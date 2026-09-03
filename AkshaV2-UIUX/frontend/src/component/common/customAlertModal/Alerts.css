@@ -1,0 +1,159 @@
+.rightcontent-cameraimgClsAlert{
+   
+    max-height: 62vh !important;
+    width: 54%;
+    margin-left: 3%;
+}
+
+.rightcontent-cameraimgClsAlert .alert-type-details {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+}
+.rightcontent-cameraimgClsAlert .alert-type-details svg {
+    height: 1.2rem;
+    width: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+.col-lg-12-main-camera-div{
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+}
+
+.overflow-hidden{
+    overflow: hidden;
+}
+
+.view-edit-img-mode .img-edit-button {
+    padding: 1rem 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+
+}
+.view-edit-img-mode .img-edit-button button {
+    background: transparent;
+    padding: 0.25rem 0.25rem;
+    border: none;
+}
+.view-edit-img-mode .img-edit-button button svg {
+    height: 1rem;
+    width: 1rem;
+}
+
+.row-align-items-start{
+    align-items: flex-start !important;
+    /* margin-top: 15%; */
+    width: 100%;
+}
+
+.add-camera-modal-dialog{
+    max-height: 150vh;
+    width: 200%;
+}
+
+.form-select-cam{
+    margin-left: -8%;
+    width: 70%;
+}
+
+.form-select-ooi{
+    background-color: white;
+    width: 100% !important;
+    height: 45px !important;
+    margin-top: -3px !important;
+}
+
+.labels{
+    margin-left: -5% !important;
+}
+
+.alert-btn{
+  margin-top: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10%;
+}
+
+.updatealert{
+  padding: 10px 19px;
+  border: 1px solid #0a57eb;
+  color: #0a57eb;
+  font-weight: 700;
+  border-radius: 5px;
+}
+
+.back-save-button{
+    margin-top: 7%;
+}
+
+@media screen and (max-width:1700px) and (max-height:900px){
+    .alertbox-width{
+        width: 87%;
+    }
+    }
+
+@media screen and (max-width:1700px) and (min-height:901px){
+.alertbox-width{
+    width: 90%;
+}
+}
+
+.timepicker{
+    margin-top: 15%;
+    align-items: flex-start !important;
+    
+    width: 151%;
+}
+
+@media only screen and (min-height:600px) and (max-height:770px) {
+    .ooi{
+        margin-top: -4%;
+    }
+
+    .ooi-align{
+        /* margin-top: 10%; */
+        margin-left: -17%;
+    }
+
+    .back-save-button{
+        margin-top: 2%;
+    }
+
+    .rightcontent-cameraimgClsAlert{
+   
+        max-height: 62vh !important;
+        width: 54%;
+        margin-left: 7%;
+    }
+
+    .form-select-ooi{
+        background-color: white;
+        width: 55% !important;
+        height: 45px !important;
+        margin-top: -3px !important;
+    }
+    .form-select-ooi-last-tab{
+        background-color: white;
+        width: 100% !important;
+        height: 45px !important;
+        margin-top: -3px !important;
+    }
+}
+
+.ooi-align{
+    margin-top: -6%;
+    margin-left: -17%;
+    /* margin-bottom: 11%; */
+}
+
+.canceloutlined{
+    color: #0a57eb;;
+    font-size:36px !important;
+}

@@ -1,0 +1,96 @@
+#custom-report-table-y-container {
+
+  overflow-y: scroll;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  width: 100%;
+  font-size: 14px;
+  //position: relative; //needed for z-index to work
+
+  scrollbar-color: #8cbbdd transparent;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #8cbbdd;
+    border-radius: 20px;
+    border: 0px solid transparent;
+  }
+
+  tr.shown,
+  tr.hidden {
+    background-color: #eee;
+    display: table-row;
+  }
+
+  tr.hidden {
+    display: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  table th,
+  table td {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    //white-space: nowrap;
+  }
+
+  td.td-link-style {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #0a57eb;
+  }
+
+  td.cam-name-style {
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  td.No-Alerts-Captured {
+    text-decoration: underline;
+  }
+
+  .alertname-items-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .alertname-item-one {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+
+    .alertname-item-two {
+      flex-grow: 2;
+      flex-shrink: 0;
+      flex-basis: 0;
+
+    }
+  }
+
+  img.alert-named-icon {
+    max-width: 24px;
+    max-height: 24px;
+    margin-right: 3px;
+  }
+
+    table thead {
+      background-color: #faf8f8;
+    }
+
+
+}

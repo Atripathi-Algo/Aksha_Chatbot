@@ -1,0 +1,962 @@
+@import "~bootstrap/scss/bootstrap";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: auto !important;
+  margin: 0;
+  font-family: "Inter", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f4f4f6 !important;
+  padding: 0 !important;
+}
+
+body.removeScroll {
+  overflow: hidden !important;
+}
+
+body.remove-Y-Scroll {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.add-camera-modal {
+  position: absolute;
+  top: 0px !important;
+}
+.add-camera-modal {
+  .modal-content {
+    width: 66%;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, 2%);
+    height: 77%;
+  }
+}
+
+// @media only screen and (max-height:876px) {
+//   .add-camera-modal {
+//     .modal-content {
+//       width: 66%;
+//       position: fixed;
+//       top: 6%;
+//       left: 50%;
+//       transform: translate(-50%, 2%);
+//       height: 90%;
+//     }
+//   }
+//   }
+
+  @media only screen and (min-height:600px) and (max-height:770px) {
+    .add-camera-modal {
+      .modal-content {
+        width: 96%;
+        position: fixed;
+        top: -2%;
+        left: 50%;
+        transform: translate(-50%, 2%);
+        height: 100%;
+      }
+    }
+    }
+
+  @media only screen and (min-height:771px) and (max-height:825px) {
+    .add-camera-modal {
+      .modal-content {
+        width: 66%;
+        position: fixed;
+        top: 1%;
+        left: 50%;
+        transform: translate(-50%, 2%);
+        height: 95%;
+      }
+    }
+    }
+
+    @media only screen and (min-height:826px) and (max-height:876px) {
+      .add-camera-modal {
+        .modal-content {
+          width: 66%;
+          position: fixed;
+          top: 1%;
+          left: 50%;
+          transform: translate(-50%, 2%);
+          height: 90%;
+        }
+      }
+      }
+
+@media only screen and (max-height:945px) and (min-height:877px) {
+  .add-camera-modal {
+    .modal-content {
+      width: 66%;
+      position: fixed;
+      top: 6%;
+      left: 50%;
+      transform: translate(-50%, 2%);
+      height: 85%;
+    }
+  }
+  }
+
+.add-camera-step-form {
+  position: relative;
+}
+
+.add-camera-step-form .close-button i {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 24px;
+  background-color: #e8edfc;
+  color: #000;
+  padding: 3px 3px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-camera-step-form .left-content {
+  padding-top: 0;
+}
+
+.add-camera-step-form .left-content h2 {
+  font-weight: 700;
+  margin-bottom: 0;
+  // margin-left: -6%;
+}
+
+.add-camera-step-form .left-content span {
+  font-size: 17px;
+  // margin-left: -6%;
+}
+
+.add-camera-step-form .left-content .single-fleld select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 12px;
+  outline: none;
+  margin-bottom: 20px;
+  border: 1px solid #9d9d9d;
+}
+
+.add-camera-step-form .left-content .single-fleld input {
+  width: 60%;
+  margin-top: -3px;
+  padding: 5px 12px;
+  outline: none;
+  margin-bottom: 3px;
+  border: 1px solid #9d9d9d;
+  margin-left: -6%;
+}
+
+.add-camera-step-form .left-content .single-fleld .selectallcameras-input {
+  width: 24px !important;
+  height: 24px !important;
+  margin-left: -8% !important;
+  margin-top: -3% !important;
+}
+
+.add-camera-step-form .left-content .single-fleld .selectallcameras-label{
+  font-size: 16px !important;
+  position: relative !important;
+  top: -25px !important;
+}
+
+@media only screen and (min-height:771px) {
+.add-camera-step-form .selectedObjectofInter-input{
+  width:24px !important;
+  height: 24px !important;
+  margin-top: 16% !important;
+  margin-left: 96% !important;
+}
+}
+
+// @media only screen and (min-height:600px) and (max-height:770px) {
+// .add-camera-step-form .selectedObjectofInter-input{
+//   width:24px !important;
+//   height: 24px !important;
+//   // margin-top: 2% !important;
+//    margin-left: -25% !important;
+// }
+
+// .NopersonAlert-label {
+//   font-size: 16px !important;
+//   margin: 0 !important;
+//   padding-left: 2px;        /* small extra spacing to avoid touching */
+//   line-height: 1.2;
+//   vertical-align: middle;
+//   white-space: nowrap;      /* keeps text in one line */
+// }
+
+// /* Optional: smaller screens */
+// @media only screen and (max-width: 1200px) {
+//   .add-camera-step-form .selectedObjectofInter-input {
+//     width: 18px !important;
+//     height: 18px !important;
+//   }
+//   .NopersonAlert-label {
+//     font-size: 15px !important;
+//   }
+// }
+
+// .add-camera-step-form .left-content .single-fleld .selectallcameras-label{
+//   font-size: 16px !important;
+//   position: relative !important;
+//   top: -15px !important;
+//   margin-left: -10px !important;
+// }
+// }
+// .add-camera-step-form  .selectallcameras-input {
+//   width: 18px !important;
+// }
+
+// .add-camera-step-form  .selectallcameras-label{
+//   font-size: 16px !important;
+//   position: relative !important;
+//   top: -6px !important;
+// }
+
+// .add-camera-step-form .selectedObjectofInter-input{
+//   width:24px !important;
+//   height: 24px !important;
+// }
+
+
+.add-camera-step-form .left-content .single-fleld textarea {
+  width: 60%;
+  margin-top: -3px;
+  padding: 5px 12px;
+  outline: none;
+  margin-bottom: 3px;
+  border: 1px solid #9d9d9d;
+  margin-left: -6%;
+}
+
+.add-camera-step-form .step-items {
+  max-width: 550px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding-bottom: 0;
+  padding-top: 0;
+  margin-top: -3%;
+}
+
+.add-camera-step-form .step-items.item {
+  text-align: center;
+}
+
+.add-camera-step-form .alert-card {
+  border: 1px solid #c2c2c3;
+   border-radius: 14px 14px 0 0;
+  width: 100%;
+  // margin-left: -8%;
+}
+
+.add-camera-step-form .alert-header {
+  background-color: #000;
+  color: #fff;
+  padding: 7px 13px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+
+.add-camera-step-form .alert-header .modal-alert-img {
+  width: 18px !important;
+  margin-right: 8px !important;
+}
+
+.add-camera-step-form .alert-header .modal-Checks-img {
+  position: relative !important;
+  left: 302px !important;
+  width: 22px !important;
+}
+
+.add-camera-step-form .alert-header .modal-pencil-img {
+  position: absolute !important;
+  right: 31px !important;
+  width: 22px !important;
+  padding-top: 4px !important;
+}
+
+
+.add-camera-step-form .step-items .item .icon {
+  padding: 9px 14px;
+  background: #ffffff;
+  border: 1px solid #b0b0b0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #000;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 2px;
+}
+
+.add-camera-step-form .step-items .item .icon.active {
+  background: #27ae60;
+  color: #ffffff;
+}
+
+.form-button-group {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+button.outlined-button {
+  padding: 10px 19px;
+  border: 1px solid #0a57eb;
+  color: #0a57eb;
+  font-weight: 700;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+button.filled-button {
+  margin-left: 30px;
+  padding: 10px 19px;
+  border: 1px solid #0a57eb;
+  background-color: #0a57eb;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 5px;
+  margin-top:15px
+}
+
+button.save-button-step-two{
+  margin-right: 10% !important;
+}
+
+.alert-btn{
+  margin-top: -10px !important;
+}
+
+.delete-alert-icon{
+  font-size: 24px !important;
+  margin-left: 10px !important;
+  color:#eb0a0a !important;
+}
+
+// .view-edit-img-mode{
+//   margin-top: 53px !important;
+// }
+
+.edit-cam-length-one{
+  margin-top: 130px !important;
+}
+
+.item-not-empty-img{
+  max-width: 640px;
+}
+
+.margin-top-70{
+  margin-top: 70px !important;
+}
+
+.margin-right-ten-perc{
+  margin-right: 10% !important;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.single-tag {
+  border: 1px solid #aba6a6;
+  border-radius: 30px;
+  margin-bottom: 5px;
+  width: fit-content;
+  padding: 13px 17px;
+  margin-right: 10px;
+}
+
+.single-tag i {
+  font-size: 18px;
+}
+
+.add-camera-step-form .selected-days-pg3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  
+}
+
+.add-camera-step-form .selected-days {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 14%;
+}
+
+.add-camera-step-form {
+  // border: 1px solid #ddd;
+  padding: 3px 0px;
+}
+
+.add-camera-step-form .selected-days .day p {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+
+.add-camera-step-form .selected-days .form-check {
+  margin-left: 10px;
+}
+
+.add-camera-step-form .form-check-input {
+  width: 19px;
+  height: 19px;
+  background-color: #cfcfcf;
+  border-color: #cfcfcf;
+}
+
+.add-camera-step-form .form-check-input:checked {
+  background-color: #27ae60;
+  border-color: #27ae60;
+}
+
+.ant-select-selector {
+  height: 45px;
+}
+
+.ant-select-dropdown {
+  z-index: 1335 !important;
+}
+
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  height: 44px !important;
+  padding: 7px 11px !important;
+}
+
+.add-camera-step-form .step-items .item {
+  position: relative;
+}
+
+.add-camera-step-form .step-items .canceloutlined {
+  margin-right: -52%;
+  font-size:20px;
+  margin-left: 10%;
+  margin-top: 2%;
+  font-size: 30px;
+}
+
+@media only screen and (min-height:600px) and (max-height:770px) {
+.add-camera-step-form .step-items .canceloutlined {
+  margin-right: -94%;
+  font-size:20px;
+  margin-left: 52%;
+  margin-top: 2%;
+  font-size: 30px;
+}
+}
+
+.add-camera-step-form .step-items .item .line {
+  width: 163px;
+  height: 2px;
+  background-color: #cdcdcd;
+  position: absolute;
+  left: 79px;
+  top: 23px;
+}
+
+.add-camera-step-form .step-items .item .line.active {
+  background-color: #27ae60 !important;
+}
+
+.ant-message {
+  z-index: 2000 !important;
+}
+
+.form-check-input:checked {
+  background-color: #27ae60;
+  border-color: #27ae60;
+}
+
+.ant-btn-primary {
+  border: 1px solid #0a57eb !important;
+  background-color: #0a57eb !important;
+}
+
+.autoalert-search-bar .mobile-search {
+  display: none;
+}
+
+
+// Mobile responsive 
+@media only screen and (max-width: 600px) {
+  #monitor-holiday-buttons button {
+    width: 72px !important;
+    font-size: 13px;
+  }
+
+  #monitor-holiday-buttons {
+    top: 5px;
+  }
+
+  .css-heg063-MuiTabs-flexContainer {
+    overflow-x: scroll;
+  }
+
+  .search-bar {
+    overflow-x: scroll;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .add-camera-step-form .step-items {
+    max-width: 350px !important;
+  }
+
+  .line {
+    width: 89px !important;
+    left: 66px !important;
+  }
+
+  .autoalert-search-bar .desktop {
+    display: none !important;
+  }
+
+  .autoalert-search-bar .mobile-search {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 17px 20px;
+    background: #ebebeb;
+    border: 1px solid #c4c1c1;
+    margin-top: 8px;
+  }
+
+  .autoalert-search-bar .mobile-search .single_item {
+    margin-bottom: 15px;
+  }
+
+  .autoalert-search-bar .mobile-search .single_item label {
+    color: #000;
+    font-size: 17px;
+  }
+
+
+  .autoalert-search-bar .mobile-search .single_item label span {
+    color: #f00 ;
+  }
+
+  .autoalert-search-bar .mobile-search .single_item .inner-content {
+    background: #fff;
+    height: 53px;
+    border-radius: 5px;
+    margin-top: 16px;
+  }
+
+  .autoalert-search-bar .mobile-search .single_item .inner-content p {
+    padding-top: 14px;
+    font-size: 17px;
+  }
+
+  .autoalert-search-bar .search-button {
+    padding: 17px 20px;
+    outline: none;
+    background-color: #0a57eb;
+    border: 1px solid #0a57eb;
+    color: #fff;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .autoalert-search-bar .search-button i {
+    font-size: 20px;
+    position: relative;
+    left: -14px;
+    top: 6px;
+  }
+
+  .my_alert_not_found {
+    position: relative;
+  }
+
+  .tab-wrapper .css-jpln7h-MuiTabs-scroller {
+    overflow: visible !important;
+  }
+
+  .tab-wrapper .makeStyles-dropBtn-3 {
+    top: 60px !important;
+    background-color: #fff;
+    border-radius: 3px;
+  }
+
+  .tab-wrapper .css-1ujnqem-MuiTabs-root {
+    overflow: visible !important;
+  }
+
+
+}
+
+.ant-dropdown-menu-item {
+  padding: 11px 10px !important;
+}
+
+.ant-modal-content {
+  width: 95%;
+  margin: auto;
+}
+
+//  Mobile responsive
+@media only screen and (min-width: 200px) and (max-width: 539px) and (orientation : portrait) {
+  .ant-modal-wrap {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    outline: 0;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .add-camera-step-form .left-content {
+    padding-top: 40px;
+    // max-width: 122% !important;
+    // width: 120% !important;
+    // margin-left: -25px;
+  }
+}
+
+@media only screen and (min-width: 360px)and (max-width: 374px) and (orientation : portrait) {
+  .add-camera-step-form .left-content {
+    padding-top: 40px;
+    // max-width: 131% !important;
+    // width: 126% !important;
+    // margin-left: -36px;
+  }
+}
+
+@media only screen and (min-width: 540px)and (max-width: 767px) and (orientation : portrait) {
+  .add-camera-step-form .left-content {
+    padding-top: 40px;
+    max-width: 131% !important;
+    width: 120% !important;
+    margin-left: -40px;
+  }
+}
+
+@media only screen and (min-width: 768px)and (max-width: 799px) and (orientation : portrait) {
+  .add-camera-step-form .left-content {
+    padding-top: 40px;
+    max-width: 131% !important;
+    width: 107% !important;
+    margin-left: -20px;
+  }
+}
+//  Mobile responsive
+@media only screen and (min-width: 800px) and (max-width: 1200px) and (orientation : portrait) {
+  .ant-modal-wrap {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    outline: 0;
+    padding-left: 28px;
+    padding-right: 33px;
+  }
+}
+
+@media only screen and (max-width:1700px) {
+.alert-modal-action-button-main-div-0{
+  margin-top:-6%  !important;
+}
+}
+// @media only screen and (min-height:635px) and (max-height:770px) {
+// .alert-modal-action-button-main-div-0{
+//   margin-top:-8%  !important;
+// }
+// }
+
+.ant-modal-body{
+  padding:9px !important;
+  overflow: hidden;
+}
+@media only screen and (min-width:1700px) {
+.alert-modal-action-button-main-div-0{
+  margin-top:-2% !important;
+}
+.alert-modal-action-button-main-div-1{
+  margin-top:3% !important;
+}
+
+.alert-modal-action-button-main-div-2{
+  margin-top:16% !important;
+}
+}
+@media only screen and (min-height:600px) and (max-height:770px) {
+  .alert-modal-action-button-main-div-2{
+    margin-top:-3% !important;
+  }
+  .alert-modal-action-button-main-div-0{
+    margin-top:-3.1% !important;
+  }
+  .alert-modal-action-button-main-div-1{
+    margin-top:1% !important;
+  }
+  .add-camera-modal .left-content .single-fleld{
+    margin-bottom: -1px;
+  }
+}
+
+ @media only screen and (min-height: 771px) {
+  .add-camera-modal .left-content .single-fleld{
+    margin-bottom: 12px;
+  }
+ }
+@media only screen and (min-width: 1400px) {
+  .right-content.camera{
+    // margin-left: 13% !important;
+  }
+  .add-camera-modal .ant-modal-content{
+    max-height: 713px !important;
+  }
+  .add-camera-step-form {
+    padding: 25px 0px !important;
+  }
+  .camera-list-scroll{
+    margin-top: 12px;
+    padding-right: 9px;
+    max-height: 450px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: fit-content;
+  }
+  .insight-camera-img{
+    max-width: 65% !important; 
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border-radius: 13px !important;
+  }
+}
+.insight-camera-img{
+  max-width: 730px;    
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border-radius: 13px !important;
+}
+@media only screen and (min-width: 1592px) {
+  .insight-camera-img{
+    max-width: 55% !important; 
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border-radius: 13px !important;
+  }
+  .add-camera-modal .add-camera-step-form .container{
+    padding-top:20px;
+  }
+  .add-camera-modal .add-camera-step-form{
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .add-camera-modal .ant-modal-content{
+    max-height: 800px !important;
+  }
+}
+.ant-message .anticon{
+  top:-3px !important;
+}
+.user_manual_modal{
+  position: relative !important;
+  top: 0 !important;
+  min-width:800px;
+  width:800px;
+}
+@media only screen and (max-width:600px){
+  .user_manual_modal {
+    min-width:100%;
+    width:100%;
+    height:100%;
+    max-width: 100%;
+  }
+}
+@media only screen and (max-width:1050px){
+  .camera-directory-list-section .alert-checks .form-check {
+    min-width: 187px;
+    padding-left: 14px;
+  }  
+}
+@media only screen and (max-width:1050px){
+  .all-option-column {
+    padding-left: 0 !important;
+  }
+  .camera-directory-list-section .widthAdjust{
+    margin-left: 4px;
+  }
+  .main-camera-div{
+    display: block !important;
+  }
+  .add-camera-modal .add-camera-step-form .single-fleld{
+    padding-top:20px;
+  }
+  .main-camera-div{
+    margin-top: 22px;
+  }
+  .main-camera-div .alert-card{
+    margin-top:20px;
+  }
+  .camera{
+    height:auto !important;
+  }
+  .camera-directory-list-section .add-camera-section .corner{
+    min-height:auto !important;
+    margin-bottom:20px;
+  }
+  .add-camera-step-form .left-content{
+    padding-left: 24px;
+    padding-right: 25px;
+    margin-left: -48px !important;
+  }  
+}
+
+// mobile version
+@media only screen and (max-width:736px){
+  .camera-directory-list-section .widthCls{
+    max-width:100% !important;
+  }
+  .camera-directory-list-section .grid-view{
+    padding-left: 0;
+    display:block !important;
+  }
+  .camera-directory-list-section .alert-checks {
+    padding-left: 25px;
+    margin-bottom: 20px;
+  }
+  .all-option-column {
+    padding-left: 9px !important;
+  }
+}
+.main-camera-div {
+  display:flex;
+}
+
+.user-manual {
+  .modal-content {
+    width: 50%;
+    position: fixed;
+    top: 6%;
+    left: 25%;
+    // transform: translate(-50%, 2%);
+    height: 70%;
+  }
+}
+/* ===========================
+   Default layout for laptops and smaller screens
+   =========================== */
+.add-camera-step-form .form-check.d-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;             /* space between checkbox and label */
+  flex-wrap: nowrap;
+}
+
+/* Checkbox default size */
+.add-camera-step-form .selectedObjectofInter-input {
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important; 
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Label default size */
+.NopersonAlert-label {
+  font-size: 16px !important;
+  margin: 0 !important;
+  line-height: 1.2;
+  white-space: nowrap;
+  padding-left: 2px;   /* small gap between checkbox and label */
+  vertical-align: middle;
+}
+
+/* Additional select all cameras styling (kept from previous code) */
+.add-camera-step-form .left-content .single-fleld .selectallcameras-input {
+  width: 1px !important;
+}
+
+.add-camera-step-form .left-content .single-fleld .selectallcameras-label {
+  font-size: 16px !important;
+  position: relative !important;
+  top: -2px !important;
+  margin-left : -5px !important;
+}
+
+/* ===========================
+   Large desktop screens
+   =========================== */
+@media only screen and (min-width: 1600px) {
+  .add-camera-step-form .form-check.d-flex {
+    justify-content: flex-start;  /* align checkbox + label to left */
+    gap: 6px;                     /* smaller gap for large screens */
+  }
+
+  .add-camera-step-form .selectedObjectofInter-input {
+    width: 24px !important;
+    height: 24px !important;
+    margin-left: -40px !important; /* shift checkbox more left on desktop */
+  }
+
+  .NopersonAlert-label {
+    margin-left: 2px !important;  /* gap between checkbox and label */
+  }
+}
+
+/* ===========================
+   Medium height screens (600px - 770px)
+   =========================== */
+@media only screen and (min-height: 600px) and (max-height: 770px) {
+  .add-camera-step-form .selectedObjectofInter-input {
+    width: 24px !important;
+    height: 24px !important;
+    margin-left: -27% !important;
+  }
+
+  .NopersonAlert-label {
+    font-size: 16px !important;
+    margin: 0 !important;
+    padding-left: 2px;
+    line-height: 1.2;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .add-camera-step-form .left-content .single-fleld .selectallcameras-label {
+    font-size: 16px !important;
+    position: relative !important;
+    top: -15px !important;
+    margin-left: -10px !important;
+  }
+}
+
+/* ===========================
+   Optional: smaller screens
+   =========================== */
+@media only screen and (max-width: 1200px) {
+  .add-camera-step-form .selectedObjectofInter-input {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .NopersonAlert-label {
+    font-size: 15px !important;
+  }
+}

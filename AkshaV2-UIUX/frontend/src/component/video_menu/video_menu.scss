@@ -1,0 +1,16 @@
+.video_menu{ 
+    position: relative;
+    .showDropdown{
+        background-color: #ffffff;
+        margin-top: 3rem;
+    }
+    .showDropdown.blank{
+        display: none;
+    }
+
+    .three-dots-button{
+        position: absolute;
+        right: 0;
+        top: 0rem;
+    }
+}

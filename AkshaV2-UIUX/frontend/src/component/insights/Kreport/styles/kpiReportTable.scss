@@ -1,0 +1,110 @@
+
+.kpi-table-wrapper {
+    width: 100%;
+    overflow-x: auto;   
+    padding: 20px 0;
+  }
+  .kpi-report-table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 20px 0;
+  }
+  
+  /* MAIN TABLE */
+  .kpi-table {
+    width: 98%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  
+    th {
+      padding: 12px 14px;
+      background: #f0f3f7;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 2px solid #dce1e8;
+    }
+  
+    td {
+      padding: 10px 14px;
+      border: 1px solid #e3e7ed;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+  
+    .camera-row {
+      background-color: #fafbfd;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+  
+    .camera-row:hover {
+      background-color: #eef3ff;
+    }
+  
+    .frame-row {
+      background: #ffffff;
+    }
+  
+    .image-link {
+      color: #0077cc;
+      font-weight: 500;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-block;
+    }
+  
+    .image-link:hover {
+      color: #005fa3;
+    }
+  }
+  /* FULL-SCREEN MODAL IMAGE OVERRIDE */
+  .modal-image {
+    width: 95vw !important;
+    height: 95vh !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+  
+  // /* OVERRIDE ImageModel popup size ONLY inside KPIReportTable */
+  // .kpi-table-wrapper {
+  
+  //   /* Make popup dialog wider & taller */
+  //   .MuiDialog-paper {
+  //     max-width: 90vw !important;
+  //     width: 90vw !important;
+  //     max-height: 90vh !important;
+  //     border-radius: 12px !important;
+  //   }
+  
+  //   /* Big centered image */
+  //   .MuiDialogContent-root img {
+  //     width: 100% !important;
+  //     height: auto !important;
+  //     max-height: 85vh !important;
+  //     object-fit: contain !important;
+  //     display: block;
+  //     margin: auto;
+  //   }
+  // }
+  
+  // /* FORCE ImageModel to full-screen */
+  // .MuiDialog-root .MuiDialog-container .MuiPaper-root {
+  //   max-width: 95vw !important;
+  //   width: 95vw !important;
+  //   height: 95vh !important;
+  //   max-height: 95vh !important;
+  // }
+  
+  // /* Force image inside ImageModel to scale */
+  // .MuiDialogContent-root img {
+  //   width: 100% !important;
+  //   height: auto !important;
+  //   max-height: 85vh !important;
+  //   object-fit: contain !important;
+  // }
+  

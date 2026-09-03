@@ -1,0 +1,50 @@
+.chat-popover-dialog-body-message {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.2rem;
+
+  .chat-popover-dialog-body-message-avatar img {
+    // background-color: #87ee93;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.2rem;
+    border-radius: 40%;
+    background-color: #eaf2f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chat-popover-dialog-body-message-text {
+    max-width: 70%;
+    position: relative;
+    overflow: visible;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    // margin-left: 0.5rem;
+    border-radius: 0.5rem;
+    // background-color: #87ee93;
+    border: 1px solid #8c8c8c;
+    border-left: 4px solid blue;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.chat-popover-dialog-body-message-user {
+  flex-direction: row-reverse;
+
+  // .chat-popover-dialog-body-message-avatar svg {
+  //   background-color: #87ccee;
+  // }
+
+  .chat-popover-dialog-body-message-text {
+    // margin-left: 0;
+    // margin-right: 0.5rem;
+    // background-color: #87ccee;
+    border-left: 1px solid #8c8c8c;
+    border-right: 4px solid blue;
+  }
+}
