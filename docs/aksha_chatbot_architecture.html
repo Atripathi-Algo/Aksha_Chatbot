@@ -1,0 +1,407 @@
+<title>Aksha Chatbot Architecture</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Expanded:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#1b2029; --ground:#f4f5f7; --surface:#ffffff; --surface-2:#eef0f3;
+    --line:#dfe2e8; --line-soft:#eceef2;
+    --muted:#5b616c; --muted-2:#868c97;
+    --accent:#326bc9; --accent-ink:#1f4788; --accent-100:#eef3fc; --accent-200:#d6e3f7;
+    --warn:#b9660b; --warn-100:#fdf3e6; --warn-line:#f0d5ab;
+    --good:#1a7a4c; --good-100:#e9f6ef;
+    --font-display:'Archivo Expanded', system-ui, sans-serif;
+    --font-body:'Archivo', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e7e9ee; --ground:#14161b; --surface:#1b1e25; --surface-2:#20242c;
+      --line:#2c313b; --line-soft:#262a33;
+      --muted:#a7acb6; --muted-2:#7b8190;
+      --accent:#6f9deb; --accent-ink:#bcd4f7; --accent-100:#1c2a42; --accent-200:#26395a;
+      --warn:#e0a545; --warn-100:#332711; --warn-line:#5a4520;
+      --good:#5cc494; --good-100:#0f2a20;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7e9ee; --ground:#14161b; --surface:#1b1e25; --surface-2:#20242c;
+    --line:#2c313b; --line-soft:#262a33;
+    --muted:#a7acb6; --muted-2:#7b8190;
+    --accent:#6f9deb; --accent-ink:#bcd4f7; --accent-100:#1c2a42; --accent-200:#26395a;
+    --warn:#e0a545; --warn-100:#332711; --warn-line:#5a4520;
+    --good:#5cc494; --good-100:#0f2a20;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--font-body); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:980px; margin:0 auto; padding:48px 24px 80px; }
+
+  header.page{ margin-bottom:32px; }
+  .eyebrow{
+    font:700 11px/1 var(--font-mono); letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent-ink); margin:0 0 12px;
+  }
+  h1{
+    font:800 clamp(28px,4vw,40px)/1.15 var(--font-display); margin:0 0 12px; text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{ font-size:15.5px; color:var(--muted); max-width:640px; margin:0; }
+
+  h2{
+    font:700 20px/1.3 var(--font-display); margin:0 0 6px; letter-spacing:-0.005em;
+  }
+  .section-sub{ font-size:13px; color:var(--muted); margin:0 0 20px; max-width:620px; }
+  section{ margin-top:52px; }
+
+  .callout{
+    border:1px solid var(--warn-line); background:var(--warn-100);
+    border-radius:10px; padding:18px 20px; display:grid; gap:10px;
+  }
+  .callout .k{
+    font:700 10.5px/1 var(--font-mono); letter-spacing:.1em; text-transform:uppercase;
+    color:var(--warn); display:flex; align-items:center; gap:8px;
+  }
+  .callout .k svg{ flex:none; }
+  .callout p{ margin:0; font-size:13.5px; color:var(--ink); }
+  .callout code{ font-family:var(--font-mono); font-size:12.5px; background:rgba(0,0,0,0.06); padding:1px 5px; border-radius:4px; }
+  :root:not([data-theme="light"]) .callout code{ background:rgba(255,255,255,0.08); }
+  .callout ul{ margin:2px 0 0; padding-left:18px; font-size:13.5px; }
+  .callout li + li{ margin-top:4px; }
+
+  figure{ margin:0; }
+  .diagram-card{
+    border:1px solid var(--line); background:var(--surface); border-radius:12px;
+    overflow:hidden;
+  }
+  .diagram-scroll{ overflow-x:auto; padding:22px 18px 8px; }
+  svg.diagram{ display:block; min-width:640px; width:100%; height:auto; }
+  figcaption{
+    padding:12px 20px 16px; font-size:12px; color:var(--muted); border-top:1px solid var(--line-soft);
+  }
+  figcaption b{ color:var(--ink); font-weight:600; }
+
+  .node-title{ font:700 12px var(--font-body); fill:var(--ink); }
+  .node-sub{ font:500 9.5px var(--font-body); fill:var(--muted); }
+  .edge-label{ font:600 9px var(--font-mono); fill:var(--accent-ink); }
+  .edge{ stroke:var(--muted-2); stroke-width:1.4; fill:none; }
+  .edge-dashed{ stroke-dasharray:4 3; }
+
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  thead th{
+    text-align:left; font:700 10px var(--font-mono); letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); padding:0 12px 10px; border-bottom:1px solid var(--line);
+  }
+  tbody td{ padding:12px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:none; }
+  .agent-name{ font-weight:700; }
+  .pill{
+    display:inline-flex; align-items:center; gap:5px; font:600 10px var(--font-mono);
+    padding:2px 8px; border-radius:99px; white-space:nowrap;
+  }
+  .pill.live{ background:var(--good-100); color:var(--good); }
+  .pill.docs{ background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
+  code.inline{ font-family:var(--font-mono); font-size:11.5px; background:var(--surface-2); padding:1px 5px; border-radius:4px; }
+
+  .table-wrap{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); padding:16px 4px; }
+  .table-scroll{ overflow-x:auto; padding:0 12px; }
+
+  footer.page{
+    margin-top:64px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--muted-2);
+  }
+  footer.page code{ font-family:var(--font-mono); }
+</style>
+
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">Aksha Support Chatbot &middot; as-built, 2026-09</p>
+    <h1>Backend, database, and chatbot tool architecture</h1>
+    <p class="lede">A ground-truth map of what actually runs today — traced from <code class="inline">aksha-chatbot-api</code> and <code class="inline">docs/CHATBOT_SYSTEM_ARCHITECTURE.md</code>, not the target design.</p>
+  </header>
+
+  <section id="db-reality">
+    <div class="callout">
+      <div class="k">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Database is MongoDB — not ChromaDB, and the chatbot never touches it directly
+      </div>
+      <p>The only database in this system is <b>MongoDB</b>, running in Docker, owned entirely by the existing Node.js/Express backend (<code>AkshaV2-UIUX/backend</code>). The Python chatbot has no database driver, no connection string, and no direct query — every fact it reports is fetched by calling that Node API, per the flow diagram below.</p>
+      <ul>
+        <li><b>Conversation checkpoints</b> — the architecture doc specifies a second, isolated Mongo database for this, but Phase 0 currently uses LangGraph's in-memory <code>MemorySaver</code> instead (documented stand-in — a one-line swap once wired up).</li>
+        <li><b>Help &amp; Product Guide's document search</b> is <b>not</b> a database at all — keyword/term-overlap scoring over two local markdown files (<code>app/tools_help.py</code>). No embeddings, no vector index, nothing Chroma- or FAISS-shaped is running today; FAISS is a named future upgrade, explicitly marked "NOT BUILT."</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="db-structure">
+    <h2>MongoDB structure</h2>
+    <p class="section-sub">The five real Mongoose collections behind the Node API, traced from <code class="inline">AkshaV2-UIUX/backend/src/models/*.js</code> — this is what every chatbot tool call ultimately resolves to.</p>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Collection</th><th>Model file</th><th>Key fields</th><th>Read by chatbot tool</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="agent-name">config</td>
+              <td><code class="inline">configSchema.js</code></td>
+              <td>Camera_Name, Priority, Status, Email_Alert, Display_Alert, FPS, Live, Surveillance_Status</td>
+              <td><code class="inline">get_cameras</code></td>
+            </tr>
+            <tr>
+              <td class="agent-name">Alerts</td>
+              <td><code class="inline">myAlertSchema.js</code></td>
+              <td>Alert_Name, Object_Class, Start_Time / End_Time, Alert_Status, Email_Activation, Timestamp</td>
+              <td><code class="inline">get_recent_alerts</code>, <code class="inline">get_alerts_by_camera</code></td>
+            </tr>
+            <tr>
+              <td class="agent-name">CameraGroup</td>
+              <td><code class="inline">cameraGroupSchema.js</code></td>
+              <td>group_name, description, priority_type, cameras[] (camera_id, camera_name, custom_order)</td>
+              <td><code class="inline">get_camera_groups</code></td>
+            </tr>
+            <tr>
+              <td class="agent-name">CameraNotificationManager</td>
+              <td><code class="inline">cameraNotificationManager.js</code></td>
+              <td>camera_group_id, email{enabled, email_list}, mobile{...}, telegram{...}, alerts_enabled</td>
+              <td><code class="inline">get_group_notification</code></td>
+            </tr>
+            <tr>
+              <td class="agent-name">Resource</td>
+              <td><code class="inline">resourceSchema.js</code></td>
+              <td>username, new_email, bot_token, send_alert_report, genai_features</td>
+              <td><code class="inline">get_notification_config</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="section-sub" style="margin-top:14px;">No collection here backs Live Monitoring or Insights &amp; Analytics as a document store — Live Monitoring reads a live REST snapshot off the same Node routes, and per the architecture doc, insight/KPI data is file-based (local disk or Blob storage), not a Mongo collection.</p>
+  </section>
+
+  <section id="backend-flow">
+    <h2>Complete backend flow</h2>
+    <p class="section-sub">Two independent backend services the chat panel depends on, plus where each piece of state actually lives.</p>
+    <figure class="diagram-card">
+      <div class="diagram-scroll">
+        <svg class="diagram" viewBox="0 0 1000 420" role="img" aria-label="Diagram: the React UI on port 5173 calls the Python FastAPI chatbot service on port 8010, which calls the existing Node.js Express backend on port 5000 for all operational reads, which in turn reads and writes MongoDB running in Docker; the chatbot service separately calls a Groq or Ollama LLM provider and, for now, keeps conversation state in memory rather than in MongoDB.">
+          <defs>
+            <marker id="arrow-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <polygon points="0 0, 8 4, 0 8" fill="var(--muted-2)" />
+            </marker>
+          </defs>
+
+          <!-- UI -->
+          <rect x="16" y="150" width="150" height="72" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="91" y="180" text-anchor="middle" class="node-title">React chat UI</text>
+          <text x="91" y="196" text-anchor="middle" class="node-sub">aksha-chatbot-ui</text>
+          <text x="91" y="209" text-anchor="middle" class="node-sub">:5173 (Vite)</text>
+
+          <path class="edge" d="M166 172 L 232 172" marker-end="url(#arrow-a)"/>
+          <text x="199" y="163" text-anchor="middle" class="edge-label">SSE /v1/chat/stream</text>
+          <path class="edge edge-dashed" d="M232 200 L 166 200" marker-end="url(#arrow-a)"/>
+          <text x="199" y="216" text-anchor="middle" class="edge-label">token · done events</text>
+
+          <!-- Chatbot API -->
+          <rect x="234" y="130" width="190" height="112" rx="8" fill="var(--accent-100)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="329" y="158" text-anchor="middle" class="node-title" style="fill:var(--accent-ink)">aksha-chatbot-api</text>
+          <text x="329" y="174" text-anchor="middle" class="node-sub">FastAPI + LangGraph</text>
+          <text x="329" y="188" text-anchor="middle" class="node-sub">:8010</text>
+          <text x="329" y="205" text-anchor="middle" class="node-sub">state: in-memory</text>
+          <text x="329" y="218" text-anchor="middle" class="node-sub">(MemorySaver, not Mongo)</text>
+
+          <path class="edge" d="M424 172 L 496 172" marker-end="url(#arrow-a)"/>
+          <text x="460" y="163" text-anchor="middle" class="edge-label">GET/POST /api/*</text>
+          <path class="edge edge-dashed" d="M496 200 L 424 200" marker-end="url(#arrow-a)"/>
+          <text x="460" y="216" text-anchor="middle" class="edge-label">JSON via node_client.py</text>
+
+          <!-- Node backend -->
+          <rect x="498" y="130" width="190" height="112" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="593" y="158" text-anchor="middle" class="node-title">node_backend</text>
+          <text x="593" y="174" text-anchor="middle" class="node-sub">Node.js / Express</text>
+          <text x="593" y="188" text-anchor="middle" class="node-sub">:5000</text>
+          <text x="593" y="205" text-anchor="middle" class="node-sub">JWT auth, existing alert /</text>
+          <text x="593" y="218" text-anchor="middle" class="node-sub">camera / notification routes</text>
+
+          <path class="edge" d="M688 172 L 758 172" marker-end="url(#arrow-a)"/>
+          <text x="722" y="163" text-anchor="middle" class="edge-label">Mongoose</text>
+          <path class="edge edge-dashed" d="M758 200 L 688 200" marker-end="url(#arrow-a)"/>
+          <text x="722" y="216" text-anchor="middle" class="edge-label">documents</text>
+
+          <!-- MongoDB -->
+          <rect x="760" y="130" width="190" height="112" rx="8" fill="var(--good-100)" stroke="var(--good)" stroke-width="1.4"/>
+          <text x="855" y="158" text-anchor="middle" class="node-title" style="fill:var(--good)">MongoDB</text>
+          <text x="855" y="174" text-anchor="middle" class="node-sub">Docker container</text>
+          <text x="855" y="191" text-anchor="middle" class="node-sub">cameras · alerts</text>
+          <text x="855" y="204" text-anchor="middle" class="node-sub">notifications · camera groups</text>
+          <text x="855" y="220" text-anchor="middle" class="node-sub">(single source of truth)</text>
+
+          <!-- LLM provider, below chatbot API -->
+          <path class="edge" d="M329 242 L 329 300" marker-end="url(#arrow-a)"/>
+          <text x="410" y="275" text-anchor="middle" class="edge-label">chat completions</text>
+          <rect x="234" y="302" width="190" height="70" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="329" y="328" text-anchor="middle" class="node-title">LLM provider</text>
+          <text x="329" y="344" text-anchor="middle" class="node-sub">Groq (cloud) or Ollama (local)</text>
+          <text x="329" y="358" text-anchor="middle" class="node-sub">via llm_client.py</text>
+
+          <!-- Docs, below chatbot API too -->
+          <path class="edge edge-dashed" d="M400 242 L 545 300" marker-end="url(#arrow-a)"/>
+          <text x="500" y="270" text-anchor="middle" class="edge-label">reads at import time</text>
+          <rect x="466" y="302" width="190" height="70" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4" stroke-dasharray="4 3"/>
+          <text x="561" y="328" text-anchor="middle" class="node-title">docs/*.md</text>
+          <text x="561" y="344" text-anchor="middle" class="node-sub">2 static files on disk</text>
+          <text x="561" y="358" text-anchor="middle" class="node-sub">no database at all</text>
+        </svg>
+      </div>
+      <figcaption>Two services, one database. The chatbot has <b>no direct database access</b> — every operational fact comes from the Node backend's existing, already-authenticated routes; only Help &amp; Product Guide bypasses both and reads flat markdown files.</figcaption>
+    </figure>
+  </section>
+
+  <section id="chatbot-flow">
+    <h2>Chatbot flow &amp; tool architecture</h2>
+    <p class="section-sub">What happens to one query inside <code class="inline">aksha-chatbot-api</code>, node by node — this is the actual compiled LangGraph, not a simplification.</p>
+    <figure class="diagram-card">
+      <div class="diagram-scroll">
+        <svg class="diagram" viewBox="0 0 1040 300" role="img" aria-label="Diagram: a user query is normalized, then routed by an LLM into one of seven agents or a clarifying question; a matched agent runs a tool-calling loop of up to three rounds against a typed tool registry, whose handlers call either the Node API or the local docs search; results are then handed to a formatter LLM that writes the streamed answer and grounded follow-up suggestions.">
+          <defs>
+            <marker id="arrow-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <polygon points="0 0, 8 4, 0 8" fill="var(--muted-2)" />
+            </marker>
+          </defs>
+
+          <rect x="10" y="34" width="132" height="60" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="76" y="60" text-anchor="middle" class="node-title">Composer</text>
+          <text x="76" y="75" text-anchor="middle" class="node-sub">operator's message</text>
+
+          <path class="edge" d="M142 64 L 176 64" marker-end="url(#arrow-b)"/>
+
+          <rect x="178" y="34" width="140" height="60" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="248" y="60" text-anchor="middle" class="node-title">normalize_query</text>
+          <text x="248" y="75" text-anchor="middle" class="node-sub">trims whitespace</text>
+
+          <path class="edge" d="M318 64 L 352 64" marker-end="url(#arrow-b)"/>
+
+          <rect x="354" y="34" width="140" height="60" rx="8" fill="var(--accent-100)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="424" y="58" text-anchor="middle" class="node-title" style="fill:var(--accent-ink)">route_request</text>
+          <text x="424" y="73" text-anchor="middle" class="node-sub">router LLM: intent,</text>
+          <text x="424" y="85" text-anchor="middle" class="node-sub">risk, 1-of-7 agent</text>
+
+          <path class="edge edge-dashed" d="M424 94 L 424 150" marker-end="url(#arrow-b)"/>
+          <text x="500" y="126" text-anchor="middle" class="edge-label">needs_clarification</text>
+          <rect x="354" y="152" width="140" height="56" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4" stroke-dasharray="4 3"/>
+          <text x="424" y="176" text-anchor="middle" class="node-title">Ask operator</text>
+          <text x="424" y="191" text-anchor="middle" class="node-sub">e.g. "which camera?"</text>
+          <path class="edge edge-dashed" d="M354 180 L 250 240 L 90 100" marker-end="url(#arrow-b)"/>
+          <text x="230" y="248" text-anchor="middle" class="edge-label">END &middot; reply shown, thread continues</text>
+
+          <path class="edge" d="M494 64 L 528 64" marker-end="url(#arrow-b)"/>
+          <text x="511" y="52" text-anchor="middle" class="edge-label" style="text-anchor:start">else</text>
+
+          <rect x="530" y="34" width="150" height="60" rx="8" fill="var(--accent-100)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="605" y="58" text-anchor="middle" class="node-title" style="fill:var(--accent-ink)">domain_worker</text>
+          <text x="605" y="73" text-anchor="middle" class="node-sub">agent LLM calls tools,</text>
+          <text x="605" y="85" text-anchor="middle" class="node-sub">up to 3 rounds</text>
+
+          <path class="edge" d="M605 94 L 605 150" marker-end="url(#arrow-b)"/>
+          <text x="605" y="130" text-anchor="middle" class="edge-label">tool_call / tool_result</text>
+          <rect x="530" y="152" width="150" height="60" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="605" y="176" text-anchor="middle" class="node-title">Tool registry</text>
+          <text x="605" y="191" text-anchor="middle" class="node-sub">Pydantic-validated,</text>
+          <text x="605" y="203" text-anchor="middle" class="node-sub">scoped by agent domain</text>
+
+          <path class="edge" d="M605 212 L 605 250" marker-end="url(#arrow-b)"/>
+          <rect x="530" y="252" width="150" height="40" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="605" y="277" text-anchor="middle" class="node-sub" style="font-weight:600">Node API or docs/*.md</text>
+
+          <path class="edge" d="M680 64 L 714 64" marker-end="url(#arrow-b)"/>
+          <text x="697" y="52" text-anchor="middle" class="edge-label" style="text-anchor:start">results</text>
+
+          <rect x="716" y="34" width="150" height="60" rx="8" fill="var(--accent-100)" stroke="var(--accent)" stroke-width="1.4"/>
+          <text x="791" y="58" text-anchor="middle" class="node-title" style="fill:var(--accent-ink)">format_response</text>
+          <text x="791" y="73" text-anchor="middle" class="node-sub">formatter LLM: prose,</text>
+          <text x="791" y="85" text-anchor="middle" class="node-sub">tone, sources, freshness</text>
+
+          <path class="edge" d="M866 64 L 900 64" marker-end="url(#arrow-b)"/>
+
+          <rect x="902" y="34" width="128" height="60" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="966" y="58" text-anchor="middle" class="node-title">SSE stream</text>
+          <text x="966" y="73" text-anchor="middle" class="node-sub">token · done</text>
+          <text x="966" y="85" text-anchor="middle" class="node-sub">+ follow_ups</text>
+        </svg>
+      </div>
+      <figcaption>Every tool call is <b>typed and validated</b> before it runs, and every failure becomes a normal <code>ToolResult</code> (never a crash) — a degraded Node API or an unmatched doc search both surface as an honest "couldn't confirm that," not a fabricated answer.</figcaption>
+    </figure>
+  </section>
+
+  <section id="agents">
+    <h2>The seven agents</h2>
+    <p class="section-sub">Router picks exactly one per turn (or asks a clarifying question first). Multi-Language Support is deliberately not in this list — it's a formatter wrapper keyed on the request's language, not a routable agent.</p>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Agent</th><th>Tools</th><th>Data source</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="agent-name">Camera Operations</td>
+              <td><code class="inline">get_cameras</code>, <code class="inline">get_camera_groups</code></td>
+              <td><span class="pill live">Node API</span></td>
+              <td>Per-camera settings vs. group membership are two different tools — the router prompt is explicit about which owns which.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Alert Investigation</td>
+              <td><code class="inline">get_recent_alerts</code>, <code class="inline">get_alerts_by_camera</code>, <code class="inline">get_cameras</code></td>
+              <td><span class="pill live">Node API</span></td>
+              <td>Metadata only (camera, time, type) — no image content in Phase 1.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Live Monitoring</td>
+              <td><code class="inline">get_live_cameras</code>, <code class="inline">get_spotlight_cameras</code></td>
+              <td><span class="pill live">Node API</span></td>
+              <td>A REST snapshot, not a push feed — answers say "as of now," and the UI's Re-poll button re-runs the same query rather than auto-refreshing.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Insights &amp; Analytics</td>
+              <td><code class="inline">get_insight_report</code></td>
+              <td><span class="pill live">Node API</span></td>
+              <td>Defaults to a 7-day window when the operator doesn't specify one, and says so.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Notification</td>
+              <td><code class="inline">get_notification_config</code>, <code class="inline">get_group_notification</code></td>
+              <td><span class="pill live">Node API</span></td>
+              <td>Read-only. Distinguishes "configured recipient" from "confirmed delivery" — no delivery-confirmation logs exist yet.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Help &amp; Product Guide</td>
+              <td><code class="inline">search_docs</code></td>
+              <td><span class="pill docs">2 local .md files</span></td>
+              <td>Keyword/term-overlap scoring, not vector search. FAISS is the named future upgrade — not built.</td>
+            </tr>
+            <tr>
+              <td class="agent-name">Error &amp; Status Explanation</td>
+              <td><code class="inline">explain_error_or_status</code></td>
+              <td><span class="pill docs">Static glossary</span></td>
+              <td>No numeric <code class="inline">ERR_xxx</code> catalog exists — the agent is explicitly instructed never to imply one does.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page">
+    Traced from <code>aksha-chatbot-api/app/{graph.py, main.py, agent_executor.py, agents.py, tool_registry.py, node_client.py, tools_help.py}</code> and <code>docs/CHATBOT_SYSTEM_ARCHITECTURE.md</code> (v1.4). Reflects the code as of 2026-09-02 — not the Phase 2+ target design.
+  </footer>
+
+</div>

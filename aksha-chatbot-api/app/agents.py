@@ -1,0 +1,137 @@
+"""
+Agent registry. Phase 1: seven agents wired to real tools. Multi-Language
+Support is deliberately not registered here at all — Section 1.2 requires it to
+stay a formatter wrapper stage keyed off the request's `language` field, not a
+routable domain. A question *about* multi-language support routes to help_guide
+(a conceptual/product question) rather than to a stub agent; see main.py's
+_run_turn for where translation is actually applied.
+"""
+
+from dataclasses import dataclass, field
+
+
+@dataclass
+class AgentSpec:
+    key: str
+    label: str
+    domain: str
+    tool_names: list[str] = field(default_factory=list)
+    implemented: bool = False
+    system_prompt: str = ""
+
+
+AGENTS: dict[str, AgentSpec] = {
+    "camera_operations": AgentSpec(
+        key="camera_operations",
+        label="Camera Operations",
+        domain="camera_operations",
+        tool_names=["get_cameras", "get_camera_groups"],
+        implemented=True,
+        system_prompt=(
+            "You are the Camera Operations agent for Aksha, a video-surveillance platform. "
+            "Answer questions about camera status, configuration, priority, FPS, detection features, "
+            "and camera-group membership using only the provided tools. Never invent a camera name, "
+            "status, or setting that isn't in the tool results. "
+            "get_cameras returns full per-camera settings (Email_Alert, Display_Alert, Priority, FPS, "
+            "Feature, Status) for every camera — use it for ANY question about a specific setting on one "
+            "or more cameras, including 'which cameras have X enabled'. get_camera_groups ONLY returns "
+            "which cameras belong to which group — it does NOT include per-camera settings like email "
+            "alerts, so never use it to answer a question about a camera setting."
+        ),
+    ),
+    "alert_investigation": AgentSpec(
+        key="alert_investigation",
+        label="Alert Investigation",
+        domain="alert_investigation",
+        tool_names=["get_recent_alerts", "get_alerts_by_camera", "get_cameras"],
+        implemented=True,
+        system_prompt=(
+            "You are the Alert Investigation agent for Aksha. Answer questions about triggered alerts "
+            "using only the provided tools. This is basic, non-image scope — you explain alert metadata "
+            "(camera, time, type), not image content. Never invent an alert ID, timestamp, or camera name. "
+            "Camera names must match exactly (e.g. 'North Gate', not 'north gate' or 'the north gate "
+            "camera') — get_alerts_by_camera does an exact string match against the real camera name and "
+            "will find nothing for a close-but-inexact name. If the operator's phrasing of a camera name "
+            "might not be exact, call get_cameras FIRST to find the real Camera_Name, then use that exact "
+            "string in get_alerts_by_camera or get_recent_alerts."
+        ),
+    ),
+    "live_monitoring": AgentSpec(
+        key="live_monitoring",
+        label="Live Monitoring",
+        domain="live_monitoring",
+        tool_names=["get_live_cameras", "get_spotlight_cameras"],
+        implemented=True,
+        system_prompt=(
+            "You are the Live Monitoring agent for Aksha. Answer questions about current camera and "
+            "activity status using only the provided tools. This reads a REST snapshot, not a real-time "
+            "push — always be clear the data is 'as of now' rather than implying a guaranteed live feed."
+        ),
+    ),
+    "insights_analytics": AgentSpec(
+        key="insights_analytics",
+        label="Insights & Analytics",
+        domain="insights_analytics",
+        tool_names=["get_insight_report"],
+        implemented=True,
+        system_prompt=(
+            "You are the Insights & Analytics agent for Aksha. Answer counting, trend, and comparison "
+            "questions about alert history using only the provided tools. If the operator doesn't give "
+            "an explicit date range, use a sensible recent default (e.g. the last 7 days) and say so. "
+            "If the tool result shows no data for the requested range, state that plainly as a fact about "
+            "that range — do NOT suggest 'try again' or 'retrieve it again', since an empty result for a "
+            "fixed past date range will not change on retry. If it seems useful, suggest trying a "
+            "different date range instead."
+        ),
+    ),
+    "notification": AgentSpec(
+        key="notification",
+        label="Notification",
+        domain="notification",
+        tool_names=["get_notification_config", "get_group_notification"],
+        implemented=True,
+        system_prompt=(
+            "You are the Notification agent for Aksha. Answer questions about notification configuration "
+            "and delivery history using only the provided tools. You are read-only — you never send mail "
+            "or change settings. Clearly distinguish a 'configured recipient' from 'confirmed delivery' — "
+            "delivery-confirmation logs don't exist yet, so never imply a message was actually received. "
+            "If a group-notification lookup comes back with configured=False and a `note` field, that "
+            "means the tool could NOT tell whether the group has no notification settings or doesn't exist "
+            "at all — say exactly that ambiguity to the operator (e.g. 'no notification config found for "
+            "that group — it may not have any set up, or that group name/id may not exist'). Never assert "
+            "the group exists but is merely 'disabled' when you only know the lookup came back empty."
+        ),
+    ),
+    "help_guide": AgentSpec(
+        key="help_guide",
+        label="Help & Product Guide",
+        domain="help_guide",
+        tool_names=["search_docs"],
+        implemented=True,
+        system_prompt=(
+            "You are the Help & Product Guide agent for Aksha. Answer how-to and definitional questions "
+            "about the product itself using only the provided tool's documentation search results. "
+            "You never touch an operator's live alerts, cameras, or account — if asked to, say that's "
+            "outside what this agent can do and suggest asking about a specific camera or alert instead."
+        ),
+    ),
+    "error_explanation": AgentSpec(
+        key="error_explanation",
+        label="Error & Status Explanation",
+        domain="error_explanation",
+        tool_names=["explain_error_or_status"],
+        implemented=True,
+        system_prompt=(
+            "You are the Error & Status Explanation agent for Aksha. The operator has seen a specific "
+            "error message, status value, or code in the app and wants to know what it means. Use only "
+            "the provided tool's lookup results — this is a static glossary of verified real messages, "
+            "not a live system check. There is NO numeric error-code catalog (no ERR_xxx scheme) anywhere "
+            "in this system — never invent one or imply one exists. If the tool finds no match for what "
+            "the operator described, say plainly that you don't have an explanation for that specific "
+            "message on file, and suggest they ask an operator or check with support — never guess at a "
+            "plausible-sounding meaning for something you don't have verified."
+        ),
+    ),
+}
+
+ROUTER_AGENT_CHOICES = list(AGENTS.keys())

@@ -1,0 +1,642 @@
+<title>Chatbot Rollout Sequence</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ink: #202A36;
+    --ink-soft: #5A6472;
+    --line: #E7EBF0;
+    --surface: #FFFFFF;
+    --surface-sunken: #F7F9FB;
+    --bg: #FFFFFF;
+    --accent: #B5651D;
+    --accent-soft: #F5E9DA;
+    --green: #1E6B45;
+    --green-bg: #EAF5EE;
+    --orange: #92600A;
+    --orange-bg: #FDF4E1;
+    --red: #9C2B2B;
+    --red-bg: #FDEDED;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Cambria, 'Times New Roman', serif;
+    --sans: 'IBM Plex Sans', Calibri, Arial, sans-serif;
+  }
+
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ink: #E7EAEE;
+      --ink-soft: #A7B1BE;
+      --line: #2B3542;
+      --surface: #171D26;
+      --surface-sunken: #10151C;
+      --bg: #0B0F14;
+      --accent: #E0A164;
+      --accent-soft: #2E2114;
+      --green: #6FCE9C;
+      --green-bg: #12251C;
+      --orange: #E8B85C;
+      --orange-bg: #2A2312;
+      --red: #E88787;
+      --red-bg: #2A1414;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #E7EAEE;
+    --ink-soft: #A7B1BE;
+    --line: #2B3542;
+    --surface: #171D26;
+    --surface-sunken: #10151C;
+    --bg: #0B0F14;
+    --accent: #E0A164;
+    --accent-soft: #2E2114;
+    --green: #6FCE9C;
+    --green-bg: #12251C;
+    --orange: #E8B85C;
+    --orange-bg: #2A2312;
+    --red: #E88787;
+    --red-bg: #2A1414;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem) 6rem;
+  }
+
+  /* ---------- Header ---------- */
+  header.hero {
+    padding: clamp(3rem, 8vw, 5.5rem) 0 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 5.3vw, 3.9rem);
+    line-height: 1.05;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 16ch;
+  }
+  .dek {
+    font-size: 1.3rem;
+    color: var(--ink-soft);
+    max-width: 62ch;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.2rem;
+    margin-top: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .meta-row strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Principle callout ---------- */
+  .principle {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+    margin: 1.5rem 0 3.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.4rem;
+    align-items: start;
+    box-shadow: 0 1px 2px rgba(32, 42, 54, 0.04);
+  }
+  .principle .mark {
+    font-family: var(--serif);
+    font-size: 3.2rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .principle p {
+    margin: 0;
+    font-size: 1.3rem;
+    max-width: 58ch;
+  }
+  .principle p em { font-style: normal; color: var(--accent); font-weight: 600;}
+
+  /* ---------- Section scaffolding ---------- */
+  section.phase {
+    padding: 3.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .phase-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+  h2.phase-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+    margin: 0;
+  }
+  .phase-sub {
+    color: var(--ink-soft);
+    font-size: 1.15rem;
+    max-width: 70ch;
+    margin: 0.4rem 0 1.8rem;
+  }
+  .status-chip {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.32rem 0.75rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .chip-green { background: var(--green-bg); color: var(--green); }
+  .chip-orange { background: var(--orange-bg); color: var(--orange); }
+  .chip-red { background: var(--red-bg); color: var(--red); }
+  .chip-neutral { background: var(--surface-sunken); color: var(--ink-soft); border: 1px solid var(--line); }
+
+  /* ---------- Agent cards grid ---------- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.1rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.35rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    box-shadow: 0 1px 2px rgba(32, 42, 54, 0.03);
+  }
+  .card h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .card .src {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    word-break: break-word;
+  }
+  .card .note {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ---------- Orange change-table ---------- */
+  .change-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1.1rem;
+  }
+  .change-table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 0 0.9rem 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .change-table td {
+    padding: 1rem 0.9rem 1rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .change-table tr:last-child td { border-bottom: none; }
+  .change-table td.agent { font-weight: 600; white-space: nowrap; }
+  .change-table .agent-note {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-top: 0.25rem;
+    white-space: normal;
+  }
+  .table-scroll { overflow-x: auto; }
+
+  /* ---------- Red deferred list ---------- */
+  .deferred-wrap {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2rem;
+  }
+  @media (max-width: 780px) { .deferred-wrap { grid-template-columns: 1fr; } }
+  .deferred-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .deferred-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.95rem 1.1rem;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    align-items: baseline;
+  }
+  .deferred-item .why { font-size: 0.95rem; color: var(--ink-soft); }
+  .precondition-box {
+    background: var(--red-bg);
+    border-radius: 12px;
+    padding: 1.5rem 1.6rem;
+    align-self: start;
+  }
+  .precondition-box h4 {
+    margin: 0 0 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+  .precondition-box ul { margin: 0; padding-left: 1.1rem; font-size: 1.05rem; color: var(--ink); }
+  .precondition-box li { margin-bottom: 0.5rem; }
+
+  /* ---------- Risk register ---------- */
+  .risk-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .risk-item {
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+  }
+  .risk-item .rn {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .risk-item h3 { margin: 0 0 0.3rem; font-size: 1.15rem; font-weight: 600; }
+  .risk-item p { margin: 0; font-size: 1.05rem; color: var(--ink-soft); }
+  .risk-item code {
+    font-family: var(--mono);
+    background: var(--surface-sunken);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+
+  /* ---------- Exit gates ---------- */
+  .gate-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 900px) { .gate-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .gate-row { grid-template-columns: 1fr; } }
+  .gate-card {
+    border-radius: 12px;
+    padding: 1.3rem 1.4rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+  }
+  .gate-card .g-phase { font-family: var(--mono); font-size: 0.85rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .gate-card p { font-size: 1.05rem; margin: 0.5rem 0 0; }
+
+  /* ---------- Timeline strip ---------- */
+  .timeline {
+    display: flex;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .t-seg {
+    flex: 1;
+    padding: 1.2rem 1.3rem;
+    position: relative;
+  }
+  .t-seg + .t-seg { border-left: 1px solid var(--line); }
+  .t-seg .t-label { font-family: var(--mono); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .t-seg .t-name { font-weight: 600; font-size: 1.15rem; margin: 0.3rem 0 0.15rem; }
+  .t-seg .t-detail { font-size: 0.98rem; color: var(--ink-soft); }
+  .t-p0 { background: var(--surface-sunken); }
+  .t-p1 { background: var(--green-bg); }
+  .t-p2 { background: var(--orange-bg); }
+  .t-p3 { background: var(--red-bg); }
+  .t-p0 .t-label { color: var(--ink-soft); }
+  .t-p1 .t-label, .t-p1 .t-name { color: var(--green); }
+  .t-p2 .t-label, .t-p2 .t-name { color: var(--orange); }
+  .t-p3 .t-label, .t-p3 .t-name { color: var(--red); }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Aksha Support Chatbot &middot; Rollout Plan</div>
+    <h1 class="title">Ship the agents the backend already supports first</h1>
+    <p class="dek">A phased build order for the multi-agent support chatbot, sequenced by how much of each domain worker's tooling already exists in the Aksha platform &mdash; not by feature importance.</p>
+    <div class="meta-row">
+      <span><strong>Source design</strong> &mdash; CHATBOT_SYSTEM_ARCHITECTURE.md, SUPPORT_CHATBOT_AGENT_CATALOG.md</span>
+      <span><strong>Branch</strong> Chatbot_Abhishek</span>
+      <span><strong>Status</strong> Proposed sequencing</span>
+    </div>
+  </header>
+
+  <div class="principle">
+    <div class="mark">&sect;</div>
+    <p>Every agent in the catalog is already labelled by <em>backend readiness</em> &mdash; green needs nothing new, orange needs a small response change, red needs new write paths and approval infrastructure. Building in that order means agent work is never blocked waiting on a backend team, and nothing that can mutate surveillance state ships before the approval &amp; audit rails exist.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="t-seg t-p0">
+      <div class="t-label">Phase 0</div>
+      <div class="t-name">Foundation</div>
+      <div class="t-detail">Router, state, JWT trust, tests</div>
+    </div>
+    <div class="t-seg t-p1">
+      <div class="t-label">Phase 1</div>
+      <div class="t-name">Green agents</div>
+      <div class="t-detail">7 read-only agents, zero backend change</div>
+    </div>
+    <div class="t-seg t-p2">
+      <div class="t-label">Phase 2</div>
+      <div class="t-name">Orange agents</div>
+      <div class="t-detail">Ship as each small adapter lands</div>
+    </div>
+    <div class="t-seg t-p3">
+      <div class="t-label">Phase 3</div>
+      <div class="t-name">Red agents</div>
+      <div class="t-detail">Parked until approval + audit exist</div>
+    </div>
+  </div>
+
+  <!-- PHASE 0 -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Phase 0</span>
+      <h2 class="phase-title">Platform foundation</h2>
+      <span class="status-chip chip-neutral">blocking &middot; no agents ship without this</span>
+    </div>
+    <p class="phase-sub">The router, state graph, and trust boundary have to exist before any domain worker can be wired in. This is also where the audit uncovered problems that must be fixed before the chatbot can safely read production data.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Chatbot service scaffold</h3>
+        <p class="src">aksha-chatbot-api (FastAPI + LangGraph)</p>
+        <p class="note">New deployable service, independent from the Node backend, per the service layout in the architecture doc.</p>
+      </div>
+      <div class="card">
+        <h3>State &amp; checkpointing</h3>
+        <p class="src">chat_threads / chat_turns / chat_checkpoints</p>
+        <p class="note">ChatbotState schema and MongoDB checkpoint store so turns are resumable and auditable.</p>
+      </div>
+      <div class="card">
+        <h3>Router &amp; formatter shells</h3>
+        <p class="src">router.py &middot; Output_formatter.py</p>
+        <p class="note">Structured JSON route output; the model never gets a free-form agent name to return.</p>
+      </div>
+      <div class="card">
+        <h3>Typed tool registry</h3>
+        <p class="src">Pydantic input/output schemas</p>
+        <p class="note">Allowlisted tool names and hosts &mdash; the model selects a tool, the server decides what it may touch.</p>
+      </div>
+      <div class="card">
+        <h3>JWT trust boundary</h3>
+        <p class="src">jose.jwtVerify, shared HS256 secret</p>
+        <p class="note">Reuse the existing Aksha-jwt secret rather than issuing a second identity system.</p>
+      </div>
+      <div class="card">
+        <h3>Streaming &amp; tracing</h3>
+        <p class="src">SSE + correlation IDs</p>
+        <p class="note">Server-sent events for chat responses; OpenTelemetry spans per router/worker/tool call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 1 -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Phase 1</span>
+      <h2 class="phase-title">Green agents &mdash; ship first</h2>
+      <span class="status-chip chip-green">zero backend change</span>
+    </div>
+    <p class="phase-sub">These seven agents read only from APIs and data sources that already exist and already work. Build the agent logic and wire it to the tool registry &mdash; no Node route or schema changes required.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Help &amp; Product Guide</h3>
+        <p class="src">indexed docs / UserManual content</p>
+        <p class="note">Pure retrieval &mdash; no live data dependency at all.</p>
+      </div>
+      <div class="card">
+        <h3>Alert Investigation (basic)</h3>
+        <p class="src">/api/alert &middot; /api/myAlert</p>
+        <p class="note">Search and explain triggered alerts, single-alert scope only.</p>
+      </div>
+      <div class="card">
+        <h3>Camera Operations</h3>
+        <p class="src">/api/camera &middot; /api/camgroup</p>
+        <p class="note">Status, configuration, groups &mdash; already RESTful and well-shaped.</p>
+      </div>
+      <div class="card">
+        <h3>Live Monitoring</h3>
+        <p class="src">/api/active/getLiveCamera &middot; Socket.IO</p>
+        <p class="note">Read adapter over the existing live feed; must label data as live vs. last-known.</p>
+      </div>
+      <div class="card">
+        <h3>Insights &amp; Analytics</h3>
+        <p class="src">/api/insight &middot; /api/insightReport</p>
+        <p class="note">Counts, trends, comparisons formatted as structured findings.</p>
+      </div>
+      <div class="card">
+        <h3>Notification (read)</h3>
+        <p class="src">/api/notification</p>
+        <p class="note">Delivery history and configuration &mdash; distinguish configured from confirmed-delivered.</p>
+      </div>
+      <div class="card">
+        <h3>Multi-Language Support</h3>
+        <p class="src">chatbot layer only</p>
+        <p class="note">Translates the final response; canonical IDs and timestamps stay in English.</p>
+      </div>
+    </div>
+
+    <div class="principle" style="margin-top:1.8rem;">
+      <div class="mark" style="font-size:2.4rem;">&#8617;</div>
+      <p style="font-size:1.15rem;">Frontend: adapt the existing <code style="font-family:var(--mono); background:var(--surface-sunken); padding:0.1rem 0.4rem; border-radius:4px;">ChatPopover.tsx</code> component &mdash; already a working dialog, message list, and send flow in the investigation view &mdash; into a general-purpose widget wired to new <code style="font-family:var(--mono); background:var(--surface-sunken); padding:0.1rem 0.4rem; border-radius:4px;">/api/chatbot/*</code> routes, instead of building a chat UI from scratch.</p>
+    </div>
+  </section>
+
+  <!-- PHASE 2 -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Phase 2</span>
+      <h2 class="phase-title">Orange agents &mdash; ship as each adapter lands</h2>
+      <span class="status-chip chip-orange">minor backend / response change</span>
+    </div>
+    <p class="phase-sub">Each of these needs a small, self-contained backend change &mdash; usually exposing a few extra fields on an existing response, not a new subsystem. Ship the agent the same sprint its adapter merges; they don't need to land together.</p>
+
+    <div class="table-scroll">
+      <table class="change-table">
+        <thead>
+          <tr><th>Agent</th><th>Backend change needed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="agent">Alert Summary</td><td>Expose summary status + timestamp from a new per-alert/camera/day summary module, returned as reused / generated / failed.</td></tr>
+          <tr><td class="agent">Image &amp; Anomaly Analysis</td><td>Extend ServiceAPI's image analysis response with confidence, risk indicators, and evidence references.</td></tr>
+          <tr><td class="agent">Camera Troubleshooting</td><td>Surface last-seen time, FPS, and RTSP/service health from the camera config collection.</td></tr>
+          <tr><td class="agent">KPI Report</td><td>Standardize KPI field names, units, reporting period, and calculation timestamp.</td></tr>
+          <tr><td class="agent">Timeline &amp; Sequence</td><td>Return event, evidence, processing, and notification timestamps in one sortable schema.</td></tr>
+          <tr>
+            <td class="agent">Error Explanation<span class="agent-note">absorbs the source docs' "Code Explainer" concept</span></td>
+            <td>Return sanitized camera, RTSP, and detection-pipeline error/status codes with dependency status instead of raw errors. Scoped to explaining operational codes shown in the app &mdash; not a source-code reading tool, so no repo access is required.</td>
+          </tr>
+          <tr><td class="agent">System Health</td><td>Authenticated health/dependency/resource endpoint with an observation timestamp.</td></tr>
+          <tr><td class="agent">Model &amp; Detection</td><td>Read-only endpoint for active model version, supported classes, and confidence thresholds.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PHASE 3 -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Phase 3</span>
+      <h2 class="phase-title">Red agents &mdash; deferred by design</h2>
+      <span class="status-chip chip-red">major backend build &middot; writes state</span>
+    </div>
+    <p class="phase-sub">These either mutate surveillance state or need infrastructure the platform doesn't have yet &mdash; cross-camera correlation, async jobs, or an immutable audit trail. None of them should start until the preconditions on the right exist.</p>
+
+    <div class="deferred-wrap">
+      <div class="deferred-list">
+        <div class="deferred-item"><span>Video Retrieval</span><span class="why">needs authorized media search API</span></div>
+        <div class="deferred-item"><span>Incident Investigation</span><span class="why">needs cross-camera correlation service</span></div>
+        <div class="deferred-item"><span>False Positive &amp; Feedback</span><span class="why">writes review state + training labels</span></div>
+        <div class="deferred-item"><span>Camera Configuration</span><span class="why">writes camera config, needs approval</span></div>
+        <div class="deferred-item"><span>Surveillance Control</span><span class="why">start/pause/restart, needs approval</span></div>
+        <div class="deferred-item"><span>Notification Configuration</span><span class="why">writes recipients/rules, needs approval</span></div>
+        <div class="deferred-item"><span>User &amp; Access</span><span class="why">role/permission writes</span></div>
+        <div class="deferred-item"><span>Report Export</span><span class="why">async jobs + masking + download audit</span></div>
+        <div class="deferred-item"><span>Compliance &amp; Audit</span><span class="why">needs immutable audit store</span></div>
+        <div class="deferred-item"><span>Escalation &amp; Human Support</span><span class="why">needs ticketing integration</span></div>
+      </div>
+      <div class="precondition-box">
+        <h4>Must exist before any of these start</h4>
+        <ul>
+          <li>Approval-gate node with short-lived, argument-bound approval tokens</li>
+          <li>Idempotency keys on every write tool</li>
+          <li><code>chat_approvals</code> and <code>chat_audit_events</code> collections</li>
+          <li>Role-based permission scopes actually enforced server-side</li>
+          <li>Unauthorized-action prevention proven at 100% on the security eval set</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Cross-cutting</span>
+      <h2 class="phase-title">Risks the codebase audit surfaced</h2>
+      <span class="status-chip chip-neutral">track alongside every phase</span>
+    </div>
+    <p class="phase-sub">Found while mapping the platform ahead of this plan. None of these block Phase 1 outright, but each one limits how far a phase can safely go.</p>
+
+    <div class="risk-list">
+      <div class="risk-item">
+        <div class="rn">1</div>
+        <div>
+          <h3>JWT scope is too thin to authorize per-tenant queries</h3>
+          <p>Tokens carry only <code>siteId</code> and a single <code>role</code> string &mdash; no <code>tenant_id</code>, no roles array, no camera-level scope. Phase 0 needs a server-side scope-resolution step to compensate until richer claims exist.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="rn">2</div>
+        <div>
+          <h3>Decoded JWT payload is never checked</h3>
+          <p>The Node backend sets <code>req.user</code> from the token and stops there &mdash; no route filters data by role or site. Any read tool built on top of these routes inherits that gap until it's closed.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="rn">3</div>
+        <div>
+          <h3>Mobile tokens likely fail verification</h3>
+          <p>Mobile tokens are signed with issuer <code>mobile-app</code>, but the shared verifier hardcodes issuer <code>algosign</code>. Fix before the chatbot is exposed to mobile clients.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="rn">4</div>
+        <div>
+          <h3>Live credentials are committed to the repository</h3>
+          <p><code>client_secrets.json</code>, <code>credentials.json</code>, plaintext RTSP camera credentials in <code>rtsplinks.json</code>, and default Mongo root credentials in <code>docker-compose.yml</code> all need rotation and exclusion from the chatbot's build context before it touches this data.</p>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="rn">5</div>
+        <div>
+          <h3>Insight and KPI data isn't in MongoDB</h3>
+          <p>It's flat JSON on disk or in Azure Blob storage. Tools for the Insights, KPI, and Alert Summary agents need dedicated file/blob adapters rather than ordinary database queries.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXIT GATES -->
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num">Release gates</span>
+      <h2 class="phase-title">What "done" means per phase</h2>
+    </div>
+    <div class="gate-row">
+      <div class="gate-card"><div class="g-phase">Phase 0</div><p>Schema, permission, and checkpoint tests pass; JWT issuer bug fixed and scope-resolution verified.</p></div>
+      <div class="gate-card"><div class="g-phase">Phase 1</div><p>All 7 agents live; tool-call validity &ge; 99% on the regression set; citation presence 100%.</p></div>
+      <div class="gate-card"><div class="g-phase">Phase 2</div><p>Each new adapter covered by contract tests before its agent activates; no regression in Phase 1 agents.</p></div>
+      <div class="gate-card"><div class="g-phase">Phase 3</div><p>Unauthorized-action prevention 100% on the security set; approval + audit flow tested in staging first.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    Aksha-Version-2 &middot; Chatbot_Abhishek &middot; based on CHATBOT_SYSTEM_ARCHITECTURE.md and SUPPORT_CHATBOT_AGENT_CATALOG.md
+  </footer>
+
+</div>

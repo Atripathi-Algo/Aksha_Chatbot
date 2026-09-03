@@ -1,0 +1,48 @@
+# Aksha Chatbot — plug-and-play deployment onto a machine already running
+# the real Aksha stack (see docker-compose.yml / Aksha_Deployment):
+# react_frontend on :3000, node_backend on :5000, service_api on :4000,
+# mongodb on :27017 — all on the `aksha-net` Docker network. This file adds
+# two more services to that same network so aksha-chatbot-api can reach the
+# others by container name, with every port and backend address driven from
+# chatbot.env (edit that file, not this one).
+#
+# Usage:
+#   cp chatbot.env.example chatbot.env   # fill in GROQ_API_KEY or OLLAMA_*, adjust ports if needed
+#   docker compose -f docker-compose.chatbot.yml --env-file chatbot.env up -d --build
+#   open http://<this-machine>:<CHATBOT_UI_PORT, default 8080>
+#
+# If the real Aksha stack is NOT on a Docker network named aksha-net (e.g.
+# it runs natively, not in Docker), delete the `networks:` blocks below and
+# set NODE_API_BASE_URL / SERVICE_API_BASE_URL in chatbot.env to
+# http://host.docker.internal:<port> instead.
+
+name: aksha-chatbot
+
+services:
+  aksha-chatbot-api:
+    build: ./aksha-chatbot-api
+    image: aksha-chatbot-api:latest
+    container_name: aksha-chatbot-api
+    restart: always
+    networks:
+      - aksha-net
+    ports:
+      - "${CHATBOT_API_PORT:-8010}:8010"
+    env_file:
+      - ./chatbot.env
+
+  aksha-chatbot-ui:
+    build: ./aksha-chatbot-ui
+    image: aksha-chatbot-ui:latest
+    container_name: aksha-chatbot-ui
+    restart: always
+    networks:
+      - aksha-net
+    ports:
+      - "${CHATBOT_UI_PORT:-8080}:80"
+    depends_on:
+      - aksha-chatbot-api
+
+networks:
+  aksha-net:
+    external: true

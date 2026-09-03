@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#326bc9"/><rect x="30" y="30" width="40" height="28" fill="#fbfbfc"/><rect x="30" y="62" width="24" height="8" fill="#d6e3f7"/></svg></template>
+<link rel="stylesheet" href="_ds/modernist-f9c53fc5-43e0-423e-925e-69a398c0640a/styles.css">
+<script src="_ds/modernist-f9c53fc5-43e0-423e-925e-69a398c0640a/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0;background:#e9ebee;font-family:"Archivo",system-ui,sans-serif}
+.dv-turn{padding:44px 48px 36px;border-bottom:2px solid #1b2029;scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 24px}
+.dv-tid{font:700 10px/1 ui-monospace,Menlo,monospace;padding:4px 7px;background:#1b2029;color:#fff;text-decoration:none;letter-spacing:.08em}
+.dv-tname{font:700 13px/1.2 "Archivo",sans-serif;color:#1b2029;letter-spacing:.04em;text-transform:uppercase}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:700 10.5px/1 ui-monospace,Menlo,monospace;padding:4px 7px;background:rgba(27,32,41,.1);color:#1b2029;text-decoration:none;letter-spacing:.08em}
+.dv-olabel{display:flex;align-items:baseline;gap:9px;font:500 11.5px/1.3 "Archivo",sans-serif;color:rgba(27,32,41,.62);text-transform:uppercase;letter-spacing:.08em}
+.dv-opt:target .dv-oid{background:#326bc9;color:#fff}
+.dv-next{margin:26px 0 0;font:400 12px/1.6 "Archivo",sans-serif;color:rgba(27,32,41,.6)}
+:root{--color-bg:#f4f5f7;--color-surface:#e8eaee;--color-text:#1b2029;--color-accent:#326bc9;--color-accent-2:#4176cd;--color-divider:color-mix(in srgb,#1b2029 40%,transparent);
+--color-accent-100:#eef3fc;--color-accent-200:#d6e3f7;--color-accent-300:#b3caf0;--color-accent-400:#7ea4e0;--color-accent-500:#4176cd;--color-accent-600:#2a5cb0;--color-accent-700:#1f4788;--color-accent-800:#163364;--color-accent-900:#12253f;
+--color-accent-2-100:#eef3fc;--color-accent-2-200:#d6e3f7;--color-accent-2-300:#b3caf0;--color-accent-2-400:#7ea4e0;--color-accent-2-500:#4176cd;--color-accent-2-600:#2a5cb0;--color-accent-2-700:#1f4788;--color-accent-2-800:#163364;--color-accent-2-900:#12253f;
+--color-neutral-100:#fbfbfc;--color-neutral-200:#e6e8ec;--color-neutral-300:#d0d4db;--color-neutral-400:#b2b7c0;--color-neutral-500:#92979f;--color-neutral-600:#757a83;--color-neutral-700:#595e66;--color-neutral-800:#3d4149;--color-neutral-900:#272b33}
+@keyframes cursorblink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes streambar{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Agents + rich answer types, on the <a class="dv-oid" href="#3a">3a</a> ledger</span></div>
+<p style="margin:-8px 0 24px;font:400 12.5px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:900px">Every answer now names the agent that produced it and the source it read. <a class="dv-oid" href="#4a">4a</a> is attribution + the agent directory, <a class="dv-oid" href="#4b">4b</a> the table / bar / pie output types, <a class="dv-oid" href="#4c">4c</a> multi-agent composition and the two chatbot-layer agents.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="4a"><div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Agent attribution + directory</div>
+<div style="width:440px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-4a" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+    <div style="display:flex;gap:var(--space-1)"><button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em;gap:5px">AGENTS<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="m6 9 6 6 6-6"/></svg></button><button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  </div>
+
+  <div style="border-bottom:2px solid var(--color-text);background:var(--color-neutral-200)">
+    <div style="padding:var(--space-2) var(--space-4);display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--color-divider)">
+      <span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Agents · 8</span>
+      <span style="font:500 9.5px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Routed automatically</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-divider)">
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Help &amp; Product Guide</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">indexed docs / UserManual</div></div>
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Alert Investigation</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">/api/alert · /api/myAlert</div></div>
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Camera Operations</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">/api/camera · /api/camgroup</div></div>
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Live Monitoring</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">/api/active · Socket.IO</div></div>
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Insights &amp; Analytics</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">/api/insight · /api/insightReport</div></div>
+      <div style="background:var(--color-accent-200);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Notification (read)</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">/api/notification</div></div>
+      <div style="background:var(--color-neutral-100);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Multi-Language</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">chatbot layer only</div></div>
+      <div style="background:var(--color-neutral-100);padding:8px 10px"><div style="font:600 11px/1.2 var(--font-body)">Error Code Explanation</div><div style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700);margin-top:3px">chatbot layer only</div></div>
+    </div>
+    <div style="padding:6px 10px;font:400 10px/1.4 var(--font-body);color:var(--color-neutral-700);border-top:1px solid var(--color-divider)">Tinted = reads a live endpoint · plain = answers from the chatbot layer, no live read</div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:04</div>
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Show all high-risk alerts from Camera 12 today.</div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2);gap:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>Alert Investigation</span>
+      <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Live · 10:04:12</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Two high-risk alerts on Camera 12 today, both loading-bay intrusion detections 41 minutes apart.</div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">ALT-4471 · 09:23</span>
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">ALT-4468 · 08:42</span>
+      <span style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700)">/api/alert</span>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>Live Monitoring</span>
+      <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Socket · 2s ago</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Nothing active near the loading bay. Camera 12 is streaming; last motion event cleared 34 minutes ago.</div>
+    <div style="margin:var(--space-3) 0 0 15px">
+      <figure style="margin:0;border:1px solid var(--color-text);width:190px"><div class="grayscale" style="height:106px;background:var(--color-neutral-100)"><image-slot id="frame-4a" shape="rect" placeholder="Live frame · CAM 12" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body)"><span>CAM 12</span><span style="font-weight:400;color:var(--color-neutral-700)">NOW</span></figcaption></figure>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-neutral-600);background:var(--color-neutral-200);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-800)"><span style="width:5px;height:5px;background:var(--color-neutral-700)"></span>Help &amp; Product Guide</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Doc · v4.2</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Email alerts are configured per camera group under Settings → Notifications. Changes apply to every camera in the group.</div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px">
+      <a href="#4a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">USER MANUAL § 6.3</a>
+    </div>
+  </div>
+
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+    <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+    <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:440px">The agent badge replaces the generic "Aksha" role label — same position, same size, so the ledger rhythm is unchanged. Endpoint reads sit with the citations, in mono.</div>
+</div>
+
+<div class="dv-opt" id="4b"><div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Rich answers — table, bar, pie</div>
+<div style="width:440px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-4b" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+    <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">DOWNLOAD</button>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Which cameras have email alerts enabled?</div>
+  </div>
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>Camera Operations</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Live · 10:12</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Nine of eleven cameras have email alerts on. Camera 3 and Camera 19 are off.</div>
+    <div style="margin-left:15px;border:1px solid var(--color-text)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--color-surface);border-bottom:1px solid var(--color-text)">
+        <span style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Table · 11 rows</span>
+        <span style="display:flex;gap:var(--space-2)"><span style="font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)">CSV</span><span style="font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)">EXPAND</span></span>
+      </div>
+      <table class="table" style="width:100%;font-size:11.5px">
+        <thead><tr><th style="text-align:left">Camera</th><th style="text-align:left">Group</th><th style="text-align:left">Email</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">CAM 03 · LOBBY</td><td>Indoor</td><td style="color:var(--color-accent-700);font-weight:600">OFF</td></tr>
+          <tr><td style="font-weight:600">CAM 07 · NORTH GATE</td><td>Perimeter</td><td>ON</td></tr>
+          <tr><td style="font-weight:600">CAM 12 · LOADING BAY</td><td>Yard</td><td>ON</td></tr>
+          <tr><td style="font-weight:600">CAM 19 · PERIMETER S</td><td>Perimeter</td><td style="color:var(--color-accent-700);font-weight:600">OFF</td></tr>
+          <tr><td style="font-weight:600">CAM 21 · NORTH GATE 2</td><td>Perimeter</td><td>ON</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:5px 10px;border-top:1px solid var(--color-divider);font:500 9.5px/1.2 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">Showing 5 of 11 · /api/camgroup</div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Which camera had the most alerts this month?</div>
+  </div>
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>Insights &amp; Analytics</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Aug 1–24</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Camera 21 · North Gate 2, with 47 alerts — 38% of the site total.</div>
+    <div style="margin-left:15px;border:1px solid var(--color-text)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--color-surface);border-bottom:1px solid var(--color-text)">
+        <span style="font:700 9px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Alerts per camera</span>
+        <span style="font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)">PNG</span>
+      </div>
+      <div style="padding:var(--space-3) 10px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:8px;font:500 10px/1 var(--font-body)"><span>CAM 21</span><span style="height:14px;background:var(--color-neutral-200);display:block"><span style="display:block;height:14px;width:100%;background:var(--color-accent)"></span></span><span style="font-weight:700;text-align:right">47</span></div>
+        <div style="display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:8px;font:500 10px/1 var(--font-body)"><span>CAM 12</span><span style="height:14px;background:var(--color-neutral-200);display:block"><span style="display:block;height:14px;width:66%;background:var(--color-accent-500)"></span></span><span style="font-weight:700;text-align:right">31</span></div>
+        <div style="display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:8px;font:500 10px/1 var(--font-body)"><span>CAM 07</span><span style="height:14px;background:var(--color-neutral-200);display:block"><span style="display:block;height:14px;width:47%;background:var(--color-accent-500)"></span></span><span style="font-weight:700;text-align:right">22</span></div>
+        <div style="display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:8px;font:500 10px/1 var(--font-body)"><span>CAM 14</span><span style="height:14px;background:var(--color-neutral-200);display:block"><span style="display:block;height:14px;width:26%;background:var(--color-accent-300)"></span></span><span style="font-weight:700;text-align:right">12</span></div>
+        <div style="display:grid;grid-template-columns:96px 1fr 26px;align-items:center;gap:8px;font:500 10px/1 var(--font-body)"><span>CAM 03</span><span style="height:14px;background:var(--color-neutral-200);display:block"><span style="display:block;height:14px;width:13%;background:var(--color-accent-300)"></span></span><span style="font-weight:700;text-align:right">6</span></div>
+      </div>
+      <div style="padding:5px 10px;border-top:1px solid var(--color-divider);font:500 9.5px/1.2 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">/api/insightReport · 118 alerts total</div>
+    </div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;gap:6px;flex-wrap:wrap">
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">CAM 21 · 47</span>
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">REPORT AUG-2026</span>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">How do this month's alerts break down by severity?</div>
+  </div>
+  <div style="padding:var(--space-4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>Insights &amp; Analytics</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">118 alerts</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Low severity dominates at 47%. High risk is 18 alerts — 15% — and 11 of those are on the perimeter group.</div>
+    <div style="margin-left:15px;border:1px solid var(--color-text)">
+      <div style="padding:6px 10px;background:var(--color-surface);border-bottom:1px solid var(--color-text);font:700 9px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Severity mix</div>
+      <div style="padding:var(--space-3) 10px;display:flex;align-items:center;gap:var(--space-4)">
+        <svg viewBox="0 0 120 120" width="110" height="110" role="img" aria-label="Severity mix: low 47 percent, medium 37 percent, high 15 percent">
+          <circle cx="60" cy="60" r="42" fill="none" stroke="var(--color-accent-200)" stroke-width="22"></circle>
+          <circle cx="60" cy="60" r="42" fill="none" stroke="var(--color-accent-500)" stroke-width="22" stroke-dasharray="98.4 165.5" transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="42" fill="none" stroke="var(--color-accent-800)" stroke-width="22" stroke-dasharray="40.2 223.7" transform="rotate(42 60 60)"></circle>
+        </svg>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+          <div style="display:flex;align-items:center;gap:8px;font:500 10.5px/1 var(--font-body)"><span style="width:12px;height:12px;background:var(--color-accent-800);flex:none"></span><span style="flex:1">HIGH</span><b style="font-weight:700">18</b><span style="color:var(--color-neutral-700);width:30px;text-align:right">15%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font:500 10.5px/1 var(--font-body)"><span style="width:12px;height:12px;background:var(--color-accent-500);flex:none"></span><span style="flex:1">MEDIUM</span><b style="font-weight:700">44</b><span style="color:var(--color-neutral-700);width:30px;text-align:right">37%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font:500 10.5px/1 var(--font-body)"><span style="width:12px;height:12px;background:var(--color-accent-200);flex:none"></span><span style="flex:1">LOW</span><b style="font-weight:700">56</b><span style="color:var(--color-neutral-700);width:30px;text-align:right">47%</span></div>
+        </div>
+      </div>
+      <div style="padding:5px 10px;border-top:1px solid var(--color-divider);font:500 9.5px/1.2 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">/api/insight · Aug 1–24</div>
+    </div>
+  </div>
+
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+    <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+    <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:440px">One container for every rich output: 1px ink box, titled header strip with export action, footer naming the endpoint. Series colors are accent ramp steps only — 800 / 500 / 200 — so the charts stay mono and print legibly in grayscale.</div>
+</div>
+
+<div class="dv-opt" id="4c"><div class="dv-olabel"><a class="dv-oid" href="#4c">4c</a>Multi-agent, error codes, language layer</div>
+<div style="width:440px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-4c" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+    <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Why didn't I receive an alert for Camera 7 this morning?</div>
+  </div>
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2);flex-wrap:wrap;gap:6px">
+      <span style="display:flex;align-items:center;gap:4px">
+        <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-accent);background:var(--color-accent-100);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700)"><span style="width:5px;height:5px;background:var(--color-accent)"></span>3 agents</span>
+        <span style="font:500 9px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700)">Alert · Notification · Error code</span>
+      </span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Live · 10:18</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">The alert fired but the email never left the queue.
+      <div style="margin-top:var(--space-3);display:flex;flex-direction:column;gap:0">
+        <div style="border-top:1px solid var(--color-divider);padding:var(--space-2) 0;display:flex;gap:8px"><span style="font:600 9px/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700);width:70px;flex:none">Alert</span><span>ALT-4462 raised at 07:15 on CAM 07.</span></div>
+        <div style="border-top:1px solid var(--color-divider);padding:var(--space-2) 0;display:flex;gap:8px"><span style="font:600 9px/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700);width:70px;flex:none">Delivery</span><span>Email job failed twice, then dropped — <b style="font-weight:600">SMTP-421</b>.</span></div>
+        <div style="border-top:1px solid var(--color-divider);padding:var(--space-2) 0;display:flex;gap:8px"><span style="font:600 9px/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700);width:70px;flex:none">Meaning</span><span>The mail server was temporarily unavailable. In-app and Socket alerts were unaffected.</span></div>
+      </div>
+    </div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">ALT-4462 · 07:15</span>
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">SMTP-421</span>
+      <span style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700)">/api/alert · /api/notification</span>
+    </div>
+    <div style="display:flex;gap:var(--space-2);margin:var(--space-3) 0 0 15px">
+      <button class="btn btn-secondary" style="padding:6px 10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;justify-content:flex-start">RESEND EMAIL</button>
+      <button class="btn btn-ghost" style="padding:6px 9px;font:600 10px/1 var(--font-body);letter-spacing:.1em">ESCALATE</button>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-neutral-600);background:var(--color-neutral-200);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-800)"><span style="width:5px;height:5px;background:var(--color-neutral-700)"></span>Error Code Explanation</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Chatbot layer</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3)">
+      <div style="border:1px solid var(--color-neutral-600);background:var(--color-neutral-200);margin-bottom:var(--space-2)">
+        <div style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font:600 10px/1.2 ui-monospace,Menlo,monospace">E-CAM-0113 · STREAM_TIMEOUT</div>
+        <div style="padding:8px 10px;font:400 12.5px/1.55 var(--font-body)">The camera stopped sending frames for longer than 15 seconds. Usually a network drop, not a camera fault. Check the switch on that segment before power-cycling the camera.</div>
+      </div>
+      <div style="font:400 11.5px/1.5 var(--font-body);color:var(--color-neutral-700)">Explained from the code table — no live system read, so no freshness label applies.</div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+      <span style="display:flex;align-items:center;gap:5px;border:1px solid var(--color-neutral-600);background:var(--color-neutral-200);padding:3px 6px;font:600 9px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-800)"><span style="width:5px;height:5px;background:var(--color-neutral-700)"></span>Multi-Language · MR</span>
+      <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Live · 10:21</span>
+    </div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 14px/1.75 var(--font-body)">आज <span style="border-bottom:2px solid var(--color-accent);font-weight:600;white-space:nowrap">CAM 21</span> वर सर्वाधिक अलर्ट नोंदवले गेले — एकूण 47. त्यापैकी 31 अलर्ट रात्री 02:00 ते 04:00 दरम्यानचे आहेत.</div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">CAM 21 · 47</span>
+      <span style="font:400 9.5px/1.3 ui-monospace,Menlo,monospace;color:var(--color-neutral-700)">answered by Insights, phrased by Multi-Language</span>
+    </div>
+  </div>
+
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+    <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+    <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:440px">When several agents contribute, the badge collapses to a count and names them beside it — one answer, not three bubbles. Chatbot-layer agents get the plain neutral badge and no freshness label, since they read nothing live.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "add a trend line chart for the insight agent" · "show the agent picker as a manual override" · "now the mobile version of <a class="dv-oid" href="#4b">4b</a>"</p>
+</section>
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Final spec — <a class="dv-oid" href="#2a">2a</a> ruled ledger, complete</span></div>
+<p style="margin:-8px 0 24px;font:400 12.5px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:900px"><a class="dv-oid" href="#3a">3a</a> is the whole thread end to end — every message type in one continuous ledger, in order. <a class="dv-oid" href="#3b">3b</a> places it in the dashboard, <a class="dv-oid" href="#3c">3c</a> covers launcher and shell states, <a class="dv-oid" href="#3d">3d</a> is the engineering handoff.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Complete thread — all message types, one ledger</div>
+<div style="width:440px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)">
+      <span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-3a" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span>
+      <span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span>
+    </div>
+    <div style="display:flex;gap:var(--space-1)">
+      <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">DOWNLOAD</button>
+      <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);background:var(--color-neutral-100);display:flex;gap:var(--space-2);flex-wrap:wrap;align-items:center">
+    <span style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Scope</span>
+    <span style="border:1px solid var(--color-text);background:var(--color-accent-100);padding:4px 8px;font:500 10.5px/1 var(--font-body)">CAMERA: CAM 12 <span style="display:inline-flex;color:var(--color-accent-700);margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+    <span style="border:1px solid var(--color-text);background:var(--color-accent-100);padding:4px 8px;font:500 10.5px/1 var(--font-body)">DATE: TODAY <span style="display:inline-flex;color:var(--color-accent-700);margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+    <button class="btn btn-ghost" style="padding:4px 7px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em">CLEAR</button>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:04</div>
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Show all high-risk alerts from Camera 12 today.</div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Live · 10:04:12</span></div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Two high-risk alerts on Camera 12 today. Both are loading-bay intrusion detections, 41 minutes apart.
+      <div style="margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-2)">
+        <div style="border-top:1px solid var(--color-divider);padding-top:var(--space-2)"><b style="font-weight:600">09:23</b> — Intrusion, loading bay. Acknowledged by R. Kale.</div>
+        <div style="border-top:1px solid var(--color-divider);padding-top:var(--space-2)"><b style="font-weight:600">08:42</b> — Intrusion, loading bay. Unacknowledged.</div>
+      </div>
+    </div>
+    <div style="margin:var(--space-3) 0 0 15px">
+      <div style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Frames</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:var(--space-3)">
+        <figure style="margin:0;border:1px solid var(--color-text)"><div class="grayscale" style="height:100px;background:var(--color-neutral-100)"><image-slot id="frame-3a-4471" shape="rect" placeholder="Frame · CAM 12 09:23" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body);letter-spacing:.06em"><span>ALT-4471</span><span style="color:var(--color-neutral-700);font-weight:400">09:23</span></figcaption></figure>
+        <figure style="margin:0;border:1px solid var(--color-text)"><div class="grayscale" style="height:100px;background:var(--color-neutral-100)"><image-slot id="frame-3a-4468" shape="rect" placeholder="Frame · CAM 12 08:42" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body);letter-spacing:.06em"><span>ALT-4468</span><span style="color:var(--color-accent-700)">08:42</span></figcaption></figure>
+      </div>
+      <div style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Sources</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <a href="#3a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">ALT-4471 · 09:23</a>
+        <a href="#3a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">ALT-4468 · 08:42</a>
+        <a href="#3a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">CAM 12 · LOADING BAY</a>
+      </div>
+      <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3)">
+        <button class="btn btn-secondary" style="padding:6px 10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;justify-content:flex-start">OPEN IN ALERTS</button>
+        <button class="btn btn-ghost" style="padding:6px 9px;font:600 10px/1 var(--font-body);letter-spacing:.1em">COPY ANSWER</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:06</div>
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Which cameras have email alerts enabled?</div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Writing…</span></div>
+    <div style="border-left:2px solid var(--color-accent);padding-left:var(--space-3)">
+      <div style="height:2px;background:var(--color-neutral-300);overflow:hidden;margin-bottom:var(--space-2)"><div style="width:33%;height:2px;background:var(--color-accent);animation:streambar 1.4s linear infinite"></div></div>
+      <div style="font:400 13.5px/1.6 var(--font-body)">Nine of eleven cameras have email alerts enabled. The exceptions are Camera 3 and<span style="display:inline-block;width:8px;height:15px;background:var(--color-text);vertical-align:-3px;margin-left:3px;animation:cursorblink 1s step-end infinite"></span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-3)">
+        <span style="font:500 10px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-600)">Sources resolving · 2 of 3</span>
+        <button class="btn btn-ghost" style="padding:4px 7px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em">STOP</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="border:2px solid var(--color-accent);background:var(--color-accent-100)">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-accent-300)"><span style="width:8px;height:8px;background:var(--color-accent)"></span><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Needs your answer</span></div>
+      <div style="padding:var(--space-3)">
+        <div style="font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Two cameras match "North Gate". Which one did you mean?</div>
+        <div style="display:flex;flex-direction:column;gap:2px;background:var(--color-accent)">
+          <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 07 · NORTH GATE<span style="font-weight:400;color:var(--color-neutral-700)">4 alerts</span></button>
+          <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 21 · NORTH GATE 2<span style="font-weight:400;color:var(--color-neutral-700)">11 alerts</span></button>
+          <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);color:var(--color-neutral-800)" style-hover="background:var(--color-accent-200)">Both</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:09 · HI</div>
+    <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 14px/1.7 var(--font-body)">कैमरा 12 पर आज कौन-कौन से हाई-रिस्क अलर्ट आए?</div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha · HI</span><span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Live · 10:09</span></div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 14px/1.75 var(--font-body)">आज <span style="border-bottom:2px solid var(--color-accent);font-weight:600;white-space:nowrap">CAM 12</span> पर दो हाई-रिस्क अलर्ट दर्ज हुए — <span style="border-bottom:2px solid var(--color-accent);font-weight:600;white-space:nowrap">ALT-4471</span> (09:23) और <span style="border-bottom:2px solid var(--color-accent);font-weight:600;white-space:nowrap">ALT-4468</span> (08:42). दोनों लोडिंग बे में intrusion detection हैं।</div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px">
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">ALT-4471 · 09:23</span>
+      <span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em">ALT-4468 · 08:42</span>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;border:1.5px solid var(--color-neutral-700);border-radius:50%"></span>Cached · last known 09:42</span></div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Camera 14 was online as of 09:42. The live status feed hasn't refreshed since — treat this as last known, not current.</div>
+    <div style="margin:var(--space-3) 0 0 15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="border:1px dashed var(--color-neutral-600);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-neutral-800)">CAM 14 · STATUS 09:42</span>
+      <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">RETRY LIVE</button>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="border:1px solid var(--color-neutral-600);background:var(--color-neutral-200)">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider)"><span style="width:8px;height:8px;border:2px solid var(--color-neutral-700)"></span><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-800)">Partial answer</span></div>
+      <div style="padding:var(--space-3);font:400 13.5px/1.6 var(--font-body)">The alert service isn't responding right now, so I can't confirm this morning's deliveries. Camera settings and site documentation are still available.
+        <div style="margin-top:var(--space-3);display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+          <span style="font:500 10px/1.3 ui-monospace,Menlo,monospace;background:var(--color-neutral-300);padding:5px 7px">REF a91f-7c02-4d18</span>
+          <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">RETRY</button>
+          <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">COPY REF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Escalated · 10:14</span></div>
+    <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">I've sent this to the on-call engineer. Here's what was captured — check it before you close the panel.</div>
+    <div style="border:1px solid var(--color-text);margin-left:15px">
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid var(--color-divider);font:500 12px/1.3 var(--font-body)"><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700)">Ticket</span><span style="font-weight:600">SUP-2291</span></div>
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid var(--color-divider);font:500 12px/1.3 var(--font-body)"><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700)">Camera</span><span style="font-weight:600">CAM 07 · NORTH GATE</span></div>
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid var(--color-divider);font:500 12px/1.3 var(--font-body)"><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700)">Alert</span><span style="font-weight:600">ALT-4462 · 07:15</span></div>
+      <div style="padding:9px 11px;font:400 12.5px/1.5 var(--font-body)"><span style="display:block;font:500 10px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:4px">Description</span>No email alert received for Camera 7 this morning despite email notifications being enabled.</div>
+    </div>
+    <div style="display:flex;gap:var(--space-2);margin:var(--space-3) 0 0 15px">
+      <button class="btn btn-secondary" style="padding:6px 11px;font:600 10.5px/1 var(--font-body);letter-spacing:.1em;justify-content:flex-start">EDIT DETAILS</button>
+      <button class="btn btn-ghost" style="padding:6px 11px;font:600 10.5px/1 var(--font-body);letter-spacing:.1em">VIEW TICKET</button>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-4)">
+    <div style="font:600 9px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Future type · not wired up</div>
+    <div style="border:2px solid var(--color-text);opacity:.85">
+      <div style="background:var(--color-accent);color:var(--color-neutral-100);padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font:700 10px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase">Approval required</span>
+        <span style="font:600 10px/1 var(--font-body);letter-spacing:.08em">EXPIRES IN 4:52</span>
+      </div>
+      <div style="padding:var(--space-4) var(--space-3);background:var(--color-neutral-100)">
+        <div style="font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">I'm ready to <b style="font-weight:700">disable email alerts</b> for <span style="border-bottom:2px solid var(--color-accent);font-weight:600">CAM 12 · LOADING BAY</span>. This stops notification emails to 3 recipients until re-enabled.</div>
+        <div style="border-top:1px solid var(--color-divider);padding-top:var(--space-2);margin-bottom:var(--space-3);font:400 11.5px/1.5 var(--font-body);color:var(--color-neutral-800)">Changes system state · logged against your operator ID · reversible from Camera settings.</div>
+        <div style="display:flex;gap:2px;background:var(--color-text)">
+          <button class="btn btn-primary" style="flex:1;padding:11px 13px;font:700 11.5px/1 var(--font-body);letter-spacing:.12em;justify-content:flex-start">APPROVE</button>
+          <button class="btn btn-secondary" style="flex:1;padding:11px 13px;font:700 11.5px/1 var(--font-body);letter-spacing:.12em;justify-content:flex-start">REJECT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)">
+    <div style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:2px;background:var(--color-neutral-300);border:1px solid var(--color-neutral-400)">
+        <span style="background:var(--color-text);color:var(--color-neutral-100);padding:4px 7px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em">EN</span>
+        <span style="background:var(--color-neutral-100);padding:4px 7px;font:600 9.5px/1 var(--font-body)">हिं</span>
+        <span style="background:var(--color-neutral-100);padding:4px 7px;font:600 9.5px/1 var(--font-body)">मर</span>
+      </div>
+      <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Docked in the operator dashboard</div>
+<div style="width:1180px;height:720px;display:flex;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md);overflow:hidden">
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-6);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+      <div style="display:flex;align-items:center;gap:var(--space-6)">
+        <span style="width:26px;height:26px;background:var(--color-accent);display:block"><image-slot id="logo-3b" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span>
+        <span style="font:600 11px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-700)">Live wall</span>
+        <span style="font:500 11px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600)">Alerts</span>
+        <span style="font:500 11px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600)">Cameras</span>
+        <span style="font:500 11px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600)">Reports</span>
+      </div>
+      <span style="font:500 11px/1 var(--font-body);color:var(--color-neutral-600)">SITE 04 · PUNE WEST</span>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:var(--color-text);padding:2px;min-height:0">
+      <div class="grayscale" style="background:var(--color-neutral-500);display:flex;align-items:flex-end;padding:10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-100)">CAM 12 · LOADING BAY</div>
+      <div class="grayscale" style="background:var(--color-neutral-700);display:flex;align-items:flex-end;padding:10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-100)">CAM 07 · NORTH GATE</div>
+      <div class="grayscale" style="background:var(--color-neutral-400);display:flex;align-items:flex-end;padding:10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;color:var(--color-text)">CAM 14 · YARD EAST</div>
+      <div class="grayscale" style="background:var(--color-neutral-600);display:flex;align-items:flex-end;padding:10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;color:var(--color-neutral-100)">CAM 03 · LOBBY</div>
+    </div>
+  </div>
+  <div style="width:420px;flex:none;border-left:2px solid var(--color-text);display:flex;flex-direction:column;background:var(--color-bg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+      <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block"><image-slot id="logo-3b2" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+      <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+      <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:04</div>
+      <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Is anything happening right now near the loading bay?</div>
+    </div>
+    <div style="padding:var(--space-4)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Live · 10:04</span></div>
+      <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Nothing active. The last motion event on Camera 12 was 34 minutes ago and it cleared on its own.</div>
+      <div style="margin:var(--space-3) 0 0 15px">
+        <figure style="margin:0;border:1px solid var(--color-text);width:180px"><div class="grayscale" style="height:100px;background:var(--color-neutral-100)"><image-slot id="frame-3b" shape="rect" placeholder="Frame · 09:33" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body)"><span>CAM 12</span><span style="font-weight:400;color:var(--color-neutral-700)">09:33</span></figcaption></figure>
+      </div>
+    </div>
+    <div style="margin-top:auto;border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+      <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+      <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="3c"><div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Shell states — launcher, first open, small viewport</div>
+<div style="display:flex;gap:var(--space-6);align-items:flex-start">
+  <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+    <div style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Closed · docked tab</div>
+    <div style="display:flex;align-items:stretch;border:2px solid var(--color-text)">
+      <div class="grayscale" style="width:190px;height:96px;background:var(--color-neutral-400);display:flex;align-items:flex-end;padding:8px;font:600 10px/1 var(--font-body)">DASHBOARD EDGE</div>
+      <div style="width:40px;background:var(--color-accent);color:var(--color-neutral-100);display:flex;align-items:center;justify-content:center"><span style="writing-mode:vertical-rl;font:700 10px/1 var(--font-heading);letter-spacing:.18em;text-transform:uppercase">Assistant</span></div>
+    </div>
+    <div style="display:flex;align-items:stretch;border:2px solid var(--color-text)">
+      <div class="grayscale" style="width:190px;height:96px;background:var(--color-neutral-400);display:flex;align-items:flex-end;padding:8px;font:600 10px/1 var(--font-body)">UNREAD ANSWER</div>
+      <div style="width:40px;background:var(--color-text);color:var(--color-neutral-100);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2)"><span style="width:8px;height:8px;background:var(--color-accent);border-radius:50%"></span><span style="writing-mode:vertical-rl;font:700 10px/1 var(--font-heading);letter-spacing:.18em;text-transform:uppercase">1 new</span></div>
+    </div>
+    <div style="font:400 11.5px/1.5 var(--font-body);color:var(--color-neutral-700);width:230px">Docked tab, never a floating button — nothing lands on top of a camera tile. Alt+K toggles.</div>
+  </div>
+
+  <div style="width:400px;height:600px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+      <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block"><image-slot id="logo-3c" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+      <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div style="flex:1;padding:var(--space-6) var(--space-4);display:flex;flex-direction:column;gap:var(--space-4)">
+      <div>
+        <div style="font:800 22px/1.2 var(--font-heading);letter-spacing:-.01em;margin-bottom:var(--space-2)">Ask instead of<br>navigating.</div>
+        <div style="font:400 13px/1.6 var(--font-body);color:var(--color-neutral-800)">Alerts, camera config, live status and incident history — in English, हिंदी or मराठी. Every answer shows its sources.</div>
+      </div>
+      <div style="height:2px;background:var(--color-text)"></div>
+      <div style="display:flex;flex-direction:column;gap:2px;background:var(--color-text)">
+        <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:13px 14px;font:500 13px/1.4 var(--font-body);display:flex;justify-content:space-between;gap:var(--space-2)" style-hover="background:var(--color-accent-200)">Show all high-risk alerts from Camera 12 today.<span style="display:flex;align-items:center;color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+        <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:13px 14px;font:500 13px/1.4 var(--font-body);display:flex;justify-content:space-between;gap:var(--space-2)" style-hover="background:var(--color-accent-200)">Which cameras have email alerts enabled?<span style="display:flex;align-items:center;color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+        <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:13px 14px;font:500 13px/1.4 var(--font-body);display:flex;justify-content:space-between;gap:var(--space-2)" style-hover="background:var(--color-accent-200)">Is anything happening right now near the loading bay?<span style="display:flex;align-items:center;color:var(--color-accent)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+      </div>
+      <div style="margin-top:auto;font:400 11.5px/1.5 var(--font-body);color:var(--color-neutral-700);border-left:2px solid var(--color-divider);padding-left:var(--space-2)">The assistant reads alerts, camera settings and site documentation. It cannot change settings without your confirmation.</div>
+    </div>
+    <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+      <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+      <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+    </div>
+  </div>
+
+  <div style="width:360px;height:600px;border:2px solid var(--color-text);background:var(--color-neutral-400);display:flex;flex-direction:column;box-shadow:var(--shadow-md)">
+    <div style="padding:var(--space-2) var(--space-3);font:600 9.5px/1 var(--font-heading);letter-spacing:.12em;text-transform:uppercase">Viewport &lt; 1100px · bottom sheet</div>
+    <div class="grayscale" style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px;background:var(--color-text)"><div style="background:var(--color-neutral-500)"></div><div style="background:var(--color-neutral-700)"></div></div>
+    <div style="height:64%;background:var(--color-bg);border-top:2px solid var(--color-text);display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:center;padding:6px 0 2px"><span style="width:44px;height:4px;background:var(--color-neutral-500)"></span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) var(--space-3);border-bottom:2px solid var(--color-text)">
+        <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:20px;height:20px;background:var(--color-accent);display:block"><image-slot id="logo-3c2" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 10.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+        <button class="btn btn-ghost" style="padding:4px 8px;font:600 11px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div style="padding:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3);overflow:hidden">
+        <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:10px 12px;font:400 13px/1.5 var(--font-body)">Which camera had the most alerts this month?</div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Live · 10:11</span></div>
+          <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13px/1.55 var(--font-body)">Camera 21 · North Gate 2, with 47 alerts — 31 of them motion in the 02:00–04:00 window.</div>
+          <div style="margin:var(--space-2) 0 0 15px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body)">CAM 21 · 47 ALERTS</span></div>
+        </div>
+      </div>
+      <div style="margin-top:auto;border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:10px var(--space-3);display:flex;justify-content:space-between;align-items:center">
+        <span style="font:400 12.5px/1 var(--font-body);color:var(--color-neutral-500)">Ask…</span>
+        <button class="btn btn-primary" style="padding:11px 16px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="3d"><div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Handoff notes</div>
+<div style="width:900px;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--color-text);border:2px solid var(--color-text)">
+  <div style="background:var(--color-neutral-100);padding:var(--space-4)">
+    <div style="font:700 10px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">Message-type ladder</div>
+    <div style="font:400 12.5px/1.6 var(--font-body)">Consequence sets weight. Answer: 2px grey left rule. Streaming: accent left rule + progress bar. Clarification: 2px accent box on accent-100. Cached: hollow dot + dashed citation chips. Degraded: neutral-200 field, 1px neutral border, correlation ref. Escalation: answer rule + captured-detail table. Approval: the only solid accent band.</div>
+  </div>
+  <div style="background:var(--color-neutral-100);padding:var(--space-4)">
+    <div style="font:700 10px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">MUI tokens</div>
+    <div style="font:400 12.5px/1.6 var(--font-body)"><code>palette.primary.main = #326BC9</code> (from the app mark), <code>palette.chat.userFill = #e8eaee</code>, <code>palette.chat.rule = #1b2029</code> at 2px, <code>palette.freshness.live / cached</code>, <code>palette.approval.band</code>. <code>shape.borderRadius = 0</code> inside the panel only. Frames render 16:9 at 180–200px wide, grayscale.</div>
+  </div>
+  <div style="background:var(--color-neutral-100);padding:var(--space-4)">
+    <div style="font:700 10px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">Keyboard &amp; screen reader</div>
+    <div style="font:400 12.5px/1.6 var(--font-body)">Alt+K opens (focus to input), Esc closes and returns focus to the tab. Tab: scope chips → message list (one stop per message, arrows within) → frames → citation chips → composer → send. Streaming region is <code>aria-live="off"</code>; a polite region announces "answer in progress" once, then the full answer plus source count on completion. Approve is never the first focus stop.</div>
+  </div>
+  <div style="background:var(--color-neutral-100);padding:var(--space-4)">
+    <div style="font:700 10px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-2)">Contrast</div>
+    <div style="font:400 12.5px/1.6 var(--font-body)">Ink #1b2029 on #f4f5f7 = 14.1:1. Accent #326BC9 on the ground = 4.6:1 — passes AA for the 10px chip and label text, unlike the previous red. White on the accent band = 4.6:1, fine for 10px bold and up. Freshness labels use neutral-700 (5.1:1); don't lighten them.</div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "now the mobile app version of <a class="dv-oid" href="#3a">3a</a>" · "add a chart answer type to <a class="dv-oid" href="#3a">3a</a>" · "make <a class="dv-oid" href="#3a">3a</a> a clickable prototype"</p>
+</section>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Three directions for the panel — same content, three structures</span></div>
+<p style="margin:-8px 0 24px;font:400 12.5px/1.6 'Archivo';color:rgba(27,32,41,.65);max-width:900px">Same conversation in all three (Camera 12 high-risk alerts → streaming → cited answer → clarification), so only the structure differs. <a class="dv-oid" href="#2a">2a</a> is the by-the-book evolution of the existing popover. <a class="dv-oid" href="#2b">2b</a> treats every answer as a data object. <a class="dv-oid" href="#2c">2c</a> pushes the system's poster voice into the panel.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Ruled ledger — quietest, closest to today's component</div>
+<div style="width:430px;height:1050px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-neutral-100)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-2a" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+    <div style="display:flex;gap:var(--space-1)"><button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.1em">DOWNLOAD</button><button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  </div>
+  <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+      <div style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Operator · 10:04</div>
+      <div style="background:var(--color-surface);border-left:2px solid var(--color-text);padding:var(--space-3);font:400 13.5px/1.55 var(--font-body)">Show all high-risk alerts from Camera 12 today.</div>
+    </div>
+    <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)"><span style="width:6px;height:6px;background:var(--color-accent);border-radius:50%"></span>Live · 10:04:12</span></div>
+      <div style="border-left:2px solid var(--color-divider);padding-left:var(--space-3);font:400 13.5px/1.6 var(--font-body)">Two high-risk alerts on Camera 12 today. Both are loading-bay intrusion detections, 41 minutes apart.
+        <div style="margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-2)">
+          <div style="border-top:1px solid var(--color-divider);padding-top:var(--space-2)"><b style="font-weight:600">09:23</b> — Intrusion, loading bay. Acknowledged by R. Kale.</div>
+          <div style="border-top:1px solid var(--color-divider);padding-top:var(--space-2)"><b style="font-weight:600">08:42</b> — Intrusion, loading bay. Unacknowledged.</div>
+        </div>
+      </div>
+      <div style="margin:var(--space-3) 0 0 15px">
+        <div style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Frames</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:var(--space-3)">
+          <figure style="margin:0;border:1px solid var(--color-text)"><div class="grayscale" style="height:100px"><image-slot id="frame-2a-4471" shape="rect" placeholder="Frame · CAM 12 09:23" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body);letter-spacing:.06em"><span>ALT-4471</span><span style="color:var(--color-neutral-700);font-weight:400">09:23</span></figcaption></figure>
+          <figure style="margin:0;border:1px solid var(--color-text)"><div class="grayscale" style="height:100px"><image-slot id="frame-2a-4468" shape="rect" placeholder="Frame · CAM 12 08:42" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid var(--color-text);padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 var(--font-body);letter-spacing:.06em"><span>ALT-4468</span><span style="color:var(--color-accent-700)">08:42</span></figcaption></figure>
+        </div>
+        <div style="font:600 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600);margin-bottom:var(--space-2)">Sources</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <a href="#2a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">ALT-4471 · 09:23</a>
+          <a href="#2a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">ALT-4468 · 08:42</a>
+          <a href="#2a" style="border:1px solid var(--color-text);padding:5px 8px;font:600 10px/1 var(--font-body);letter-spacing:.06em;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-text);color:var(--color-neutral-100)">CAM 12 · LOADING BAY</a>
+        </div>
+      </div>
+    </div>
+    <div style="padding:var(--space-4);border-bottom:1px solid var(--color-divider)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)"><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</span><span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Writing…</span></div>
+      <div style="border-left:2px solid var(--color-accent);padding-left:var(--space-3)">
+        <div style="height:2px;background:var(--color-neutral-300);overflow:hidden;margin-bottom:var(--space-2)"><div style="width:33%;height:2px;background:var(--color-accent);animation:streambar 1.4s linear infinite"></div></div>
+        <div style="font:400 13.5px/1.6 var(--font-body)">Camera 12 has email alerts enabled for three recipients. Notification delivery over the last<span style="display:inline-block;width:8px;height:15px;background:var(--color-text);vertical-align:-3px;margin-left:3px;animation:cursorblink 1s step-end infinite"></span></div>
+      </div>
+    </div>
+    <div style="padding:var(--space-4)">
+      <div style="border:2px solid var(--color-accent);background:var(--color-accent-100)">
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-accent-300)"><span style="width:8px;height:8px;background:var(--color-accent)"></span><span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">Needs your answer</span></div>
+        <div style="padding:var(--space-3)">
+          <div style="font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Two cameras match "North Gate". Which one did you mean?</div>
+          <div style="display:flex;flex-direction:column;gap:2px;background:var(--color-accent)">
+            <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 07 · NORTH GATE<span style="font-weight:400;color:var(--color-neutral-700)">4 alerts</span></button>
+            <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 21 · NORTH GATE 2<span style="font-weight:400;color:var(--color-neutral-700)">11 alerts</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)">
+    <div style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 10px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">EN · हिं · मर</span><button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button></div>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:430px">Messages are rows in a ledger, separated by hairline rules; only the left marker changes per type. Lowest engineering cost, least visual risk — but evidence stays prose-first.</div>
+</div>
+
+<div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Answer-as-object — evidence in the grid, not the prose</div>
+<div style="width:430px;height:1050px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-text);background:var(--color-accent)">
+    <div style="display:flex;align-items:center;gap:var(--space-2)"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-2b" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-100)">Aksha assistant</span></div>
+    <div style="display:flex;gap:var(--space-2);align-items:center"><span style="font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-100)">3 queries this shift</span><span style="display:flex;color:var(--color-neutral-100)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></div>
+  </div>
+  <div style="display:flex;background:var(--color-neutral-200);border-bottom:2px solid var(--color-text)">
+    <div style="flex:1;padding:var(--space-2) var(--space-3);border-right:1px solid var(--color-divider)"><div style="font:600 8.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Camera</div><div style="font:600 11.5px/1.4 var(--font-body)">CAM 12</div></div>
+    <div style="flex:1;padding:var(--space-2) var(--space-3);border-right:1px solid var(--color-divider)"><div style="font:600 8.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Window</div><div style="font:600 11.5px/1.4 var(--font-body)">TODAY</div></div>
+    <div style="flex:1;padding:var(--space-2) var(--space-3)"><div style="font:600 8.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Severity</div><div style="font:600 11.5px/1.4 var(--font-body);color:var(--color-accent-700)">HIGH</div></div>
+  </div>
+  <div style="flex:1;padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-4);overflow:hidden">
+    <div style="text-align:right"><span style="display:inline-block;background:var(--color-text);color:var(--color-neutral-100);padding:var(--space-2) var(--space-3);font:400 13px/1.5 var(--font-body);max-width:86%;text-align:left">Show all high-risk alerts from Camera 12 today.</span></div>
+    <div style="border:1px solid var(--color-text);background:var(--color-neutral-100)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-2) var(--space-3);background:var(--color-surface);border-bottom:1px solid var(--color-text)">
+        <span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Result · 2 alerts</span>
+        <span class="tag tag-accent" style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase">Live 10:04</span>
+      </div>
+      <div style="padding:var(--space-3);font:400 13px/1.55 var(--font-body);border-bottom:1px solid var(--color-divider)">Both are loading-bay intrusion detections, 41 minutes apart.</div>
+      <div style="padding:5px var(--space-3);border-bottom:1px solid var(--color-divider);font:600 9px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">Frames · click to open in review</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-text);border-bottom:1px solid var(--color-text)">
+        <div class="grayscale" style="height:106px;position:relative;background:var(--color-neutral-100)"><image-slot id="frame-2b-4471" shape="rect" placeholder="Frame 09:23" style="width:100%;height:100%"></image-slot></div>
+        <div class="grayscale" style="height:106px;position:relative;background:var(--color-neutral-100)"><image-slot id="frame-2b-4468" shape="rect" placeholder="Frame 08:42" style="width:100%;height:100%"></image-slot></div>
+      </div>
+      <table class="table" style="width:100%;font-size:11.5px">
+        <thead><tr><th style="text-align:left">Alert</th><th style="text-align:left">Time</th><th style="text-align:left">Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">ALT-4471</td><td>09:23</td><td>ACK · R. KALE</td></tr>
+          <tr><td style="font-weight:600">ALT-4468</td><td>08:42</td><td style="color:var(--color-accent-700);font-weight:600">OPEN</td></tr>
+        </tbody>
+      </table>
+      <div style="display:flex;gap:2px;background:var(--color-text);border-top:1px solid var(--color-text)">
+        <button class="btn btn-secondary" style="flex:1;padding:8px 10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;border:0;background:var(--color-neutral-100);justify-content:flex-start">OPEN IN ALERTS</button>
+        <button class="btn btn-secondary" style="flex:1;padding:8px 10px;font:600 10px/1 var(--font-body);letter-spacing:.1em;border:0;background:var(--color-neutral-100);justify-content:flex-start">VIEW CAM 12</button>
+      </div>
+    </div>
+    <div style="text-align:right"><span style="display:inline-block;background:var(--color-text);color:var(--color-neutral-100);padding:var(--space-2) var(--space-3);font:400 13px/1.5 var(--font-body);max-width:86%;text-align:left">Which cameras have email alerts enabled?</span></div>
+    <div style="border:1px solid var(--color-text);background:var(--color-neutral-100)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-2) var(--space-3);background:var(--color-surface);border-bottom:1px solid var(--color-text)">
+        <span style="font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase">Result</span>
+        <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Streaming</span>
+      </div>
+      <div style="height:2px;background:var(--color-neutral-300);overflow:hidden"><div style="width:28%;height:2px;background:var(--color-accent);animation:streambar 1.4s linear infinite"></div></div>
+      <div style="padding:var(--space-3);font:400 13px/1.55 var(--font-body)">Nine of eleven cameras have email alerts enabled. The exceptions are<span style="display:inline-block;width:8px;height:14px;background:var(--color-text);vertical-align:-3px;margin-left:3px;animation:cursorblink 1s step-end infinite"></span></div>
+    </div>
+    <div style="border:1px solid var(--color-divider);background:var(--color-neutral-200)">
+      <div style="padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-divider);font:700 9.5px/1 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-800)">Partial result · REF a91f-7c02</div>
+      <div style="padding:var(--space-3);font:400 12.5px/1.55 var(--font-body)">The alert service isn't responding. Camera configuration answers are unaffected.</div>
+    </div>
+  </div>
+  <div style="border-top:2px solid var(--color-text);background:var(--color-neutral-100);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center">
+    <span style="font:400 13px/1 var(--font-body);color:var(--color-neutral-500)">Ask about alerts, cameras or events…</span>
+    <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:430px">Every answer is a bordered result object with a header, a one-line summary, the evidence as a real table, and row actions. Scope lives in a three-cell strip. Densest and most operator-like; least chat-like.</div>
+</div>
+
+<div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Poster gutter — display type, accent as a field</div>
+<div style="width:430px;height:1050px;display:flex;flex-direction:column;background:var(--color-bg);border:2px solid var(--color-text);box-shadow:var(--shadow-md)">
+  <div style="padding:var(--space-4);border-bottom:2px solid var(--color-text);display:flex;justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;gap:var(--space-3);align-items:flex-end"><span style="width:34px;height:34px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-2c" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><div><div style="font:600 9px/1 var(--font-heading);letter-spacing:.2em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:5px">Aksha</div><div style="font:800 19px/1 var(--font-heading);letter-spacing:-.02em">Ask the site.</div></div></div>
+    <div style="display:flex;gap:var(--space-1)"><button class="btn btn-ghost" style="padding:4px 7px;font:600 10px/1 var(--font-body);letter-spacing:.1em">SAVE</button><button class="btn btn-ghost" style="padding:4px 8px;font:600 12px/1 var(--font-body)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  </div>
+  <div style="flex:1;overflow:hidden">
+    <div style="display:grid;grid-template-columns:74px 1fr;border-bottom:1px solid var(--color-divider)">
+      <div style="padding:var(--space-4) 0 var(--space-4) var(--space-4);font:600 9px/1.4 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600)">You<br>10:04</div>
+      <div style="padding:var(--space-4);font:500 15px/1.45 var(--font-body)">Show all high-risk alerts from Camera 12 today.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:74px 1fr;border-bottom:1px solid var(--color-divider);background:var(--color-neutral-100)">
+      <div style="padding:var(--space-4) 0 var(--space-4) var(--space-4);border-left:0"><div style="font:600 9px/1.4 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Aksha</div><div style="margin-top:6px;font:600 9px/1.4 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">Live<br>10:04</div></div>
+      <div style="padding:var(--space-4)">
+        <div style="display:flex;align-items:baseline;gap:var(--space-2);margin-bottom:var(--space-2)"><span style="font:800 46px/1 var(--font-heading);letter-spacing:-.03em;color:var(--color-accent)">2</span><span style="font:700 11px/1.2 var(--font-heading);letter-spacing:.12em;text-transform:uppercase">High-risk<br>alerts</span></div>
+        <div style="font:400 13.5px/1.6 var(--font-body);margin-bottom:var(--space-3)">Both loading-bay intrusion detections on Camera 12, 41 minutes apart.</div>
+        <div class="grayscale" style="height:132px;border:1px solid var(--color-text);margin-bottom:var(--space-3)"><image-slot id="frame-2c-4471" shape="rect" placeholder="Key frame · CAM 12 09:23" style="width:100%;height:100%"></image-slot></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;justify-content:space-between;border-top:2px solid var(--color-text);padding:var(--space-2) 0;font:600 12px/1.3 var(--font-body)"><span>ALT-4471</span><span style="color:var(--color-neutral-700);font-weight:400">09:23 · ACK</span></div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--color-divider);padding:var(--space-2) 0;font:600 12px/1.3 var(--font-body)"><span>ALT-4468</span><span style="color:var(--color-accent-700)">08:42 · OPEN</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:74px 1fr;border-bottom:1px solid var(--color-divider)">
+      <div style="padding:var(--space-4) 0 var(--space-4) var(--space-4);font:600 9px/1.4 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600)">Aksha<br>…now</div>
+      <div style="padding:var(--space-4)">
+        <div style="display:flex;gap:4px;margin-bottom:var(--space-2)"><span style="width:22px;height:4px;background:var(--color-accent)"></span><span style="width:22px;height:4px;background:var(--color-accent-300)"></span><span style="width:22px;height:4px;background:var(--color-neutral-300)"></span></div>
+        <div style="font:400 13.5px/1.6 var(--font-body)">Camera 14 is online. Last frame received two seconds ago from<span style="display:inline-block;width:8px;height:15px;background:var(--color-text);vertical-align:-3px;margin-left:3px;animation:cursorblink 1s step-end infinite"></span></div>
+      </div>
+    </div>
+    <div style="background:var(--color-accent);color:var(--color-neutral-100);padding:var(--space-4)">
+      <div style="font:600 9px/1 var(--font-heading);letter-spacing:.2em;text-transform:uppercase;margin-bottom:var(--space-2)">Needs your answer</div>
+      <div style="font:800 20px/1.15 var(--font-heading);letter-spacing:-.01em;margin-bottom:var(--space-3)">Which North Gate?</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);color:var(--color-text);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 07 · NORTH GATE<span style="font-weight:400;color:var(--color-neutral-700)">4 alerts</span></button>
+        <button style="all:unset;cursor:pointer;background:var(--color-neutral-100);color:var(--color-text);padding:11px 12px;font:600 12.5px/1.3 var(--font-body);display:flex;justify-content:space-between" style-hover="background:var(--color-accent-200)">CAM 21 · NORTH GATE 2<span style="font-weight:400;color:var(--color-neutral-700)">11 alerts</span></button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:74px 1fr">
+      <div style="padding:var(--space-4) 0 var(--space-4) var(--space-4);font:600 9px/1.4 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-600)">Aksha<br>09:42</div>
+      <div style="padding:var(--space-4);font:400 13px/1.6 var(--font-body);color:var(--color-neutral-800)">Cached — last known 09:42. The alert index hasn't refreshed since; newer alerts may exist.
+        <div style="margin-top:var(--space-2)"><button class="btn btn-ghost" style="padding:4px 7px;font:600 10px/1 var(--font-body);letter-spacing:.1em">RETRY LIVE</button></div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:2px solid var(--color-text);padding:var(--space-3) var(--space-4);display:flex;justify-content:space-between;align-items:center;background:var(--color-neutral-100)">
+    <span style="font:500 14px/1 var(--font-body);color:var(--color-neutral-500)">Ask…</span>
+    <button class="btn btn-primary" style="padding:9px 16px;font:600 11px/1 var(--font-body);letter-spacing:.1em">SEND</button>
+  </div>
+</div>
+<div style="font:400 12px/1.6 var(--font-body);color:var(--color-neutral-700);max-width:430px">A 74px label gutter carries role, freshness and time; the answer column gets display-scale numerals for the one figure that matters. Clarification runs as a red poster field — highest legibility at a glance across a control room, most opinionated.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "build <a class="dv-oid" href="#2b">2b</a> out across all the states in <a class="dv-oid" href="#t1">turn 1</a>" · "<a class="dv-oid" href="#2c">2c</a>'s gutter with <a class="dv-oid" href="#2a">2a</a>'s citation chips" · "make <a class="dv-oid" href="#2b">2b</a> a working prototype"</p>
+</section>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Aksha support chatbot — states from the prompt bundle</span></div>
+
+<div style="display:flex;gap:32px;align-items:flex-start;margin:0 0 34px;max-width:1180px">
+<div style="flex:1;border-left:2px solid #326bc9;padding-left:16px">
+<div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#1f4788;margin-bottom:8px">Assumptions</div>
+<p style="margin:0;font:400 13px/1.6 'Archivo';color:#1b2029;text-wrap:pretty">Docked right-hand side panel, 420px, over a dense operator dashboard — not a floating popover (occludes feeds, too small for cited answers) and not full-screen (operators must keep watching cameras). Panel pushes/overlays only the rightmost dashboard column. Evolution of the existing <code>ChatPopover</code>: same shell, message list, input, download action.</p>
+</div>
+<div style="flex:1;border-left:2px solid rgba(27,32,41,.4);padding-left:16px">
+<div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:rgba(27,32,41,.6);margin-bottom:8px">Message-type ladder</div>
+<p style="margin:0;font:400 13px/1.6 'Archivo';color:#1b2029;text-wrap:pretty">One rule governs all seven types: consequence = weight. Plain answer is unfilled ink-on-ground. Clarification adds a red left rule + tinted field. Degraded adds a neutral field. Approval — the only type that changes system state — is the only one that gets a solid red band.</p>
+</div>
+<div style="flex:1;border-left:2px solid rgba(27,32,41,.4);padding-left:16px">
+<div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:rgba(27,32,41,.6);margin-bottom:8px">MUI theme tokens to reconcile</div>
+<p style="margin:0;font:400 13px/1.6 'Archivo';color:#1b2029;text-wrap:pretty">Accent remapped to the Aksha brand blue <code>#326BC9</code> (ramp 100–900 regenerated); ground cooled to #f4f5f7, ink to #1b2029. Structure stays Modernist — Archivo, 0 radius, 2px rules. New: <code>palette.chat.userFill</code>, <code>palette.chat.rule</code> (2px ink divider), <code>palette.evidence.chipBorder</code>, <code>palette.freshness.live / cached / stale</code>, <code>palette.approval.band</code>. Radius 0 across the panel overrides MUI's default 4px.</p>
+</div>
+</div>
+
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Launcher + docked panel, in app context</div>
+<div style="width:1180px;height:760px;display:flex;background:#f4f5f7;border:2px solid #1b2029;box-shadow:var(--shadow-md);overflow:hidden">
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:2px solid #1b2029;background:#fbfbfc">
+      <div style="display:flex;align-items:baseline;gap:20px">
+        <span style="font:800 16px/1 'Archivo';letter-spacing:-.01em">AKSHA</span>
+        <span style="font:600 11px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:#326bc9">Live wall</span>
+        <span style="font:500 11px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:rgba(27,32,41,.55)">Alerts</span>
+        <span style="font:500 11px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:rgba(27,32,41,.55)">Cameras</span>
+        <span style="font:500 11px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:rgba(27,32,41,.55)">Reports</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font:500 11px/1 'Archivo';color:rgba(27,32,41,.55)">SITE 04 · PUNE WEST<span style="width:26px;height:26px;background:#d0d4db"></span></div>
+    </div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:#1b2029;padding:2px;min-height:0">
+      <div style="background:#92979f;display:flex;flex-direction:column;justify-content:space-between;padding:10px;filter:grayscale(1)"><span style="font:600 10px/1 'Archivo';letter-spacing:.1em;color:#fbfbfc">CAM 12 · LOADING BAY</span><span style="font:500 10px/1 'Archivo';color:rgba(251,251,252,.8)">CAMERA FEED</span></div>
+      <div style="background:#757a83;display:flex;flex-direction:column;justify-content:space-between;padding:10px"><span style="font:600 10px/1 'Archivo';letter-spacing:.1em;color:#fbfbfc">CAM 07 · NORTH GATE</span><span style="font:500 10px/1 'Archivo';color:rgba(251,251,252,.8)">CAMERA FEED</span></div>
+      <div style="background:#595e66;display:flex;flex-direction:column;justify-content:space-between;padding:10px"><span style="font:600 10px/1 'Archivo';letter-spacing:.1em;color:#fbfbfc">CAM 14 · YARD EAST</span><span style="font:500 10px/1 'Archivo';color:rgba(251,251,252,.8)">CAMERA FEED</span></div>
+      <div style="background:#b2b7c0;display:flex;flex-direction:column;justify-content:space-between;padding:10px"><span style="font:600 10px/1 'Archivo';letter-spacing:.1em;color:#1b2029">CAM 03 · LOBBY</span><span style="font:500 10px/1 'Archivo';color:rgba(27,32,41,.7)">CAMERA FEED</span></div>
+      <div style="background:#d0d4db;display:flex;flex-direction:column;justify-content:space-between;padding:10px"><span style="font:600 10px/1 'Archivo';letter-spacing:.1em;color:#1b2029">CAM 19 · PERIMETER S</span><span style="font:500 10px/1 'Archivo';color:rgba(27,32,41,.7)">CAMERA FEED</span></div>
+      <div style="background:#fbfbfc;display:flex;flex-direction:column;gap:8px;padding:12px">
+        <span style="font:700 10px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase">Alert queue</span>
+        <div style="display:flex;justify-content:space-between;font:500 11px/1.4 'Archivo';border-bottom:1px solid rgba(27,32,41,.25);padding-bottom:6px"><span>ALT-4471 · CAM 12</span><span style="color:#1f4788">HIGH</span></div>
+        <div style="display:flex;justify-content:space-between;font:500 11px/1.4 'Archivo';border-bottom:1px solid rgba(27,32,41,.25);padding-bottom:6px"><span>ALT-4468 · CAM 12</span><span style="color:#1f4788">HIGH</span></div>
+        <div style="display:flex;justify-content:space-between;font:500 11px/1.4 'Archivo';border-bottom:1px solid rgba(27,32,41,.25);padding-bottom:6px"><span>ALT-4462 · CAM 07</span><span style="color:rgba(27,32,41,.6)">MED</span></div>
+        <div style="display:flex;justify-content:space-between;font:500 11px/1.4 'Archivo'"><span>ALT-4459 · CAM 19</span><span style="color:rgba(27,32,41,.6)">LOW</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="width:420px;flex:none;display:flex;flex-direction:column;border-left:2px solid #1b2029;background:#f4f5f7">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:2px solid #1b2029;background:#fbfbfc">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-1a" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span>
+        <span style="font:700 11px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.1em">DOWNLOAD</button>
+        <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 'Archivo'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+    </div>
+    <div style="padding:14px 16px;border-bottom:1px solid rgba(27,32,41,.25);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="font:600 10px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:rgba(27,32,41,.55)">Scope</span>
+      <span style="border:1px solid #1b2029;padding:4px 8px;font:500 10.5px/1 'Archivo';letter-spacing:.04em">CAMERA: CAM 12 <span style="display:inline-flex;color:#1f4788;margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+      <span style="border:1px solid #1b2029;padding:4px 8px;font:500 10.5px/1 'Archivo';letter-spacing:.04em">DATE: TODAY <span style="display:inline-flex;color:#1f4788;margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+    </div>
+    <div style="flex:1;padding:18px 16px;display:flex;flex-direction:column;gap:20px;min-height:0">
+      <div>
+        <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:7px">Operator · 10:04</div>
+        <div style="background:#e8eaee;border-left:2px solid #1b2029;padding:11px 13px;font:400 13.5px/1.55 'Archivo';color:#1b2029">Show all high-risk alerts from Camera 12 today.</div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+          <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha</span>
+          <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.55)"><span style="width:6px;height:6px;background:#326bc9;border-radius:50%"></span>Live · 10:04</span>
+        </div>
+        <div style="border-left:2px solid rgba(27,32,41,.4);padding:0 0 0 13px;font:400 13.5px/1.6 'Archivo';color:#1b2029">Two high-risk alerts on Camera 12 today. Both are loading-bay intrusion detections, 41 minutes apart.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0 15px">
+          <span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em">ALT-4471 · 09:23</span>
+          <span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em">ALT-4468 · 08:42</span>
+          <span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em">CAM 12 · LOADING BAY</span>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:2px solid #1b2029;background:#fbfbfc;padding:12px 16px;display:flex;flex-direction:column;gap:10px">
+      <div style="font:400 13px/1 'Archivo';color:rgba(27,32,41,.45)">Ask about alerts, cameras or events…</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font:500 10px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.45)">EN · हिं · मर</span>
+        <button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 'Archivo';letter-spacing:.1em">SEND</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="font:400 12px/1.6 'Archivo';color:rgba(27,32,41,.6);max-width:1180px">Closed state: the panel collapses to a docked right-edge tab (below), 40px wide, never over a feed — no floating FAB that lands on top of camera tiles.</div>
+<div style="display:flex;gap:20px;align-items:flex-start">
+  <div style="display:flex;align-items:stretch;border:2px solid #1b2029">
+    <div style="width:220px;height:96px;background:#b2b7c0;display:flex;align-items:flex-end;padding:8px;font:600 10px/1 'Archivo';color:#1b2029">DASHBOARD EDGE</div>
+    <div style="width:40px;background:#326bc9;color:#fff;display:flex;align-items:center;justify-content:center"><span style="writing-mode:vertical-rl;font:700 10px/1 'Archivo';letter-spacing:.18em;text-transform:uppercase">Assistant</span></div>
+  </div>
+  <div style="display:flex;align-items:stretch;border:2px solid #1b2029">
+    <div style="width:220px;height:96px;background:#b2b7c0;display:flex;align-items:flex-end;padding:8px;font:600 10px/1 'Archivo';color:#1b2029">UNREAD ANSWER</div>
+    <div style="width:40px;background:#1b2029;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px"><span style="width:8px;height:8px;background:#326bc9;border-radius:50%"></span><span style="writing-mode:vertical-rl;font:700 10px/1 'Archivo';letter-spacing:.18em;text-transform:uppercase">1 new</span></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>First-open / empty state</div>
+<div style="width:420px;height:700px;display:flex;flex-direction:column;background:#f4f5f7;border:2px solid #1b2029;box-shadow:var(--shadow-md)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:2px solid #1b2029;background:#fbfbfc">
+    <div style="display:flex;align-items:center;gap:9px"><span style="width:22px;height:22px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-1b" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 11px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+    <button class="btn btn-ghost" style="padding:5px 9px;font:600 12px/1 'Archivo'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+  <div style="flex:1;padding:22px 18px;display:flex;flex-direction:column;gap:22px">
+    <div>
+      <div style="font:800 22px/1.2 'Archivo';letter-spacing:-.01em;margin-bottom:8px">Ask instead of<br>navigating.</div>
+      <div style="font:400 13px/1.6 'Archivo';color:rgba(27,32,41,.7)">Alerts, camera config, live status and incident history — in English, हिंदी or मराठी. Every answer shows its sources.</div>
+    </div>
+    <div class="hr" style="height:2px;background:#1b2029"></div>
+    <div style="display:flex;flex-direction:column;gap:2px;background:#1b2029">
+      <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:13px 14px;font:500 13px/1.4 'Archivo';color:#1b2029;display:flex;justify-content:space-between;gap:10px" style-hover="background:#d6e3f7">Show all high-risk alerts from Camera 12 today.<span style="display:flex;align-items:center;color:#326bc9"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+      <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:13px 14px;font:500 13px/1.4 'Archivo';color:#1b2029;display:flex;justify-content:space-between;gap:10px" style-hover="background:#d6e3f7">Which cameras have email alerts enabled?<span style="display:flex;align-items:center;color:#326bc9"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+      <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:13px 14px;font:500 13px/1.4 'Archivo';color:#1b2029;display:flex;justify-content:space-between;gap:10px" style-hover="background:#d6e3f7">Is anything happening right now near the loading bay?<span style="display:flex;align-items:center;color:#326bc9"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></button>
+    </div>
+    <div style="margin-top:auto;font:400 11.5px/1.5 'Archivo';color:rgba(27,32,41,.55);border-left:2px solid rgba(27,32,41,.4);padding-left:10px">The assistant reads alerts, camera settings and site documentation. It cannot change settings without your confirmation.</div>
+  </div>
+  <div style="border-top:2px solid #1b2029;background:#fbfbfc;padding:12px 16px;display:flex;flex-direction:column;gap:10px">
+    <div style="font:400 13px/1 'Archivo';color:rgba(27,32,41,.45)">Ask about alerts, cameras or events…</div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 10px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.45)">EN · हिं · मर</span><button class="btn btn-primary" style="padding:7px 14px;font:600 11px/1 'Archivo';letter-spacing:.1em">SEND</button></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Streaming, citations, freshness</div>
+<div style="width:420px;display:flex;flex-direction:column;gap:2px;background:#1b2029;border:2px solid #1b2029">
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Streaming answer</div>
+    <div style="background:#e8eaee;border-left:2px solid #1b2029;padding:11px 13px;font:400 13.5px/1.55 'Archivo';margin-bottom:18px">Show all high-risk alerts from Camera 12 today.</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha</span>
+      <span style="font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.55)">Writing…</span>
+    </div>
+    <div style="border-left:2px solid #326bc9;padding-left:13px">
+      <div style="height:2px;background:rgba(27,32,41,.15);overflow:hidden;margin-bottom:10px"><div style="width:33%;height:2px;background:#326bc9;animation:streambar 1.4s linear infinite"></div></div>
+      <div style="font:400 13.5px/1.6 'Archivo'">Two high-risk alerts on Camera 12 today. The first, at 09:23, was an intrusion detection at the<span style="display:inline-block;width:8px;height:15px;background:#1b2029;vertical-align:-3px;margin-left:3px;animation:cursorblink 1s step-end infinite"></span></div>
+      <div style="margin-top:10px;font:500 10px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.5)">Sources resolving · 2 of 3</div>
+    </div>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Completed · live data · cited</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha</span>
+      <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.6)"><span style="width:6px;height:6px;background:#326bc9;border-radius:50%"></span>Live · 10:04:12</span>
+    </div>
+    <div style="border-left:2px solid rgba(27,32,41,.4);padding-left:13px;font:400 13.5px/1.6 'Archivo'">
+      Two high-risk alerts on Camera 12 today.
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+        <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:8px"><b style="font-weight:600">09:23</b> — Intrusion detected, loading bay. Acknowledged by R. Kale.</div>
+        <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:8px"><b style="font-weight:600">08:42</b> — Intrusion detected, loading bay. Unacknowledged.</div>
+      </div>
+    </div>
+    <div style="margin:12px 0 0 15px">
+      <div style="font:600 9.5px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:7px">Frames</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+        <figure style="margin:0;border:1px solid #1b2029"><div class="grayscale" style="height:100px"><image-slot id="frame-1c-4471" shape="rect" placeholder="Frame · 09:23" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid #1b2029;padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 'Archivo'"><span>ALT-4471</span><span style="font-weight:400;color:rgba(27,32,41,.6)">09:23</span></figcaption></figure>
+        <figure style="margin:0;border:1px solid #1b2029"><div class="grayscale" style="height:100px"><image-slot id="frame-1c-4468" shape="rect" placeholder="Frame · 08:42" style="width:100%;height:100%"></image-slot></div><figcaption style="border-top:1px solid #1b2029;padding:4px 6px;display:flex;justify-content:space-between;font:600 9.5px/1.2 'Archivo'"><span>ALT-4468</span><span style="color:#1f4788">08:42</span></figcaption></figure>
+      </div>
+      <div style="font:600 9.5px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:7px">Sources</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <a href="#1c" style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em;color:#1b2029;text-decoration:none" style-hover="background:#1b2029;color:#fbfbfc">ALT-4471 · 09:23</a>
+        <a href="#1c" style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em;color:#1b2029;text-decoration:none" style-hover="background:#1b2029;color:#fbfbfc">ALT-4468 · 08:42</a>
+        <a href="#1c" style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em;color:#1b2029;text-decoration:none" style-hover="background:#1b2029;color:#fbfbfc">CAM 12 · LOADING BAY</a>
+      </div>
+    </div>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Same answer · cached data</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha</span>
+      <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.6)"><span style="width:6px;height:6px;border:1.5px solid rgba(27,32,41,.6);border-radius:50%"></span>Cached · last known 09:42</span>
+    </div>
+    <div style="border-left:2px solid rgba(27,32,41,.4);padding-left:13px;font:400 13.5px/1.6 'Archivo'">Two high-risk alerts on Camera 12 as of 09:42. The alert index has not refreshed since — newer alerts may exist.</div>
+    <div style="margin:10px 0 0 15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="border:1px dashed rgba(27,32,41,.55);padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em;color:rgba(27,32,41,.7)">ALT-4471 · 09:23</span>
+      <span style="border:1px dashed rgba(27,32,41,.55);padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em;color:rgba(27,32,41,.7)">ALT-4468 · 08:42</span>
+      <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.1em">RETRY LIVE</button>
+    </div>
+  </div>
+</div>
+<div style="font:400 12px/1.6 'Archivo';color:rgba(27,32,41,.6);max-width:420px">Freshness sits on the meta line (right of the role label), citations sit under the prose — two different bands, so they never compete. Cached citations go dashed.</div>
+</div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Clarification, scope chips, Hindi</div>
+<div style="width:420px;display:flex;flex-direction:column;gap:2px;background:#1b2029;border:2px solid #1b2029">
+  <div style="background:#fbfbfc;padding:14px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:2px solid #1b2029">
+    <span style="font:600 10px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:rgba(27,32,41,.55)">Answering within</span>
+    <span style="border:1px solid #1b2029;background:#eef3fc;padding:4px 8px;font:500 10.5px/1 'Archivo'">CAMERA: NORTH GATE <span style="display:inline-flex;color:#1f4788;margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+    <span style="border:1px solid #1b2029;background:#eef3fc;padding:4px 8px;font:500 10.5px/1 'Archivo'">DATE: YESTERDAY <span style="display:inline-flex;color:#1f4788;margin-left:4px;vertical-align:-2px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></span>
+    <button class="btn btn-ghost" style="padding:4px 7px;font:600 9.5px/1 'Archivo';letter-spacing:.1em">CLEAR ALL</button>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:7px">Operator · 11:16</div>
+    <div style="background:#e8eaee;border-left:2px solid #1b2029;padding:11px 13px;font:400 13.5px/1.55 'Archivo';margin-bottom:18px">Show alerts from yesterday.</div>
+    <div style="border:2px solid #326bc9;background:#eef3fc">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(50,107,201,.4)">
+        <span style="width:8px;height:8px;background:#326bc9"></span>
+        <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Needs your answer</span>
+      </div>
+      <div style="padding:13px 12px">
+        <div style="font:400 13.5px/1.6 'Archivo';margin-bottom:12px">Two cameras match "North Gate". Which one did you mean?</div>
+        <div style="display:flex;flex-direction:column;gap:2px;background:#326bc9">
+          <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:11px 12px;font:600 12.5px/1.3 'Archivo';display:flex;justify-content:space-between" style-hover="background:#d6e3f7">CAM 07 · NORTH GATE<span style="font-weight:400;color:rgba(27,32,41,.6)">4 alerts</span></button>
+          <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:11px 12px;font:600 12.5px/1.3 'Archivo';display:flex;justify-content:space-between" style-hover="background:#d6e3f7">CAM 21 · NORTH GATE 2<span style="font-weight:400;color:rgba(27,32,41,.6)">11 alerts</span></button>
+          <button style="all:unset;cursor:pointer;background:#fbfbfc;padding:11px 12px;font:600 12.5px/1.3 'Archivo';color:rgba(27,32,41,.75)" style-hover="background:#d6e3f7">Both</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Hindi exchange · mixed script</div>
+    <div style="background:#e8eaee;border-left:2px solid #1b2029;padding:11px 13px;font:400 14px/1.7 'Archivo';margin-bottom:18px">कैमरा 12 पर आज कौन-कौन से हाई-रिस्क अलर्ट आए?</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha · HI</span>
+      <span style="display:flex;align-items:center;gap:5px;font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.6)"><span style="width:6px;height:6px;background:#326bc9;border-radius:50%"></span>Live · 10:06</span>
+    </div>
+    <div style="border-left:2px solid rgba(27,32,41,.4);padding-left:13px;font:400 14px/1.75 'Archivo'">आज <span style="border-bottom:2px solid #326bc9;font-weight:600;white-space:nowrap">CAM 12</span> पर दो हाई-रिस्क अलर्ट दर्ज हुए — <span style="border-bottom:2px solid #326bc9;font-weight:600;white-space:nowrap">ALT-4471</span> (09:23) और <span style="border-bottom:2px solid #326bc9;font-weight:600;white-space:nowrap">ALT-4468</span> (08:42). दोनों लोडिंग बे में intrusion detection हैं।</div>
+    <div style="margin:12px 0 0 15px;display:flex;flex-wrap:wrap;gap:6px">
+      <span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em">ALT-4471 · 09:23</span>
+      <span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.06em">ALT-4468 · 08:42</span>
+    </div>
+    <div style="margin-top:12px;font:400 11.5px/1.5 'Archivo';color:rgba(27,32,41,.55)">Identifiers stay Latin and unwrapped; body line-height rises to 1.75 for Devanagari matras.</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1e"><div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Degraded, escalation, approval</div>
+<div style="width:420px;display:flex;flex-direction:column;gap:2px;background:#1b2029;border:2px solid #1b2029">
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Degraded service</div>
+    <div style="border:1px solid rgba(27,32,41,.45);background:#e6e8ec">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(27,32,41,.25)">
+        <span style="width:8px;height:8px;border:2px solid rgba(27,32,41,.6)"></span>
+        <span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.7)">Partial answer</span>
+      </div>
+      <div style="padding:13px 12px;font:400 13.5px/1.6 'Archivo'">
+        The alert service isn't responding right now, so I can't confirm today's alerts. Camera settings and site documentation are still available.
+        <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+          <span style="font:500 10px/1.3 ui-monospace,Menlo,monospace;background:#d0d4db;padding:5px 7px">REF a91f-7c02-4d18</span>
+          <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.1em">RETRY</button>
+          <button class="btn btn-ghost" style="padding:5px 8px;font:600 10px/1 'Archivo';letter-spacing:.1em">COPY REF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Escalation captured</div>
+    <div style="border-left:2px solid rgba(27,32,41,.4);padding-left:13px;font:400 13.5px/1.6 'Archivo';margin-bottom:12px">I've sent this to the on-call engineer. Here's what was captured — check it before it leaves the panel.</div>
+    <div style="border:1px solid #1b2029;margin-left:15px">
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid rgba(27,32,41,.25);font:500 12px/1.3 'Archivo'"><span style="color:rgba(27,32,41,.6);letter-spacing:.06em;text-transform:uppercase;font-size:10px">Ticket</span><span style="font-weight:600">SUP-2291</span></div>
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid rgba(27,32,41,.25);font:500 12px/1.3 'Archivo'"><span style="color:rgba(27,32,41,.6);letter-spacing:.06em;text-transform:uppercase;font-size:10px">Camera</span><span style="font-weight:600">CAM 07 · NORTH GATE</span></div>
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;border-bottom:1px solid rgba(27,32,41,.25);font:500 12px/1.3 'Archivo'"><span style="color:rgba(27,32,41,.6);letter-spacing:.06em;text-transform:uppercase;font-size:10px">Alert</span><span style="font-weight:600">ALT-4462 · 07:15</span></div>
+      <div style="padding:9px 11px;font:400 12.5px/1.5 'Archivo'"><span style="display:block;color:rgba(27,32,41,.6);letter-spacing:.06em;text-transform:uppercase;font-size:10px;font-weight:500;margin-bottom:4px">Description</span>No email alert received for Camera 7 this morning despite email notifications being enabled.</div>
+    </div>
+    <div style="display:flex;gap:8px;margin:11px 0 0 15px">
+      <button class="btn btn-secondary" style="padding:6px 11px;font:600 10.5px/1 'Archivo';letter-spacing:.1em">EDIT DETAILS</button>
+      <button class="btn btn-ghost" style="padding:6px 11px;font:600 10.5px/1 'Archivo';letter-spacing:.1em">VIEW TICKET</button>
+    </div>
+  </div>
+  <div style="background:#f4f5f7;padding:18px 16px">
+    <div style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:rgba(27,32,41,.5);margin-bottom:9px">Approval required · future type, de-emphasised</div>
+    <div style="border:2px solid #1b2029;opacity:.82">
+      <div style="background:#326bc9;color:#fff;padding:9px 12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font:700 10px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase">Approval required</span>
+        <span style="font:600 10px/1 'Archivo';letter-spacing:.08em">EXPIRES IN 4:52</span>
+      </div>
+      <div style="padding:14px 12px;background:#fbfbfc">
+        <div style="font:400 13.5px/1.6 'Archivo';margin-bottom:12px">I'm ready to <b style="font-weight:700">disable email alerts</b> for <span style="border-bottom:2px solid #326bc9;font-weight:600">CAM 12 · LOADING BAY</span>. This stops notification emails to 3 recipients until re-enabled.</div>
+        <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:10px;margin-bottom:14px;font:400 11.5px/1.5 'Archivo';color:rgba(27,32,41,.65)">Changes system state · logged against your operator ID · reversible from Camera settings.</div>
+        <div style="display:flex;gap:2px;background:#1b2029">
+          <button class="btn btn-primary" style="flex:1;padding:11px 13px;font:700 11.5px/1 'Archivo';letter-spacing:.12em;justify-content:flex-start">APPROVE</button>
+          <button class="btn btn-secondary" style="flex:1;padding:11px 13px;font:700 11.5px/1 'Archivo';letter-spacing:.12em;justify-content:flex-start">REJECT</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font:400 11.5px/1.5 'Archivo';color:rgba(27,32,41,.6)">Only this type gets a solid red field and a full-width action pair — the visual budget is reserved for state-changing messages. Shown at 82% opacity here since it isn't wired up yet.</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1f"><div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Small viewport + accessibility pass</div>
+<div style="display:flex;gap:24px;align-items:flex-start">
+  <div style="width:380px;height:640px;border:2px solid #1b2029;background:#b2b7c0;display:flex;flex-direction:column;box-shadow:var(--shadow-md)">
+    <div style="padding:10px 12px;font:600 10px/1 'Archivo';letter-spacing:.12em;text-transform:uppercase;color:#1b2029">Viewport &lt; 1100px · dashboard behind</div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px">
+      <div style="background:#92979f"></div><div style="background:#757a83"></div><div style="background:#d0d4db"></div><div style="background:#595e66"></div>
+    </div>
+    <div style="background:#f4f5f7;border-top:2px solid #1b2029;height:62%;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:center;padding:7px 0 3px"><span style="width:44px;height:4px;background:rgba(27,32,41,.4)"></span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:2px solid #1b2029">
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:20px;height:20px;background:var(--color-accent);display:block;flex:none"><image-slot id="logo-1f" shape="rect" src="uploads/pasted-1787568275658-0.png" style="width:100%;height:100%"></image-slot></span><span style="font:700 10.5px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase">Aksha assistant</span></div>
+        <button class="btn btn-ghost" style="padding:4px 8px;font:600 11px/1 'Archivo'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div style="flex:1;padding:14px;display:flex;flex-direction:column;gap:14px;min-height:0">
+        <div style="background:#e8eaee;border-left:2px solid #1b2029;padding:10px 12px;font:400 13px/1.5 'Archivo'">Is anything happening right now near the loading bay?</div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font:700 9.5px/1 'Archivo';letter-spacing:.16em;text-transform:uppercase;color:#1f4788">Aksha</span><span style="font:600 9.5px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:rgba(27,32,41,.6)">Live · 10:07</span></div>
+          <div style="border-left:2px solid rgba(27,32,41,.4);padding-left:12px;font:400 13px/1.55 'Archivo'">Nothing active. Last motion on Camera 12 was 34 minutes ago and cleared.</div>
+          <div style="margin:9px 0 0 14px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #1b2029;padding:5px 8px;font:600 10px/1 'Archivo'">CAM 12 · 09:33</span></div>
+        </div>
+      </div>
+      <div style="border-top:2px solid #1b2029;background:#fbfbfc;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font:400 12.5px/1 'Archivo';color:rgba(27,32,41,.45)">Ask…</span>
+        <button class="btn btn-primary" style="padding:11px 16px;font:600 11px/1 'Archivo';letter-spacing:.1em">SEND</button>
+      </div>
+    </div>
+  </div>
+  <div style="width:440px;background:#fbfbfc;border:2px solid #1b2029;padding:20px">
+    <div style="font:800 15px/1.2 'Archivo';margin-bottom:4px">Responsive &amp; accessibility notes</div>
+    <div style="font:400 12px/1.6 'Archivo';color:rgba(27,32,41,.65);margin-bottom:16px">Engineering handoff — decisions, not suggestions.</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="border-top:2px solid #1b2029;padding-top:10px"><div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#1f4788;margin-bottom:5px">Breakpoint</div><div style="font:400 12.5px/1.6 'Archivo'">Below 1100px the docked panel becomes a bottom sheet at 62% viewport height, not a full-screen overlay: the operator keeps at least two camera tiles visible. Drag handle resizes to 40% / 62% / 88%. Below 600px only, it goes full-screen with a persistent "back to wall" bar.</div></div>
+      <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:10px"><div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#1f4788;margin-bottom:5px">Keyboard</div><div style="font:400 12.5px/1.6 'Archivo'">Alt+K toggles the panel from anywhere; focus lands on the input, Esc returns focus to the launcher tab. Tab order: scope chips → message list (one stop per message, arrow keys move between messages) → citation chips within the focused message → composer → send. Clarification options and Approve/Reject are real buttons in DOM order; Approve is never the first focus stop.</div></div>
+      <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:10px"><div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#1f4788;margin-bottom:5px">Streaming &amp; screen readers</div><div style="font:400 12.5px/1.6 'Archivo'">The streaming region is <code>aria-live="off"</code>; a separate polite live region announces "Answer in progress" once, then the complete answer plus "3 sources" on stream end. Never announce per token. A "read as it arrives" preference exists for users who want <code>aria-live="polite"</code> chunked by sentence.</div></div>
+      <div style="border-top:1px solid rgba(27,32,41,.25);padding-top:10px"><div style="font:700 10px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#1f4788;margin-bottom:5px">Contrast flags</div><div style="font:400 12.5px/1.6 'Archivo'">Ink #1b2029 on #f4f5f7 = 14.4:1 (pass). Citation chip border and 10px label use full ink, not 60% grey — pass. <b style="font-weight:700">Flag:</b> accent #326bc9 on the light ground is ~3.4:1 — used only for 2px rules, dots and the white-on-red band (white on #326bc9 = 3.9:1, large/bold text only). Any accent-coloured body copy must drop to <code>--color-accent-700</code>. Freshness labels sit at 60% ink = 4.9:1 — pass, but do not go lighter.</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "turn <a class="dv-oid" href="#1a">1a</a>'s panel into a working prototype with live streaming" · "give me two alternates for the citation chips" · "add the MUI/TSX code for <a class="dv-oid" href="#1e">1e</a>"</p>
+</section>
+
+</x-dc>
+</body>
+</html>

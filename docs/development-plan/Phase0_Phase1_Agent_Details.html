@@ -1,0 +1,1146 @@
+<title>Phase 0 & 1 Agent Specification</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ink: #202A36;
+    --ink-soft: #5A6472;
+    --line: #E7EBF0;
+    --line-strong: #CBD3DC;
+    --surface: #FFFFFF;
+    --surface-sunken: #F7F9FB;
+    --bg: #FFFFFF;
+    --accent: #B5651D;
+    --accent-soft: #F5E9DA;
+    --green: #1E6B45;
+    --green-bg: #EAF5EE;
+    --neutral-bg: #F1F3F6;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Cambria, 'Times New Roman', serif;
+    --sans: 'IBM Plex Sans', Calibri, Arial, sans-serif;
+  }
+
+  /* This page commits to a single light appearance regardless of the
+     viewer's system theme or an explicit dark toggle. */
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  code {
+    font-family: var(--mono);
+    background: var(--surface-sunken);
+    padding: 0.12rem 0.4rem;
+    border-radius: 5px;
+    font-size: 0.85em;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem) 6rem;
+  }
+
+  header.hero {
+    padding: clamp(3rem, 7vw, 5rem) 0 2.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.3rem, 4.8vw, 3.5rem);
+    line-height: 1.08;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .dek {
+    font-size: 1.3rem;
+    color: var(--ink-soft);
+    max-width: 68ch;
+  }
+
+  nav.jump {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+  }
+  nav.jump a {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    text-decoration: none;
+    color: var(--ink-soft);
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 0.4rem 0.95rem;
+  }
+  nav.jump a:hover { color: var(--accent); border-color: var(--accent); }
+
+  section.block {
+    padding: 3.2rem 0;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 1.5rem;
+  }
+  .block-head {
+    margin-bottom: 2rem;
+  }
+  .block-eyebrow {
+    font-family: var(--mono);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+  h2.block-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    margin: 0.3rem 0 0.6rem;
+  }
+  .block-sub {
+    color: var(--ink-soft);
+    font-size: 1.18rem;
+    max-width: 74ch;
+  }
+
+  /* ---------- Item card ---------- */
+  .item {
+    background: var(--surface);
+    border: 2.5px solid var(--line-strong);
+    border-radius: 16px;
+    padding: clamp(1.6rem, 3vw, 2.2rem);
+    margin-bottom: 1.3rem;
+    box-shadow: 0 1px 3px rgba(32, 42, 54, 0.04);
+  }
+  .item-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+  }
+  .item-num {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .item h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0.2rem 0 0.1rem;
+  }
+  .item .tag {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.28rem 0.7rem;
+    border-radius: 100px;
+    white-space: nowrap;
+    background: var(--neutral-bg);
+    color: var(--ink-soft);
+  }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+
+  .sample-queries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.3rem 0 1.4rem;
+  }
+  .sample-queries .sq-label {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-bottom: 0.2rem;
+  }
+  .sq-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+  }
+  .sq-item::before {
+    content: "\201C";
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .sq-item span {
+    font-size: 1.03rem;
+    color: var(--ink);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6rem;
+  }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+
+  .col-label {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .col-what p, .col-how p {
+    margin: 0 0 0.7rem;
+    font-size: 1.08rem;
+  }
+  .col-how ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .col-how li {
+    font-size: 1.05rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .refs {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .refs .refs-label {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-right: 0.3rem;
+  }
+  .refs code {
+    font-size: 0.88rem;
+  }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+  }
+
+  /* ---------- Architecture diagram (paper-cutout style) ---------- */
+  .diagram-shell {
+    background: var(--surface-sunken);
+    border: 1.5px solid var(--line-strong);
+    border-radius: 20px;
+    padding: clamp(1rem, 2.5vw, 1.8rem);
+    /* full-bleed: break out of .wrap's max-width so the diagram uses the whole viewport */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    box-sizing: border-box;
+  }
+  @media (max-width: 700px) {
+    .diagram-shell { border-radius: 0; padding: 0.8rem; }
+  }
+  .diagram-shell:fullscreen,
+  .diagram-shell:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    padding: 1.1rem clamp(1rem, 3vw, 2.5rem);
+    background: var(--bg);
+  }
+  .diagram-shell:fullscreen .diagram-svg-wrap,
+  .diagram-shell:-webkit-full-screen .diagram-svg-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+  .diagram-shell:fullscreen #archSvg,
+  .diagram-shell:-webkit-full-screen #archSvg {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+  }
+  .diagram-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.1rem;
+  }
+  .fs-btn { margin-left: auto; }
+  .diag-btn {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    padding: 0.55rem 1rem;
+    border-radius: 100px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .diag-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .diag-btn:disabled { opacity: 0.4; cursor: default; }
+  .diag-btn:disabled:hover { border-color: var(--line-strong); color: var(--ink); }
+  .step-dots { display: flex; gap: 0.4rem; }
+  .step-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--line-strong); border: none; cursor: pointer; padding: 0;
+  }
+  .step-dot.on { background: var(--accent); }
+  .step-caption {
+    font-size: 1.05rem;
+    background: var(--surface);
+    border: 1.5px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1.2rem;
+    min-height: 1.6em;
+  }
+  .step-caption b { color: var(--accent); font-family: var(--mono); font-size: 0.85em; }
+  .step-hint { font-size: 0.88rem; color: var(--ink-soft); margin-top: 0.6rem; }
+
+  .diagram-svg-wrap { overflow-x: auto; }
+  #archSvg { width: 100%; height: auto; display: block; min-width: 760px; max-height: 82vh; }
+
+  .paper-node { cursor: pointer; }
+  .paper-node .p-shadow { fill: #B9AECF; opacity: 0.35; }
+  .paper-node .p-face { stroke: var(--ink); stroke-width: 1.6; transition: opacity 0.15s ease, stroke-width 0.15s ease; }
+  .paper-node .p-label { font-family: var(--sans); font-weight: 700; fill: var(--ink); pointer-events: none; }
+  .paper-node .p-sub { font-family: var(--mono); fill: var(--ink-soft); pointer-events: none; }
+  .paper-node:hover .p-face { stroke-width: 2.6; }
+  .paper-node.active .p-face { stroke-width: 3; stroke: var(--accent); }
+  .paper-node.dim { opacity: 0.32; }
+
+  .container-face { fill: none; stroke: var(--line-strong); stroke-width: 2; stroke-dasharray: 7 6; }
+  .container-label { font-family: var(--mono); fill: var(--ink-soft); letter-spacing: 0.04em; }
+
+  .flow-arrow { stroke: var(--ink-soft); stroke-width: 2; fill: none; transition: opacity 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease; }
+  .flow-arrow.dashed { stroke-dasharray: 5 5; }
+  .flow-arrow.active { stroke: var(--accent); stroke-width: 3; }
+  .flow-arrow.dim { opacity: 0.28; }
+  .arrow-label { font-family: var(--mono); fill: var(--ink-soft); pointer-events: none; }
+  .arrow-label.active { fill: var(--accent); }
+
+  .jump-hint { font-family: var(--mono); fill: var(--ink-soft); opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
+  .paper-node:hover .jump-hint { opacity: 1; }
+
+  @keyframes flashCard {
+    0%, 100% { box-shadow: 0 1px 3px rgba(32,42,54,0.04); }
+    30% { box-shadow: 0 0 0 4px var(--accent); }
+  }
+  .item.flash { animation: flashCard 1.4s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    .item.flash { animation: none; box-shadow: 0 0 0 4px var(--accent); }
+    .paper-node .p-face, .flow-arrow { transition: none; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Aksha Support Chatbot &middot; Build Specification</div>
+    <h1 class="title">Phase 0 and Phase 1, in detail</h1>
+    <p class="dek">What each foundation piece and each first-wave agent actually does, and how it works mechanically &mdash; the tools it calls, the data it reads, and what it says back to the user.</p>
+    <nav class="jump">
+      <a href="#architecture">Architecture diagram</a>
+      <a href="#phase0">Phase 0 &middot; Foundation</a>
+      <a href="#phase1">Phase 1 &middot; Green agents</a>
+      <a href="#frontend">Delivery to the user</a>
+    </nav>
+  </header>
+
+  <!-- =========================== ARCHITECTURE =========================== -->
+  <section class="block" id="architecture">
+    <div class="block-head">
+      <div class="block-eyebrow">Architecture</div>
+      <h2 class="block-title">How a request moves through the system</h2>
+      <p class="block-sub">Every service and agent named below, laid out as the actual request path. Step through the numbered flow to trace one example question end to end, or click any labeled card to jump to its full write-up.</p>
+    </div>
+
+    <div class="diagram-shell" id="diagramShell">
+      <div class="diagram-controls">
+        <button class="diag-btn" id="stepPrev">&larr; Prev</button>
+        <div class="step-dots" id="stepDots"></div>
+        <button class="diag-btn" id="stepNext">Next &rarr;</button>
+        <button class="diag-btn fs-btn" id="stepFullscreen">&#x26F6; Fullscreen</button>
+      </div>
+      <div class="step-caption" id="stepCaption"></div>
+
+      <div class="diagram-svg-wrap">
+        <svg id="archSvg" viewBox="0 0 1180 700" role="img" aria-label="Request flow from the browser through the Node API, the new chatbot API's router, one of seven domain agents, the typed tool registry, and back out as a streamed, cited answer, with a MongoDB checkpoint store attached and the existing Aksha platform APIs called for data.">
+          <defs>
+            <marker id="arrEnd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+            </marker>
+            <marker id="arrStart" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+            </marker>
+          </defs>
+
+          <!-- container: chatbot API -->
+          <rect class="container-face" x="20" y="200" width="1140" height="340" rx="20"></rect>
+          <text class="container-label" x="40" y="213" font-size="12">AKSHA-CHATBOT-API &middot; NEW SERVICE</text>
+
+          <!-- row: existing platform label -->
+          <text class="container-label" x="40" y="580" font-size="12">EXISTING AKSHA PLATFORM &middot; UNCHANGED</text>
+
+          <!-- arrows: browser <-> node api -->
+          <line class="flow-arrow" id="arrBN" x1="590" y1="68" x2="590" y2="118" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></line>
+          <text class="arrow-label" x="606" y="86" font-size="11.5">1 &rarr; query + JWT</text>
+          <text class="arrow-label" x="606" y="103" font-size="11.5">8 &larr; cited answer (SSE)</text>
+
+          <!-- arrows: node api <-> router/container -->
+          <line class="flow-arrow" id="arrNR" x1="590" y1="170" x2="590" y2="200" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></line>
+          <text class="arrow-label" x="606" y="180" font-size="11">2 &rarr; forwards request</text>
+          <text class="arrow-label" x="606" y="195" font-size="11">7 &larr; formatted response</text>
+
+          <!-- node: browser -->
+          <g class="paper-node" id="node-browser" data-jump="frontend">
+            <rect class="p-shadow" x="384" y="20" width="420" height="52" rx="14"></rect>
+            <rect class="p-face" x="380" y="16" width="420" height="52" rx="14" fill="#F5E9DA"></rect>
+            <text class="p-label" x="590" y="38" text-anchor="middle" font-size="13.5">Browser</text>
+            <text class="p-sub" x="590" y="56" text-anchor="middle" font-size="10.5">ChatPopover widget (adapted)</text>
+            <text class="jump-hint" x="590" y="80" text-anchor="middle" font-size="9.5">click &rarr; Delivery to the user</text>
+          </g>
+
+          <!-- node: node api -->
+          <g class="paper-node" id="node-nodeapi">
+            <rect class="p-shadow" x="384" y="122" width="420" height="52" rx="14"></rect>
+            <rect class="p-face" x="380" y="118" width="420" height="52" rx="14" fill="#F1F3F6"></rect>
+            <text class="p-label" x="590" y="140" text-anchor="middle" font-size="13.5">Node API (existing)</text>
+            <text class="p-sub" x="590" y="158" text-anchor="middle" font-size="10.5">jwtAuthMiddleware verifies the token</text>
+          </g>
+
+          <!-- node: SSE / tracing pill -->
+          <g class="paper-node" id="node-sse" data-jump="p0-6">
+            <rect class="p-shadow" x="834" y="52" width="300" height="42" rx="12"></rect>
+            <rect class="p-face" x="830" y="48" width="300" height="42" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="980" y="74" text-anchor="middle" font-size="12.5">SSE Stream + OTel Tracing</text>
+          </g>
+
+          <!-- node: JWT trust boundary pill -->
+          <g class="paper-node" id="node-jwt" data-jump="p0-5">
+            <rect class="p-shadow" x="834" y="149" width="300" height="42" rx="12"></rect>
+            <rect class="p-face" x="830" y="145" width="300" height="42" rx="12" fill="#FDF3DF"></rect>
+            <text class="p-label" x="980" y="171" text-anchor="middle" font-size="12.5">JWT Trust Boundary</text>
+          </g>
+
+          <!-- node: chatbot service scaffold pill -->
+          <g class="paper-node" id="node-scaffold" data-jump="p0-1">
+            <rect class="p-shadow" x="44" y="232" width="330" height="28" rx="9"></rect>
+            <rect class="p-face" x="40" y="228" width="330" height="28" rx="9" fill="#F1F3F6"></rect>
+            <text class="p-label" x="205" y="247" text-anchor="middle" font-size="11.5">FastAPI + LangGraph service scaffold</text>
+          </g>
+
+          <!-- node: router -->
+          <g class="paper-node" id="node-router" data-jump="p0-3">
+            <rect class="p-shadow" x="464" y="266" width="260" height="48" rx="12"></rect>
+            <rect class="p-face" x="460" y="262" width="260" height="48" rx="12" fill="#F5E9DA"></rect>
+            <text class="p-label" x="590" y="292" text-anchor="middle" font-size="13.5">Supervisor Router</text>
+          </g>
+
+          <!-- node: mongo checkpoint -->
+          <g class="paper-node" id="node-mongo" data-jump="p0-2">
+            <rect class="p-shadow" x="934" y="266" width="210" height="64" rx="12"></rect>
+            <rect class="p-face" x="930" y="262" width="210" height="64" rx="12" fill="#F1F3F6"></rect>
+            <text class="p-label" x="1035" y="288" text-anchor="middle" font-size="12">MongoDB Checkpoint Store</text>
+            <text class="p-sub" x="1035" y="306" text-anchor="middle" font-size="9.5">chat_threads &middot; turns &middot; checkpoints</text>
+          </g>
+          <path class="flow-arrow dashed" id="arrRM" d="M720,284 L930,290" marker-end="url(#arrEnd)"></path>
+
+          <!-- fan: router -> 7 agents -->
+          <path class="flow-arrow" id="arrFan1" d="M590,310 L104,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan2" d="M590,310 L266,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan3" d="M590,310 L428,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan4" d="M590,310 L590,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan5" d="M590,310 L752,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan6" d="M590,310 L914,332" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrFan7" d="M590,310 L1076,332" marker-end="url(#arrEnd)"></path>
+          <text class="arrow-label" x="590" y="323" text-anchor="middle" font-size="11">3 &middot; routes to exactly one agent</text>
+
+          <!-- row: 7 agents -->
+          <g class="paper-node" id="node-agent1" data-jump="p1-1">
+            <rect class="p-shadow" x="33" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="29" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="104" y="360" text-anchor="middle" font-size="12">Help &amp; Guide</text>
+            <text class="p-sub" x="104" y="378" text-anchor="middle" font-size="9.5">1.1 &middot; doc RAG</text>
+          </g>
+          <g class="paper-node" id="node-agent2" data-jump="p1-2">
+            <rect class="p-shadow" x="195" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="191" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="266" y="354" text-anchor="middle" font-size="12">Alert</text>
+            <text class="p-label" x="266" y="368" text-anchor="middle" font-size="12">Investigation</text>
+            <text class="p-sub" x="266" y="384" text-anchor="middle" font-size="9.5">1.2</text>
+          </g>
+          <g class="paper-node" id="node-agent3" data-jump="p1-3">
+            <rect class="p-shadow" x="357" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="353" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="428" y="354" text-anchor="middle" font-size="12">Camera</text>
+            <text class="p-label" x="428" y="368" text-anchor="middle" font-size="12">Operations</text>
+            <text class="p-sub" x="428" y="384" text-anchor="middle" font-size="9.5">1.3</text>
+          </g>
+          <g class="paper-node" id="node-agent4" data-jump="p1-4">
+            <rect class="p-shadow" x="519" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="515" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="590" y="354" text-anchor="middle" font-size="12">Live</text>
+            <text class="p-label" x="590" y="368" text-anchor="middle" font-size="12">Monitoring</text>
+            <text class="p-sub" x="590" y="384" text-anchor="middle" font-size="9.5">1.4</text>
+          </g>
+          <g class="paper-node" id="node-agent5" data-jump="p1-5">
+            <rect class="p-shadow" x="681" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="677" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="752" y="354" text-anchor="middle" font-size="12">Insights &amp;</text>
+            <text class="p-label" x="752" y="368" text-anchor="middle" font-size="12">Analytics</text>
+            <text class="p-sub" x="752" y="384" text-anchor="middle" font-size="9.5">1.5</text>
+          </g>
+          <g class="paper-node" id="node-agent6" data-jump="p1-6">
+            <rect class="p-shadow" x="843" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="839" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="914" y="360" text-anchor="middle" font-size="12">Notification</text>
+            <text class="p-sub" x="914" y="378" text-anchor="middle" font-size="9.5">1.6 &middot; read-only</text>
+          </g>
+          <g class="paper-node" id="node-agent7" data-jump="p1-7">
+            <rect class="p-shadow" x="1005" y="336" width="150" height="62" rx="12"></rect>
+            <rect class="p-face" x="1001" y="332" width="150" height="62" rx="12" fill="#EAF5EE"></rect>
+            <text class="p-label" x="1076" y="354" text-anchor="middle" font-size="12">Multi-Language</text>
+            <text class="p-label" x="1076" y="368" text-anchor="middle" font-size="12">Support</text>
+            <text class="p-sub" x="1076" y="384" text-anchor="middle" font-size="9.5">1.7</text>
+          </g>
+
+          <!-- agents 1-6 -> tool registry, agent 7 -> formatter -->
+          <path class="flow-arrow" id="arrAT1" d="M104,394 L560,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrAT2" d="M266,394 L560,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrAT3" d="M428,394 L575,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrAT4" d="M590,394 L590,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrAT5" d="M752,394 L640,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrAT6" d="M914,394 L700,438" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrA7F" d="M1076,394 L890,438" marker-end="url(#arrEnd)"></path>
+          <text class="arrow-label" x="440" y="420" text-anchor="middle" font-size="10.5">4 &middot; calls a typed tool</text>
+
+          <!-- node: tool registry -->
+          <g class="paper-node" id="node-toolreg" data-jump="p0-4">
+            <rect class="p-shadow" x="464" y="442" width="260" height="50" rx="12"></rect>
+            <rect class="p-face" x="460" y="438" width="260" height="50" rx="12" fill="#FDF3DF"></rect>
+            <text class="p-label" x="590" y="468" text-anchor="middle" font-size="13.5">Typed Tool Registry</text>
+          </g>
+
+          <!-- node: formatter -->
+          <g class="paper-node" id="node-formatter" data-jump="p0-3">
+            <rect class="p-shadow" x="764" y="442" width="260" height="50" rx="12"></rect>
+            <rect class="p-face" x="760" y="438" width="260" height="50" rx="12" fill="#F5E9DA"></rect>
+            <text class="p-label" x="890" y="468" text-anchor="middle" font-size="13.5">Output Formatter</text>
+          </g>
+          <line class="flow-arrow" id="arrTF" x1="720" y1="463" x2="760" y2="463" marker-end="url(#arrEnd)"></line>
+          <text class="arrow-label" x="740" y="450" text-anchor="middle" font-size="9.5">6</text>
+
+          <!-- tool registry <-> existing platform (rowD) -->
+          <path class="flow-arrow" id="arrTD1" d="M560,488 L104,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrTD2" d="M575,488 L266,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrTD3" d="M590,488 L428,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrTD4" d="M600,488 L590,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrTD5" d="M660,488 L752,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <path class="flow-arrow" id="arrTD6" d="M700,488 L914,590" marker-start="url(#arrStart)" marker-end="url(#arrEnd)"></path>
+          <text class="arrow-label" x="590" y="527" text-anchor="middle" font-size="11">5 &middot; scoped call &harr; result</text>
+
+          <!-- row: existing platform data sources -->
+          <g class="paper-node" id="node-rowd1">
+            <rect class="p-shadow" x="33" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="29" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="104" y="616" text-anchor="middle" font-size="11.5">FAISS Doc Index</text>
+            <text class="p-sub" x="104" y="634" text-anchor="middle" font-size="9.5">product docs</text>
+          </g>
+          <g class="paper-node" id="node-rowd2">
+            <rect class="p-shadow" x="195" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="191" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="266" y="616" text-anchor="middle" font-size="11.5">/api/alert</text>
+            <text class="p-sub" x="266" y="634" text-anchor="middle" font-size="9.5">/api/myAlert</text>
+          </g>
+          <g class="paper-node" id="node-rowd3">
+            <rect class="p-shadow" x="357" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="353" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="428" y="616" text-anchor="middle" font-size="11.5">/api/camera</text>
+            <text class="p-sub" x="428" y="634" text-anchor="middle" font-size="9.5">/api/camgroup</text>
+          </g>
+          <g class="paper-node" id="node-rowd4">
+            <rect class="p-shadow" x="519" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="515" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="590" y="616" text-anchor="middle" font-size="11.5">/api/active</text>
+            <text class="p-sub" x="590" y="634" text-anchor="middle" font-size="9.5">Socket.IO</text>
+          </g>
+          <g class="paper-node" id="node-rowd5">
+            <rect class="p-shadow" x="681" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="677" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="752" y="616" text-anchor="middle" font-size="11.5">/api/insight</text>
+            <text class="p-sub" x="752" y="634" text-anchor="middle" font-size="9.5">/api/insightReport</text>
+          </g>
+          <g class="paper-node" id="node-rowd6">
+            <rect class="p-shadow" x="843" y="594" width="150" height="60" rx="12"></rect>
+            <rect class="p-face" x="839" y="590" width="150" height="60" rx="12" fill="#FFFFFF"></rect>
+            <text class="p-label" x="914" y="616" text-anchor="middle" font-size="11.5">/api/notification</text>
+            <text class="p-sub" x="914" y="634" text-anchor="middle" font-size="9.5">group config</text>
+          </g>
+        </svg>
+        <p class="step-hint">Click any labeled card above to jump straight to its write-up below. Use Prev / Next to trace one example question end to end.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== PHASE 0 =========================== -->
+  <section class="block" id="phase0">
+    <div class="block-head">
+      <div class="block-eyebrow">Phase 0 &middot; Blocking</div>
+      <h2 class="block-title">Platform foundation</h2>
+      <p class="block-sub">None of the Phase 1 agents can run until these six pieces exist. They're infrastructure, not conversation logic &mdash; built once, used by every agent in every later phase.</p>
+    </div>
+
+    <div class="item" id="p0-1">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.1</span>
+          <h3>Chatbot service scaffold</h3>
+        </div>
+        <span class="tag">new service</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Hosts the actual multi-agent runtime. This is the one new backend service everything else in the plan plugs into &mdash; separate from the existing Node API and Python image/report services.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>A FastAPI app (<code>aksha-chatbot-api</code>) wraps a compiled LangGraph graph with nodes: <code>authenticate_and_scope &rarr; load_checkpoint &rarr; normalize_query &rarr; route_request &rarr; domain_worker &rarr; verify_evidence &rarr; format_response</code>.</li>
+            <li>Deployed as its own container, joining the existing <code>aksha-net</code> Docker network so it can reach <code>node_backend</code> and MongoDB directly.</li>
+            <li>Talks to the Node backend using a service-to-service credential, never a forwarded browser cookie.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>docker-compose.yml</code> <code>aksha-chatbot-api (new)</code></div>
+    </div>
+
+    <div class="item" id="p0-2">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.2</span>
+          <h3>State &amp; checkpointing</h3>
+        </div>
+        <span class="tag">new database</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Makes every conversation turn resumable and auditable &mdash; if the process restarts mid-answer, or an operator needs to review what the bot did six hours ago, this is the record.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>A versioned <code>ChatbotState</code> Pydantic model carries <code>thread_id</code>, <code>user_scope</code>, extracted entities, tool results, and the final response status.</li>
+            <li>A LangGraph checkpointer writes to a <strong>new, separate MongoDB database</strong> (not the existing <code>Aksha</code> database) &mdash; collections <code>chat_threads</code>, <code>chat_turns</code>, <code>chat_checkpoints</code>.</li>
+            <li>A checkpoint is written before and after every tool call, and once more at the terminal state, keyed by <code>(tenant_id, thread_id, turn_id, node_name, sequence)</code>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>MongoDB (new db)</code> <code>ChatbotState schema</code></div>
+    </div>
+
+    <div class="item" id="p0-3">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.3</span>
+          <h3>Router &amp; formatter shells</h3>
+        </div>
+        <span class="tag">core logic</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Decides which single agent should answer a question, then turns that agent's raw findings into the sentence the user actually reads.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>The router is itself a constrained model call: it must return one JSON object &mdash; <code>{domain, agent, intent, entities, risk_level, needs_clarification, confidence}</code> &mdash; never free text.</li>
+            <li>That JSON is schema-validated server-side before any tool is allowed to run; a malformed or out-of-catalog agent name is rejected, not guessed at.</li>
+            <li>The formatter receives only structured <code>ToolResult</code> and <code>SourceRef</code> objects and must cite them &mdash; it cannot introduce a fact that isn't already in the state.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>router.py (new)</code> <code>Output_formatter.py (new)</code></div>
+    </div>
+
+    <div class="item" id="p0-4">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.4</span>
+          <h3>Typed tool registry</h3>
+        </div>
+        <span class="tag">core logic</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>The only door between an agent and real data. No agent ever queries MongoDB, calls an internal service, or hits a filesystem path directly.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Each tool is registered with a Pydantic input/output schema, a <code>domain</code>, an <code>access</code> level (<code>read</code> / <code>propose</code> / <code>write</code>), required permission scopes, a timeout, and an idempotency flag.</li>
+            <li>An agent's LLM only ever sees the tool schemas registered to <em>its</em> domain &mdash; a Camera Operations call can't accidentally reach a Notification tool.</li>
+            <li>The server &mdash; never the model &mdash; injects <code>tenant_id</code>, <code>site_ids</code>, and <code>requested_by</code> into every call after argument validation.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>tool_registry.py (new)</code></div>
+    </div>
+
+    <div class="item" id="p0-5">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.5</span>
+          <h3>JWT trust boundary</h3>
+        </div>
+        <span class="tag">security</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Establishes who is asking and what they're allowed to see &mdash; without standing up a second identity system.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Reuses the existing Aksha-jwt HS256 shared secret; verifies with <code>jose.jwtVerify</code> at the chatbot API boundary, mirroring the Node backend's <code>jwtAuthMiddleware</code>.</li>
+            <li>Fixes the issuer mismatch found in the audit: mobile tokens are signed with issuer <code>mobile-app</code> but verified against a hardcoded <code>algosign</code> &mdash; today, mobile tokens likely fail this check.</li>
+            <li>Because the token only carries <code>siteId</code> and a single <code>role</code> string, a small internal scope-resolution step maps those two fields to the permission set each tool actually needs, instead of waiting on new JWT claims.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>Aksha-jwt/middleware/validateJWT.ts</code> <code>scope_resolver.py (new)</code></div>
+    </div>
+
+    <div class="item" id="p0-6">
+      <div class="item-head">
+        <div>
+          <span class="item-num">0.6</span>
+          <h3>Streaming &amp; tracing</h3>
+        </div>
+        <span class="tag">operability</span>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Lets the user watch an answer appear live, and lets engineers see exactly what happened inside a turn afterward.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>A Server-Sent Events endpoint streams the formatter's output token by token as it's generated.</li>
+            <li>Every node emits an OpenTelemetry span &mdash; <code>chat.request &rarr; graph.run &rarr; router.invoke &rarr; worker.invoke &rarr; tool.call &rarr; formatter.invoke</code> &mdash; tagged with thread id, a hashed tenant id, tool name, status, and latency.</li>
+            <li>Spans never carry raw prompts, JWTs, or RTSP URLs &mdash; only metadata about what ran and how long it took.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>SSE endpoint (new)</code> <code>OTel instrumentation</code></div>
+    </div>
+  </section>
+
+  <!-- =========================== PHASE 1 =========================== -->
+  <section class="block" id="phase1">
+    <div class="block-head">
+      <div class="block-eyebrow">Phase 1 &middot; Ship first</div>
+      <h2 class="block-title">Green agents &mdash; zero backend change</h2>
+      <p class="block-sub">Each of these seven only reads from APIs and files that already work today. The agent's job is to translate a natural-language question into a tool call and the tool result back into an answer &mdash; no new backend endpoint required.</p>
+    </div>
+
+    <div class="item" id="p1-1">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.1</span>
+          <h3>Help &amp; Product Guide Agent</h3>
+        </div>
+        <span class="tag tag-green">read-only &middot; no live data</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>How do I add a camera to a group?</span></div>
+        <div class="sq-item"><span>What does the "Holiday Status" alert setting do?</span></div>
+        <div class="sq-item"><span>Where can I find camera reports in the app?</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Answers how-to and definitional questions about the Aksha product itself &mdash; it never touches an operator's alerts, cameras, or account.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Product documentation and the frontend's <code>UserManual</code> content are chunked and embedded into a FAISS index at build time.</li>
+            <li>A query runs hybrid keyword + vector search, retrieves the top 12 candidates, reranks to the top 5.</li>
+            <li>The formatter must cite the source document/section for every claim; no tenant filtering is needed since this content is global, not per-user data.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Reads</span> <code>indexed docs</code> <code>UserManual component content</code></div>
+    </div>
+
+    <div class="item" id="p1-2">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.2</span>
+          <h3>Alert Investigation Agent (basic)</h3>
+        </div>
+        <span class="tag tag-green">read-only</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>Show all high-risk alerts from Camera 12 today.</span></div>
+        <div class="sq-item"><span>Why was alert A-1042 generated?</span></div>
+        <div class="sq-item"><span>Were there any intrusion alerts on the warehouse camera yesterday?</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Searches and explains individual triggered alerts within a bounded filter &mdash; camera, date, or alert type. Single-alert or simple-filter scope only in this phase; cross-alert correlation is a later phase.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>The router extracts entities (camera name/id, alert type, date range) from the question.</li>
+            <li>A new <code>search_alerts</code> tool wraps the existing <code>GET /api/alert/:camera_name</code> and <code>GET /api/recentAlert/:hours</code> routes.</li>
+            <li>The server injects the caller's site-derived camera scope into the call &mdash; the model never sees or sets it.</li>
+            <li>Results come back as structured alert records (id, camera, timestamp, object class); the formatter turns them into prose that always cites the alert id.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Calls</span> <code>/api/alert/:camera_name</code> <code>/api/recentAlert/:hours</code></div>
+    </div>
+
+    <div class="item" id="p1-3">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.3</span>
+          <h3>Camera Operations Agent</h3>
+        </div>
+        <span class="tag tag-green">read-only</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>Which cameras have email alerts enabled?</span></div>
+        <div class="sq-item"><span>Is Camera 23 live right now?</span></div>
+        <div class="sq-item"><span>Show me all cameras configured for person detection.</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Answers camera configuration and group-membership questions &mdash; status, priority, detection features, group assignment.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Calls <code>get_camera</code> / <code>search_cameras</code> / <code>get_camera_group</code> tools wrapping the existing <code>GET /api/camera</code> and <code>GET /api/camgroup</code> routes.</li>
+            <li>This is a near-direct pass-through: the tool adapter just maps schema fields (<code>Priority</code>, <code>FPS</code>, <code>Feature[]</code>, <code>Email_Alert</code>) to plain-language labels for the formatter.</li>
+            <li>No new backend logic &mdash; the existing camera routes are already RESTful and well-shaped for this.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Calls</span> <code>/api/camera</code> <code>/api/camgroup</code></div>
+    </div>
+
+    <div class="item" id="p1-4">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.4</span>
+          <h3>Live Monitoring Agent</h3>
+        </div>
+        <span class="tag tag-green">read-only &middot; time-sensitive</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>Is anything happening right now near the loading bay?</span></div>
+        <div class="sq-item"><span>Which cameras currently have active alerts?</span></div>
+        <div class="sq-item"><span>Show the current status of all camera groups.</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Reports current operational state &mdash; which cameras are live, which have active alerts &mdash; as of the moment asked.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Reads <code>GET /api/active/getLiveCamera</code> and <code>getSpotlightCamera</code>, the same data the frontend's monitor view uses.</li>
+            <li>Optionally subscribes to the existing Socket.IO <code>liveAllCamera</code> event through a read-only adapter, rather than polling.</li>
+            <li>Because the backing data is a MongoDB change-stream snapshot rather than a guaranteed real-time push to the chatbot, every answer is labeled <em>live</em>, <em>cached</em>, or <em>last-known-at-&lt;timestamp&gt;</em> &mdash; never presented as certain when it might be stale.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Calls</span> <code>/api/active/getLiveCamera</code> <code>Socket.IO liveAllCamera</code></div>
+    </div>
+
+    <div class="item" id="p1-5">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.5</span>
+          <h3>Insights &amp; Analytics Agent</h3>
+        </div>
+        <span class="tag tag-green">read-only</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>Which camera had the most alerts this month?</span></div>
+        <div class="sq-item"><span>What are the busiest times of day for the entrance camera?</span></div>
+        <div class="sq-item"><span>Compare this week's alert count with last week's.</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Answers trend, count, and comparison questions over historical alert activity.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Calls the existing <code>/api/insight</code> and <code>/api/insightReport</code> routes, which read per-day JSON files (local disk or Azure Blob) produced by the <code>Anomaly_model_training</code> service.</li>
+            <li>A new tool adapter parses that JSON &mdash; <code>total_alerts_generated</code>, <code>most_active_hour_for_each_object</code>, <code>peak_alert_time_hour</code> &mdash; into a normalized structured-metrics object.</li>
+            <li>No new Mongo query is needed, but the adapter itself is new code: nothing today exposes this JSON in a shape an LLM tool call can consume directly.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Calls</span> <code>/api/insight</code> <code>/api/insightReport</code> <code>insight_report/&#123;date&#125;.json</code></div>
+    </div>
+
+    <div class="item" id="p1-6">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.6</span>
+          <h3>Notification Agent (read)</h3>
+        </div>
+        <span class="tag tag-green">read-only</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>Why didn't I receive an alert for Camera 7 this morning?</span></div>
+        <div class="sq-item"><span>Which cameras have display notifications enabled?</span></div>
+        <div class="sq-item"><span>Who is configured to receive alerts for the north gate group?</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Explains notification configuration and history &mdash; who's set up to receive alerts and how, per camera or group.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Calls the existing <code>/api/notification</code> and camera-notification-manager <code>GET</code> routes.</li>
+            <li>Distinguishes a <em>configured recipient</em> (from the <code>CameraNotificationManager</code> schema) from <em>confirmed delivery</em> &mdash; the platform doesn't have full delivery-confirmation logs yet, so the agent must say "delivery confirmation isn't available" rather than imply an email was received.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Calls</span> <code>/api/notification</code> <code>/api/notification/group/:groupId</code></div>
+    </div>
+
+    <div class="item" id="p1-7">
+      <div class="item-head">
+        <div>
+          <span class="item-num">1.7</span>
+          <h3>Multi-Language Support Agent</h3>
+        </div>
+        <span class="tag tag-green">chatbot layer only</span>
+      </div>
+      <div class="sample-queries">
+        <span class="sq-label">Sample queries</span>
+        <div class="sq-item"><span>&#2325;&#2376;&#2350;&#2352;&#2366; 12 &#2350;&#2375;&#2306; &#2310;&#2332; &#2325;&#2367;&#2340;&#2344;&#2375; &#2309;&#2354;&#2352;&#2381;&#2335; &#2310;&#2319; &#2361;&#2376;&#2306;? &#8213; "How many alerts came from Camera 12 today?" (Hindi)</span></div>
+        <div class="sq-item"><span>&#2325;&#2376;&#2350;&#2375;&#2352;&#2366; &#2324;&#2347;&#2354;&#2366;&#2311;&#2344; &#2325;&#2366; &#2309;&#2352;&#2381;&#2341; &#2325;&#2366;&#2351; &#2310;&#2361;&#2375;? &#8213; "What does camera offline mean?" (Marathi)</span></div>
+        <div class="sq-item"><span>Same question asked in English, to confirm the response stays in the requester's language while alert IDs and timestamps stay canonical.</span></div>
+      </div>
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What it does</span>
+          <p>Lets an operator interact in their own language, without changing how any other agent works.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">How it works</span>
+          <ul>
+            <li>Not a domain worker with its own tools &mdash; it's a wrapper stage inside the formatter that translates only the final natural-language response.</li>
+            <li>Canonical fields (camera names, alert IDs, timestamps, URLs) stay in their original form so citations and downstream automation remain stable across languages.</li>
+            <li>Source language is detected from the incoming query or a client-supplied locale; internal tool calls and routing always run in English.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="refs"><span class="refs-label">Touches</span> <code>Output_formatter.py</code></div>
+    </div>
+  </section>
+
+  <!-- =========================== FRONTEND =========================== -->
+  <section class="block" id="frontend">
+    <div class="block-head">
+      <div class="block-eyebrow">Delivery</div>
+      <h2 class="block-title">How these seven agents reach the user</h2>
+      <p class="block-sub">All seven share one delivery path on the frontend, adapted from a component that already exists in the investigation view.</p>
+    </div>
+    <div class="item">
+      <div class="split">
+        <div class="col-what">
+          <span class="col-label">What exists today</span>
+          <p><code>ChatPopover.tsx</code> is a working dialog: message list with user/assistant bubbles, a text input with send-on-submit, local chat-history state, and a "download chat" action. It currently only talks to the image-analysis endpoint.</p>
+        </div>
+        <div class="col-how">
+          <span class="col-label">What changes for Phase 1</span>
+          <ul>
+            <li>Generalize the popover so it isn't investigation-only, and point it at the new <code>/api/chatbot/threads</code> and <code>/api/chatbot/threads/:threadId/messages</code> routes.</li>
+            <li>Add source-citation rendering inside message bubbles, since every Phase 1 answer must carry a citation.</li>
+            <li>Add token-by-token rendering against the new SSE stream from Phase 0.</li>
+            <li>Surface a clarification question (e.g. "which camera did you mean?") as a visually distinct message type, not a plain assistant bubble.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Aksha-Version-2 &middot; Chatbot_Abhishek &middot; companion detail to the Phase 0/1 sections of the Development Plan
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var STEPS = [
+    { label: "Overview", caption: "The full request path, always-on view. Every service and agent named in the plan is labeled below. <b>Use Prev / Next to trace one example question end to end.</b>", nodes: [], arrows: [] },
+    { label: "1", caption: "<b>Step 1.</b> The browser sends the query with the user's JWT to the existing Node API — no new auth path.", nodes: ["node-browser", "node-nodeapi"], arrows: ["arrBN"] },
+    { label: "2", caption: "<b>Step 2.</b> Node API validates the JWT with the same <code>jwtAuthMiddleware</code> already in production, then forwards a service-authenticated request into the new chatbot API.", nodes: ["node-nodeapi", "node-scaffold", "node-router", "node-jwt"], arrows: ["arrNR"] },
+    { label: "3", caption: "<b>Step 3.</b> The Supervisor Router classifies intent and entities and selects exactly one of the seven agents &mdash; never more than one per turn.", nodes: ["node-router", "node-agent1", "node-agent2", "node-agent3", "node-agent4", "node-agent5", "node-agent6", "node-agent7"], arrows: ["arrFan1", "arrFan2", "arrFan3", "arrFan4", "arrFan5", "arrFan6", "arrFan7"] },
+    { label: "4", caption: "<b>Step 4 (example).</b> Camera Operations calls a typed tool &mdash; <code>get_camera</code> &mdash; through the Tool Registry. It never touches MongoDB or a route directly.", nodes: ["node-agent3", "node-toolreg"], arrows: ["arrAT3"] },
+    { label: "5", caption: "<b>Step 5.</b> The Tool Registry injects the caller's scope and calls the existing <code>GET /api/camera</code> route. A checkpoint is written before and after this call.", nodes: ["node-toolreg", "node-rowd3", "node-mongo"], arrows: ["arrTD3", "arrRM"] },
+    { label: "6", caption: "<b>Step 6.</b> Camera data comes back; the Tool Registry hands structured findings and source references to the Formatter.", nodes: ["node-toolreg", "node-formatter"], arrows: ["arrTF"] },
+    { label: "7", caption: "<b>Step 7.</b> The Formatter writes a cited answer and returns it out through the chatbot API to Node.", nodes: ["node-formatter", "node-router", "node-nodeapi"], arrows: ["arrNR"] },
+    { label: "8", caption: "<b>Step 8.</b> Node streams the final answer to the browser over SSE, rendered token by token in the chat widget.", nodes: ["node-nodeapi", "node-browser"], arrows: ["arrBN"] }
+  ];
+
+  var current = 0;
+  var svg = document.getElementById("archSvg");
+  var allNodeIds = Array.prototype.map.call(svg.querySelectorAll(".paper-node"), function (n) { return n.id; });
+  var allArrowIds = Array.prototype.map.call(svg.querySelectorAll(".flow-arrow"), function (a) { return a.id; });
+
+  function render() {
+    var step = STEPS[current];
+    var highlight = step.nodes.length > 0 || step.arrows.length > 0;
+
+    allNodeIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      var active = step.nodes.indexOf(id) !== -1;
+      el.classList.toggle("active", active);
+      el.classList.toggle("dim", highlight && !active);
+    });
+    allArrowIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      var active = step.arrows.indexOf(id) !== -1;
+      el.classList.toggle("active", active);
+      el.classList.toggle("dim", highlight && !active);
+    });
+
+    document.getElementById("stepCaption").innerHTML = step.caption;
+    document.getElementById("stepPrev").disabled = current === 0;
+    document.getElementById("stepNext").disabled = current === STEPS.length - 1;
+
+    var dots = document.getElementById("stepDots");
+    dots.innerHTML = "";
+    STEPS.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.className = "step-dot" + (i === current ? " on" : "");
+      b.setAttribute("aria-label", "Step " + s.label);
+      b.addEventListener("click", function () { current = i; render(); });
+      dots.appendChild(b);
+    });
+  }
+
+  document.getElementById("stepPrev").addEventListener("click", function () {
+    if (current > 0) { current--; render(); }
+  });
+  document.getElementById("stepNext").addEventListener("click", function () {
+    if (current < STEPS.length - 1) { current++; render(); }
+  });
+
+  render();
+
+  // Fullscreen toggle for the diagram shell.
+  var shell = document.getElementById("diagramShell");
+  var fsBtn = document.getElementById("stepFullscreen");
+  function isFs() {
+    return document.fullscreenElement === shell || document.webkitFullscreenElement === shell;
+  }
+  function updateFsBtn() {
+    fsBtn.innerHTML = isFs() ? "&#x2715; Exit fullscreen" : "&#x26F6; Fullscreen";
+  }
+  fsBtn.addEventListener("click", function () {
+    if (isFs()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      return;
+    }
+    var req = shell.requestFullscreen ? shell.requestFullscreen() : (shell.webkitRequestFullscreen ? shell.webkitRequestFullscreen() : null);
+    if (req && req.catch) {
+      req.catch(function () {
+        fsBtn.disabled = true;
+        fsBtn.title = "This viewer doesn't allow fullscreen — try opening the page directly in a new browser tab.";
+        fsBtn.innerHTML = "&#x26F6; Fullscreen unavailable here";
+      });
+    }
+  });
+  document.addEventListener("fullscreenchange", updateFsBtn);
+  document.addEventListener("webkitfullscreenchange", updateFsBtn);
+  if (!shell.requestFullscreen && !shell.webkitRequestFullscreen) {
+    fsBtn.disabled = true;
+    fsBtn.title = "Fullscreen isn't supported in this viewer";
+  }
+
+  // Click any labeled diagram card to jump to its full write-up.
+  svg.querySelectorAll(".paper-node[data-jump]").forEach(function (node) {
+    node.addEventListener("click", function () {
+      var target = document.getElementById(node.getAttribute("data-jump"));
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (target.classList.contains("item")) {
+        target.classList.remove("flash");
+        void target.offsetWidth; // restart animation
+        target.classList.add("flash");
+      }
+    });
+  });
+})();
+</script>

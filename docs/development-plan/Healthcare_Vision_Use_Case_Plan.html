@@ -1,0 +1,358 @@
+<title>Healthcare Vision Use-Case Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#211b2e; --ink-soft:#635c74; --line:#e4deee; --line-strong:#cfc5e3;
+    --surface:#ffffff; --surface-sunken:#f8f6fc; --bg:#ffffff;
+    --accent:#6d4aa0; --accent-soft:#efe7f8; --accent-ink:#4d3477;
+
+    --a:#1e6b45; --a-bg:#e7f4ec; --a-line:#bfe0cc;
+    --b:#92600a; --b-bg:#fdf3df; --b-line:#f0d9a1;
+    --c:#7a2e3a; --c-bg:#fbeaec; --c-line:#eec3ca;
+
+    --serif:'Fraunces', Cambria, 'Times New Roman', serif;
+    --sans:'IBM Plex Sans', Calibri, Arial, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece8f4; --ink-soft:#b3a9c7; --line:#3a3350; --line-strong:#4a4166;
+      --surface:#221d33; --surface-sunken:#1a1727; --bg:#161320;
+      --accent:#a98cd6; --accent-soft:#2e2748; --accent-ink:#cbb6ea;
+      --a:#6fcf9a; --a-bg:#173425; --a-line:#265c3f;
+      --b:#e0ac52; --b-bg:#3a2c11; --b-line:#5c481f;
+      --c:#e58c9a; --c-bg:#3a1e23; --c-line:#5c313a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece8f4; --ink-soft:#b3a9c7; --line:#3a3350; --line-strong:#4a4166;
+    --surface:#221d33; --surface-sunken:#1a1727; --bg:#161320;
+    --accent:#a98cd6; --accent-soft:#2e2748; --accent-ink:#cbb6ea;
+    --a:#6fcf9a; --a-bg:#173425; --a-line:#265c3f;
+    --b:#e0ac52; --b-bg:#3a2c11; --b-line:#5c481f;
+    --c:#e58c9a; --c-bg:#3a1e23; --c-line:#5c313a;
+  }
+
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:920px; margin:0 auto; padding:clamp(2rem,5vw,3.5rem) clamp(1.1rem,4vw,2rem) 5rem; }
+
+  .kicker{ font-family:var(--mono); font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-ink); margin:0 0 0.9rem; }
+  h1{ font-family:var(--serif); font-weight:600; font-size:clamp(1.9rem,4vw,2.7rem); line-height:1.15; margin:0 0 0.7rem; text-wrap:balance; letter-spacing:-0.005em; }
+  .dek{ font-size:1.05rem; color:var(--ink-soft); max-width:66ch; margin:0; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:0.5rem 1.4rem; margin-top:1.4rem; font-family:var(--mono); font-size:0.78rem; color:var(--ink-soft); }
+  .meta-row b{ color:var(--ink); font-weight:600; }
+
+  h2{ font-family:var(--serif); font-weight:600; font-size:1.55rem; margin:0 0 0.5rem; letter-spacing:-0.005em; }
+  .section-dek{ font-size:0.95rem; color:var(--ink-soft); margin:0 0 1.6rem; max-width:62ch; }
+  section{ margin-top:3.6rem; }
+  section.lead-in{ margin-top:2.6rem; }
+
+  .callout{ border:1.5px solid var(--line-strong); background:var(--surface-sunken); border-radius:14px; padding:1.2rem 1.4rem; font-size:0.96rem; }
+  .callout p{ margin:0 0 0.5rem; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ background:var(--c-bg); border-color:var(--c-line); }
+  .callout.warn b{ color:var(--c); }
+
+  /* Summary stat row */
+  .stat-row{ display:flex; flex-wrap:wrap; gap:0.8rem; margin:1.4rem 0; }
+  .stat{ flex:1; min-width:150px; border:1.5px solid var(--line-strong); border-radius:14px; padding:1rem 1.2rem; background:var(--surface); }
+  .stat .n{ font-family:var(--serif); font-size:2rem; line-height:1; display:block; }
+  .stat .l{ font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); margin-top:0.35rem; display:block; }
+  .stat.a{ color:var(--a); } .stat.b{ color:var(--b); } .stat.c{ color:var(--c); }
+
+  /* Tier tables */
+  .tier-block{ border:1.5px solid var(--line-strong); border-radius:16px; overflow:hidden; margin-bottom:1.6rem; background:var(--surface); }
+  .tier-head{ padding:1.1rem 1.4rem; display:flex; align-items:baseline; gap:0.7rem; flex-wrap:wrap; }
+  .tier-head.a{ background:var(--a-bg); } .tier-head.b{ background:var(--b-bg); } .tier-head.c{ background:var(--c-bg); }
+  .tier-badge{ font-family:var(--mono); font-size:0.72rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:0.25rem 0.65rem; border-radius:100px; }
+  .tier-badge.a{ background:var(--a); color:#fff; } .tier-badge.b{ background:var(--b); color:#fff; } .tier-badge.c{ background:var(--c); color:#fff; }
+  .tier-head h3{ margin:0; font-family:var(--serif); font-size:1.2rem; font-weight:600; }
+  .tier-head .sub{ font-size:0.88rem; color:var(--ink-soft); width:100%; margin-top:0.15rem; }
+
+  .use-case{ padding:1.1rem 1.4rem; border-top:1px dashed var(--line); }
+  .use-case:first-of-type{ border-top:none; }
+  .use-case-name{ font-weight:700; font-size:1rem; margin-bottom:0.3rem; }
+  .use-case-why{ font-size:0.9rem; color:var(--ink-soft); margin-bottom:0.5rem; }
+  .use-case-why b{ color:var(--ink); font-weight:600; }
+  .use-case-how{ font-size:0.92rem; }
+  .use-case-how .lbl{ font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin-right:0.4rem; }
+
+  /* Quadrant chart */
+  .chart-card{ border:1.5px solid var(--line-strong); border-radius:16px; background:var(--surface); padding:1.4rem 1.4rem 1rem; }
+  .chart-scroll{ overflow-x:auto; }
+  svg.quad{ display:block; min-width:640px; width:100%; height:auto; }
+  .quad-label{ font:600 11.5px var(--sans); fill:var(--ink); }
+  .quad-sub{ font:500 9px var(--sans); fill:var(--ink-soft); }
+  .axis-label{ font:600 10px var(--mono); letter-spacing:0.04em; fill:var(--ink-soft); text-transform:uppercase; }
+  .quad-title{ font:700 11px var(--mono); letter-spacing:0.06em; text-transform:uppercase; }
+
+  /* Roadmap */
+  .roadmap{ display:flex; flex-direction:column; gap:0; }
+  .phase{ display:grid; grid-template-columns:100px 1fr; gap:1.1rem; padding:1.1rem 0; border-top:1px solid var(--line); }
+  .phase:first-child{ border-top:none; }
+  .phase-tag{ font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-ink); padding-top:0.15rem; }
+  .phase-tag .n{ display:block; font-family:var(--serif); font-size:1.5rem; color:var(--ink); line-height:1; margin-bottom:0.2rem; }
+  .phase-title{ font-weight:700; font-size:1.02rem; margin-bottom:0.3rem; }
+  .phase-body{ font-size:0.93rem; color:var(--ink-soft); }
+  .phase-body code{ font-family:var(--mono); font-size:0.85em; background:var(--surface-sunken); padding:0.1rem 0.35rem; border-radius:5px; color:var(--ink); }
+
+  footer{ margin-top:4rem; padding-top:1.4rem; border-top:1px solid var(--line); font-size:0.85rem; color:var(--ink-soft); font-family:var(--mono); }
+  footer a{ color:var(--accent-ink); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="kicker">Aksha &middot; Healthcare Vertical &middot; Use-Case Plan</p>
+    <h1>What's actually possible in a hospital with computer vision — and how</h1>
+    <p class="dek">Every use case below is checked against two real constraints: whether the training data actually exists (per the companion dataset atlas), and whether Aksha's current detection pipeline — single-frame YOLO object detection, not pose estimation or action recognition — can plausibly deliver it without a new architecture.</p>
+    <div class="meta-row">
+      <span><b>Scope:</b> hospital / clinical environment only</span>
+      <span><b>Source model:</b> <code style="font-family:inherit;">object_based_anomaly.py</code> class set</span>
+      <span><b>Companion:</b> Healthcare Vision Dataset Atlas</span>
+      <span><b>Compiled:</b> September 2026</span>
+    </div>
+  </header>
+
+  <section class="lead-in">
+    <div class="stat-row">
+      <div class="stat a"><span class="n">5</span><span class="l">Build now</span></div>
+      <div class="stat b"><span class="n">4</span><span class="l">Needs real work</span></div>
+      <div class="stat c"><span class="n">7</span><span class="l">No honest CV-only answer</span></div>
+    </div>
+    <div class="callout">
+      <p><b>Reading this plan:</b> the three tiers are not a maturity ladder to climb in order — they're an honesty ladder. Tier A is safe to put on a roadmap today. Tier B is a real R&amp;D commitment with named caveats. Tier C use cases are frequently the ones a hospital asks for first (falls, wandering, infant safety) — and are exactly where overpromising does the most damage.</p>
+    </div>
+  </section>
+
+  <section id="priority-matrix">
+    <h2>Priority matrix — clinical criticality vs. technical feasibility</h2>
+    <p class="section-dek">Where each use case sits once both axes are honest. The upper-right is the actual starting roadmap; the upper-left is where hospitals push hardest and where the technical gap is largest.</p>
+    <div class="chart-card">
+      <div class="chart-scroll">
+        <svg class="quad" viewBox="0 0 1000 560" role="img" aria-label="Quadrant chart plotting hospital computer-vision use cases by clinical criticality (vertical) against technical feasibility with Aksha's current pipeline (horizontal). High-criticality, high-feasibility items in the top right include unauthorized-zone access, person-down floor detection, mask compliance, fire and smoke detection, and weapon detection at the ED entrance — these are recommended to build first. High-criticality but low-feasibility items in the top left include wandering and elopement detection, infant abduction alerts, bed-exit monitoring, and violence detection — these carry the most pressure to promise but the least technical readiness. Lower-criticality items such as ward occupancy, queue management, and equipment tracking sit toward the bottom regardless of feasibility.">
+          <defs>
+            <marker id="q-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="var(--ink-soft)" />
+            </marker>
+          </defs>
+
+          <!-- quadrant backgrounds -->
+          <rect x="70" y="40" width="430" height="230" fill="var(--c-bg)" opacity="0.55"/>
+          <rect x="500" y="40" width="430" height="230" fill="var(--a-bg)" opacity="0.55"/>
+          <rect x="70" y="270" width="430" height="230" fill="var(--surface-sunken)"/>
+          <rect x="500" y="270" width="430" height="230" fill="var(--b-bg)" opacity="0.4"/>
+
+          <!-- axes -->
+          <line x1="70" y1="500" x2="930" y2="500" stroke="var(--ink-soft)" stroke-width="1.2" marker-end="url(#q-arrow)"/>
+          <line x1="70" y1="500" x2="70" y2="30" stroke="var(--ink-soft)" stroke-width="1.2" marker-end="url(#q-arrow)"/>
+          <text x="500" y="524" text-anchor="middle" class="axis-label">Technical feasibility with today's pipeline &rarr;</text>
+          <text x="46" y="265" text-anchor="middle" class="axis-label" transform="rotate(-90 46 265)">Clinical criticality &rarr;</text>
+
+          <text x="90" y="58" class="quad-title" fill="var(--c)">CRITICAL, BUT NOT READY</text>
+          <text x="900" y="58" text-anchor="end" class="quad-title" fill="var(--a)">BUILD FIRST</text>
+          <text x="900" y="295" text-anchor="end" class="quad-title" fill="var(--b)">EASY, LOWER STAKES</text>
+          <text x="90" y="295" class="quad-title" fill="var(--ink-soft)">DEPRIORITIZE</text>
+
+          <!-- Tier A points (build first) -->
+          <g fill="var(--a)">
+            <circle cx="700" cy="95" r="6"/><text x="712" y="92" class="quad-label">Unauthorized-zone access</text><text x="712" y="104" class="quad-sub">ICU / NICU / pharmacy</text>
+            <circle cx="660" cy="130" r="6"/><text x="672" y="127" class="quad-label">Person-down / floor collapse</text><text x="672" y="139" class="quad-sub">reuses "supine person" class</text>
+            <circle cx="730" cy="165" r="6"/><text x="742" y="162" class="quad-label">Mask compliance</text>
+            <circle cx="620" cy="195" r="6"/><text x="632" y="192" class="quad-label">Fire / smoke (OT, O2 storage)</text>
+            <circle cx="770" cy="228" r="6"/><text x="782" y="225" class="quad-label">Weapon detection</text><text x="782" y="237" class="quad-sub">ED entrance</text>
+          </g>
+
+          <!-- Tier B points -->
+          <g fill="var(--b)">
+            <circle cx="580" cy="330" r="6"/><text x="592" y="327" class="quad-label">Broader clinical PPE</text>
+            <circle cx="620" cy="380" r="6"/><text x="632" y="377" class="quad-label">Ward / bed occupancy</text>
+            <circle cx="540" cy="420" r="6"/><text x="552" y="417" class="quad-label">Hand-hygiene dwell proxy</text>
+          </g>
+          <g fill="var(--c)">
+            <circle cx="480" cy="150" r="6"/><text x="492" y="147" class="quad-label">Aggression / violence detection</text><text x="492" y="159" class="quad-sub">action recognition, not YOLO</text>
+          </g>
+
+          <!-- Tier C points -->
+          <g fill="var(--c)">
+            <circle cx="150" cy="80" r="6"/><text x="162" y="77" class="quad-label">Infant abduction alert</text><text x="162" y="89" class="quad-sub">use RFID, not CV</text>
+            <circle cx="200" cy="115" r="6"/><text x="212" y="112" class="quad-label">Wandering / elopement</text>
+            <circle cx="140" cy="150" r="6"/><text x="152" y="147" class="quad-label">Bed-exit / unattended bed</text>
+            <circle cx="230" cy="185" r="6"/><text x="242" y="182" class="quad-label">Restraint-check compliance</text>
+            <circle cx="180" cy="220" r="6"/><text x="192" y="217" class="quad-label">Prolonged immobility</text>
+            <circle cx="260" cy="245" r="6"/><text x="272" y="242" class="quad-label">Code Blue response-time</text>
+          </g>
+          <g fill="var(--ink-soft)">
+            <circle cx="650" cy="450" r="6"/><text x="662" y="447" class="quad-label">Equipment tracking</text><text x="662" y="459" class="quad-sub">carts, pumps</text>
+            <circle cx="760" cy="478" r="6"/><text x="772" y="475" class="quad-label">Queue / wait-time</text><text x="772" y="487" class="quad-sub">estimation</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="tier-a">
+    <div class="tier-block">
+      <div class="tier-head a">
+        <span class="tier-badge a">Tier A</span>
+        <h3>Build now — same tech Aksha already ships</h3>
+        <span class="sub">No new model architecture, no new dataset risk. Config/class additions to the existing YOLO detection + zone-alert pipeline.</span>
+      </div>
+
+      <div class="use-case">
+        <div class="use-case-name">Unauthorized-zone access — ICU, NICU, pharmacy, blood bank, drug cabinet</div>
+        <div class="use-case-why"><b>Why critical:</b> patient safety, and pharmacy/blood-bank access is a regulatory requirement, not a nice-to-have.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Zero new model work — the same person-detector + polygon-zone logic already running for perimeter/loading-bay intrusion, pointed at a new zone.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Person down / collapse on floor</div>
+        <div class="use-case-why"><b>Why critical:</b> falls are a leading hospital adverse event, and unwitnessed collapse in a corridor is the highest-cost failure mode.</div>
+        <div class="use-case-how"><span class="lbl">How</span>The <code style="font-family:var(--mono);">supine person</code> class already exists in Aksha's trained model — this is a config change (add the class to ward/corridor camera alert rules), not new training. Add zone logic to distinguish "supine on a bed" (fine) from "supine on the floor" (alert).</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Face mask compliance</div>
+        <div class="use-case-why"><b>Why critical:</b> infection control, especially in isolation and immunocompromised-patient areas.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Identical pattern to the existing <code style="font-family:var(--mono);">helmet</code>/<code style="font-family:var(--mono);">no helmet</code> class. Dataset already identified and commercially clean (Kaggle Face Mask Detection, CC0).</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Fire / smoke — OT, oxygen storage, utility rooms</div>
+        <div class="use-case-why"><b>Why critical:</b> life-safety; oxygen-tank fire risk is a standing hospital hazard.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Ready-to-train public datasets already in YOLO format. Standard detection-class addition; adapt lighting/angle for ward and OT cameras.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Weapon detection at ED entrance</div>
+        <div class="use-case-why"><b>Why critical:</b> a documented, real risk at emergency-department entrances.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Best-matched dataset in the whole atlas (~2,600 CCTV-angle images) — light fine-tuning on the actual entrance camera's angle and lighting.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tier-b">
+    <div class="tier-block">
+      <div class="tier-head b">
+        <span class="tier-badge b">Tier B</span>
+        <h3>Real requirement, real R&amp;D lift</h3>
+        <span class="sub">Needs new classes trained on real hospital imagery, a licensing check, or an honest scope-down from what the name implies.</span>
+      </div>
+
+      <div class="use-case">
+        <div class="use-case-name">Ward / bed occupancy (empty vs. occupied)</div>
+        <div class="use-case-why"><b>The catch:</b> generic "room occupancy" datasets don't capture bed-specific state — this needs a genuinely new class trained on real bed imagery.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Custom-labeled hospital footage for an empty-bed / occupied-bed classifier layered on top of existing person detection.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Broader clinical PPE — gown, gloves, face shield</div>
+        <div class="use-case-why"><b>The catch:</b> ~24,900 images exist, but they're mostly construction-site PPE, not clinical attire.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Relabel a subset on real hospital imagery before training, or accuracy will silently degrade on gowns/shields that don't resemble a hard hat.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Hand hygiene compliance</div>
+        <div class="use-case-why"><b>The catch:</b> the only real hospital-sourced dataset (WHO 6-step, PSKUS/EDI-RIGA) is academic-license-only, and true step-verification needs temporal action recognition — a different model family from Aksha's current single-frame detector.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Ship a deliberately cruder v1: "did a person dwell near the dispenser for &gt;N seconds," a zone + dwell-time proxy buildable on the current stack. State plainly to stakeholders that this is not step-by-step WHO compliance verification.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Aggression / violence detection — ED, psychiatric ward</div>
+        <div class="use-case-why"><b>The catch:</b> needs action recognition over time, not bounding boxes; the only usable base dataset (RWF-2000) has no stated commercial license; false positives here carry real reputational and legal weight.</div>
+        <div class="use-case-how"><span class="lbl">How</span>Scope as a multi-month R&amp;D track with its own model architecture — do not put this on a near-term feature roadmap.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tier-c">
+    <div class="tier-block">
+      <div class="tier-head c">
+        <span class="tier-badge c">Tier C</span>
+        <h3>No honest CV-only answer today</h3>
+        <span class="sub">Frequently what a hospital asks for first — falls-over-time, wandering, infant safety. This is exactly where overpromising causes the most damage.</span>
+      </div>
+
+      <div class="use-case">
+        <div class="use-case-name">Bed-exit / unattended-bed event</div>
+        <div class="use-case-why"><b>Why not:</b> needs the on-bed &rarr; off-bed &rarr; exit transition labeled over time — no public dataset covers this, only static presence.</div>
+        <div class="use-case-how"><span class="lbl">Reframe as</span>a custom data-collection project: what footage, from where, under what consent process — before any modeling starts.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Wandering / elopement detection</div>
+        <div class="use-case-why"><b>Why not:</b> dementia/ward-specific wandering has no released video data anywhere.</div>
+        <div class="use-case-how"><span class="lbl">Reframe as</span>generic person re-identification + time-in-zone logic — an engineering project on top of existing detection, not a new visual class, and still needs real evaluation data before deployment.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Infant abduction alert (NICU)</div>
+        <div class="use-case-why"><b>Why not:</b> the entire industry solves this with RFID/tag hardware for good reason — the failure mode of a missed CV detection here is catastrophic.</div>
+        <div class="use-case-how"><span class="lbl">Recommendation</span>do not pitch this as a CV feature. Position Aksha's camera layer as a complement to RFID (e.g., flag an unrecognized adult near a crib zone), never the primary safeguard.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Restraint-check compliance</div>
+        <div class="use-case-why"><b>Why not:</b> no dataset addresses restraint checks or check-interval timestamps; in-bed monitoring datasets exist but don't cover this protocol.</div>
+        <div class="use-case-how"><span class="lbl">Reframe as</span>a custom capture-and-label project scoped with clinical staff to define what a "check" looks like on camera.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Prolonged immobility / pressure-ulcer prevention</div>
+        <div class="use-case-why"><b>Why not:</b> needs continuous pose tracking over hours inside a patient room — a different technical stack from object detection, with no public dataset for the movement-over-time signal itself.</div>
+        <div class="use-case-how"><span class="lbl">Reframe as</span>a long-horizon R&amp;D track; the SLP in-bed pose dataset is a possible base component, not a solution.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Nurse rounding compliance</div>
+        <div class="use-case-why"><b>Why not:</b> only commercial RTLS/badge hardware products solve this today — no public vision dataset addresses room-entry/dwell-time-for-rounding.</div>
+        <div class="use-case-how"><span class="lbl">Recommendation</span>if this is a must-have, integrate with badge/RTLS data rather than building it from video.</div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-name">Code Blue / response-time tracking</div>
+        <div class="use-case-why"><b>Why not:</b> this isn't a vision problem — it needs event correlation between the alarm system and camera-detected staff arrival.</div>
+        <div class="use-case-how"><span class="lbl">Reframe as</span>a systems-integration project: alarm timestamp + person-detection timestamp in the same zone, not a new model.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="regulatory-gate">
+    <h2>The gate underneath Tier B and C</h2>
+    <div class="callout warn">
+      <p><b>Every Tier B/C use case above lives in a patient room, ICU, or NICU</b> — and continuous video surveillance there runs into consent and privacy law before it runs into a modeling problem: India's DPDP Act, hospital NABH accreditation norms, and the rough equivalent of HIPAA in other markets.</p>
+      <p>That gate needs clearing with the hospital's compliance/legal team <b>before</b> any of these gets pitched as a deliverable — it is a real requirement, not a footnote to add later.</p>
+    </div>
+  </section>
+
+  <section id="rollout">
+    <h2>Recommended rollout sequence</h2>
+    <p class="section-dek">Sequencing by what's both clinically valuable and technically honest today, not by what a sales conversation asks for first.</p>
+    <div class="roadmap">
+      <div class="phase">
+        <div class="phase-tag"><span class="n">01</span>Now</div>
+        <div>
+          <div class="phase-title">Ship all five Tier A use cases</div>
+          <div class="phase-body">Config and class additions to the existing pipeline — unauthorized-zone access, person-down/collapse, mask compliance, fire/smoke, weapon detection. No new architecture, no dataset-license risk, fastest path to a working hospital pilot.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span class="n">02</span>Next</div>
+        <div>
+          <div class="phase-title">Scope Tier B with explicit downgrades stated up front</div>
+          <div class="phase-body">Ward/bed occupancy and clinical PPE relabeling are straightforward data-collection projects. Hand hygiene ships as a dwell-time proxy, named as such to the customer — not as WHO-step verification. Aggression/violence detection gets scoped as its own R&amp;D track with a separate timeline, not bundled into the same release.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span class="n">03</span>Parallel track</div>
+        <div>
+          <div class="phase-title">Clear the regulatory gate before touching Tier C</div>
+          <div class="phase-body">Engage the target hospital's compliance/legal function on in-room camera consent (<code>DPDP Act</code>, <code>NABH</code>) in parallel with Tier A/B delivery, so it isn't a surprise blocker when a Tier C conversation starts.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag"><span class="n">04</span>Only after 01&ndash;03</div>
+        <div>
+          <div class="phase-title">Treat each Tier C item as its own data-collection project</div>
+          <div class="phase-body">Wandering, bed-exit, restraint-checks, and prolonged immobility each need a bespoke capture-and-label effort defined with clinical staff — not a shared "advanced features" sprint. Infant abduction and nurse rounding should be positioned as hardware-led (RFID/RTLS), with vision as a complement at most.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Sources: <code>Anomaly_model_training/object_based_anomaly.py</code> (Aksha's current detection classes), <code>docs/development-plan/Healthcare_Vision_Dataset_Atlas.html</code> (dataset-by-dataset feasibility, Aug 2026). Compiled September 2026 — re-verify dataset licenses before any commercial training run.
+  </footer>
+
+</div>

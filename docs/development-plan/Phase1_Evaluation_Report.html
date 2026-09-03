@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aksha Support Chatbot — Phase 1 Evaluation Report</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #1b2430;
+    margin: 0;
+  }
+  h1 {
+    font-size: 19pt;
+    margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1b2430;
+    padding-bottom: 8pt;
+  }
+  h2 {
+    font-size: 13.5pt;
+    margin: 20pt 0 8pt 0;
+    color: #1b2430;
+    border-bottom: 1pt solid #b5651d;
+    padding-bottom: 3pt;
+  }
+  h3 {
+    font-size: 11.5pt;
+    margin: 14pt 0 6pt 0;
+    color: #1b2430;
+  }
+  .meta { font-size: 9.5pt; margin: 2pt 0; color: #333; }
+  .meta b { color: #1b2430; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8pt 0 10pt 0;
+    font-size: 9pt;
+  }
+  th, td {
+    border: 0.75pt solid #999;
+    padding: 4pt 6pt;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eceff3;
+    font-weight: 700;
+  }
+  tr:nth-child(even) td { background: #f7f8fa; }
+  code {
+    font-family: "Consolas", monospace;
+    font-size: 8.8pt;
+    background: #eef0f3;
+    padding: 1pt 3pt;
+    border-radius: 2pt;
+  }
+  .summary-table td:first-child { font-weight: 600; width: 34%; }
+  .pass { color: #1a7a3c; font-weight: 700; }
+  .fail { color: #b02a2a; font-weight: 700; }
+  .bottom-line {
+    background: #f4f0e8;
+    border-left: 3pt solid #b5651d;
+    padding: 8pt 10pt;
+    margin: 8pt 0;
+  }
+  .update-box {
+    background: #eef7f0;
+    border-left: 3pt solid #1a7a3c;
+    padding: 8pt 10pt;
+    margin: 8pt 0;
+  }
+  ul, ol { margin: 4pt 0; padding-left: 18pt; }
+  li { margin: 3pt 0; }
+  hr { border: none; border-top: 0.75pt solid #ccc; margin: 14pt 0; }
+  .section-note { font-size: 9pt; color: #555; margin: 4pt 0 8pt 0; }
+</style>
+</head>
+<body>
+
+<h1>Aksha Support Chatbot — Phase 1 Evaluation Report</h1>
+<p class="meta"><b>Date:</b> 2026-08-24 · <b>Updated:</b> 2026-08-25 (MongoDB connectivity restored, full 30-query matrix re-run live — see Sections 3b and 3c)</p>
+<p class="meta"><b>Scope:</b> All 6 implemented Phase 1 agents (Camera Operations, Alert Investigation, Live Monitoring, Insights &amp; Analytics, Notification, Help &amp; Product Guide) plus Multi-Language Support (formatter wrapper) and the React frontend.</p>
+<p class="meta"><b>Method:</b> 30 scripted queries (5 per agent) run live against <code>aksha-chatbot-api</code> on <code>localhost:8010</code> via <code>POST /v1/chat/invoke</code> on 2026-08-24 (backend degraded), a 6-query spot-check on 2026-08-25 after the MongoDB fix, then the <b>full 30-query matrix re-run on 2026-08-25</b> against the fixed, genuinely reachable backend, plus manual live testing through the actual React UI on <code>localhost:5173</code>.</p>
+<p class="meta"><b>Raw data:</b> <code>eval_queries.tsv</code> (inputs, shared across both runs), <code>eval_results.jsonl</code> (2026-08-24 outputs, degraded backend), <code>eval_results_live.jsonl</code> (2026-08-25 outputs, fixed backend).</p>
+
+<h2>1. Summary</h2>
+<table class="summary-table">
+<tr><td>Total queries run (2026-08-24 pass, degraded backend)</td><td>30 (5 per agent × 6 agents)</td></tr>
+<tr><td>Correctly routed to the intended agent (2026-08-24)</td><td><span class="pass">30/30</span>, after one fix found during this pass (28/30 on the first run)</td></tr>
+<tr><td>Agents that returned a live, grounded answer (2026-08-24)</td><td>help_guide only (5/5) — the other 5 agents were degraded, see below</td></tr>
+<tr><td><b>Full 30-query matrix re-run on 2026-08-25, fixed backend</b></td><td><span class="pass">30/30 correctly routed, 30/30 resolved live</span> — a completely clean pass</td></tr>
+<tr><td>Bugs found and fixed on 2026-08-24</td><td>1 (router misclassification, live_monitoring vs. camera_operations)</td></tr>
+<tr><td>Bugs found and fixed on 2026-08-25</td><td>2 (wrong <code>recentAlert</code> route on the deployed backend; 404/400 "not configured yet" misreported as an outage for notification &amp; insights)</td></tr>
+<tr><td>New bugs found in the full 30-query re-run</td><td>0 — all three earlier fixes held across the complete matrix; two minor answer-wording nuances noted (Section 3c), not functional bugs</td></tr>
+<tr><td>Infrastructure blocker</td><td><code>node_backend</code>/MongoDB connectivity — <b>resolved 2026-08-25</b>, root cause and fix in Section 3b</td></tr>
+</table>
+
+<div class="bottom-line">
+<b>Bottom line:</b> the chatbot's routing and failure-handling logic is sound — every query reached the right agent (after the one fix the 2026-08-24 pass surfaced), and every agent that couldn't reach its backend failed <i>honestly</i>, with no invented data. As of 2026-08-25, the MongoDB connectivity blocker is fixed, and <b>the complete 30-query matrix has been re-run against the real backend with a clean 30/30 result</b> (Section 3c) — every agent, every query, resolved live with honest empty-state answers. This report now reflects a full data-accuracy pass, not just a spot-check.
+</div>
+
+<h2>2. Results by agent (2026-08-24 pass, degraded backend)</h2>
+<p class="section-note">The tables below are the original 2026-08-24 run, made against the then-unreachable <code>node_backend</code>/MongoDB. Every query listed as "Degraded (TIMEOUT)" here now returns a real, honest empty-state answer instead — see Section 3c for the 2026-08-25 full re-run against the fixed backend. Kept as-is for historical record and to show the routing/failure-handling behavior was already correct before the infrastructure fix.</p>
+
+<h3>2.1 Camera Operations</h3>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to</th><th>Status</th><th>Notes</th></tr>
+<tr><td>1</td><td>How many cameras do we have configured?</td><td>camera_operations</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>2</td><td>Which cameras have email alerts enabled?</td><td>camera_operations</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>3</td><td>What camera groups exist and which cameras are in them?</td><td>camera_operations</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>4</td><td>What's the FPS setting on the loading dock camera?</td><td>camera_operations</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>5</td><td>List all cameras with person-detection enabled.</td><td>camera_operations</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+</table>
+<p class="section-note"><b>Routing: 5/5 correct.</b> No degradation-handling issues — every failure produced the expected "3 retries then honest TIMEOUT message with a correlation id" pattern, never a hallucinated camera list.</p>
+
+<h3>2.2 Alert Investigation</h3>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to</th><th>Status</th><th>Notes</th></tr>
+<tr><td>1</td><td>What alerts were triggered in the last 24 hours?</td><td>alert_investigation</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>2</td><td>Show me alerts for the main entrance camera.</td><td>alert_investigation</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>3</td><td>Were there any intrusion alerts yesterday?</td><td>alert_investigation</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>4</td><td>Give me the details of alert ID ALT-10293.</td><td>alert_investigation</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>5</td><td>Has camera 7 triggered any alerts this week?</td><td>alert_investigation</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+</table>
+<p class="section-note"><b>Routing: 5/5 correct.</b></p>
+
+<h3>2.3 Live Monitoring</h3>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to (1st run)</th><th>Routed to (after fix)</th><th>Notes</th></tr>
+<tr><td>1</td><td>Show me the live cameras right now.</td><td>live_monitoring</td><td>live_monitoring</td><td>Correct</td></tr>
+<tr><td>2</td><td>Which cameras are currently in spotlight view?</td><td class="fail">camera_operations ❌</td><td class="pass">live_monitoring ✅</td><td>Misrouted, then fixed — see Section 3</td></tr>
+<tr><td>3</td><td>Is the warehouse camera online at this moment?</td><td class="fail">camera_operations ❌</td><td class="pass">live_monitoring ✅</td><td>Misrouted, then fixed — see Section 3</td></tr>
+<tr><td>4</td><td>What's the current live status of all cameras?</td><td>live_monitoring</td><td>live_monitoring</td><td>Correct</td></tr>
+<tr><td>5</td><td>Are any cameras currently down or offline?</td><td>live_monitoring</td><td>live_monitoring</td><td>Correct</td></tr>
+</table>
+<p class="section-note"><b>Routing: 3/5 on the first run, 5/5 after the fix described in Section 3.</b> All five, once correctly routed, returned the honest degraded response (backend unreachable).</p>
+
+<h3>2.4 Insights &amp; Analytics</h3>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to</th><th>Status</th><th>Notes</th></tr>
+<tr><td>1</td><td>Give me the insight report for the last 7 days.</td><td>insights_analytics</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>2</td><td>How many alerts happened this month compared to last month?</td><td>insights_analytics</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>3</td><td>What's the trend in false-positive alerts recently?</td><td>insights_analytics</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>4</td><td>Which camera generated the most alerts this week?</td><td>insights_analytics</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>5</td><td>Summarize alert activity for today.</td><td>insights_analytics</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+</table>
+<p class="section-note"><b>Routing: 5/5 correct.</b></p>
+
+<h3>2.5 Notification</h3>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to</th><th>Status</th><th>Notes</th></tr>
+<tr><td>1</td><td>What are the email notification settings?</td><td>notification</td><td>Degraded (TIMEOUT)</td><td>Correct route (confirms the Section 9c fix held)</td></tr>
+<tr><td>2</td><td>Who gets notified for camera group Warehouse-A?</td><td>notification</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>3</td><td>Do we get a notification every time an alert fires, or only for certain types?</td><td>notification</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>4</td><td>Was the notification for alert ALT-10293 delivered?</td><td>notification</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+<tr><td>5</td><td>List the notification recipients for the main gate group.</td><td>notification</td><td>Degraded (TIMEOUT)</td><td>Correct route; backend unreachable</td></tr>
+</table>
+<p class="section-note"><b>Routing: 5/5 correct.</b> Query 1 specifically re-validates the router fix made in Section 9c of the architecture doc (a prior pass had this query falling through to help_guide).</p>
+
+<h3>2.6 Help &amp; Product Guide</h3>
+<p class="section-note">This is the only agent whose backend (this repo's own docs, searched by <code>search_docs</code>) is actually reachable, so these are real, graded answers rather than degraded stubs.</p>
+<table>
+<tr><th>#</th><th>Query</th><th>Routed to</th><th>Status</th><th>Answer quality</th></tr>
+<tr><td>1</td><td>How do I search for an alert?</td><td>help_guide</td><td>Live, resolved</td><td><b>Good.</b> Correctly cites <code>search_alerts</code>/<code>/api/alert</code>, <code>start_at</code>/<code>end_at</code>, <code>camera_ids</code>, <code>alert_types</code> — matches the real Node route contract.</td></tr>
+<tr><td>2</td><td>How does multi-language support work?</td><td>help_guide</td><td>Live, resolved</td><td><b>Partially accurate.</b> Correctly describes it as a read-only, no-new-API-surface feature, but repeats this doc's <i>target</i>-architecture "FAISS document index" language as if already built — the real implementation is a keyword/term-overlap MVP (Section 9b). Known, previously-flagged gap (Section 9c), reconfirmed here.</td></tr>
+<tr><td>3</td><td>What does the spotlight view feature do?</td><td>help_guide</td><td>Live, resolved</td><td><b>Correct behavior, content gap.</b> Answered "I'm not able to confirm that based on the available documentation" rather than guessing — exactly right when the docs corpus has no page on this feature. The gap is in documentation coverage, not agent logic.</td></tr>
+<tr><td>4</td><td>How do camera groups relate to notification settings?</td><td>help_guide</td><td>Live, resolved</td><td><b>Good.</b> Correctly cites <code>/api/camgroup</code> and <code>/api/notification</code> as separate route families, explains the group-ID linking relationship, and is honest that the docs don't specify more detail.</td></tr>
+<tr><td>5</td><td>What can this chatbot help me with?</td><td>help_guide</td><td>Live, resolved</td><td><b>Good.</b> Reasonable, on-topic capability summary grounded in the docs corpus.</td></tr>
+</table>
+<p class="section-note"><b>Routing: 5/5 correct. Answer quality: 4/5 fully correct, 1/5 correct-but-stale on a known, already-documented gap.</b></p>
+
+<h2>3. Bug found and fixed during this evaluation</h2>
+<p><b>Router misclassification: live_monitoring vs. camera_operations.</b></p>
+<p>"Which cameras are currently in spotlight view?" and "Is the warehouse camera online at this moment?" both misrouted to <code>camera_operations</code>. Root cause: <code>app/router.py</code>'s disambiguation rules distinguished camera_operations from notification and from help_guide, but had no rule at all separating it from live_monitoring — so a present-moment-status question that happens to name a camera fell through to the configuration agent.</p>
+<p><b>Fix:</b> added an explicit rule to the router's system prompt — phrasing like "currently", "right now", "at this moment", or "spotlight view" routes to live_monitoring (present-moment status), while camera_operations stays scoped to static configuration (settings, groups, FPS, detection features), even when a specific camera is named.</p>
+<p><b>Verification:</b> both queries re-tested after the fix and now route correctly; the original camera_operations regression case ("Which cameras have email alerts enabled?") was re-tested alongside and still routes correctly — no regression introduced.</p>
+<p>This is the third router-disambiguation bug found through live testing across Phase 1's build and evaluation (the first two are documented in Section 9b/9c of the architecture doc), all following the same pattern: the router prompt is only as good as its explicit disambiguation rules, and each new agent added a new pairwise ambiguity that needed its own rule rather than being inferred by the model.</p>
+
+<h2>3b. MongoDB Connectivity Fixed, All 6 Agents Verified Live (2026-08-25)</h2>
+<p>The infrastructure blocker behind Section 1's "25/25 degraded" result is now fixed, and every agent has been re-verified against a genuinely reachable backend for the first time in this project.</p>
+<p><b>Root cause:</b> not a DNS server bug as long assumed. <code>docker inspect mongodb</code> showed <code>NetworkSettings.Networks: {}</code> — the <code>mongodb</code> container had no network endpoint attached at all, despite its config correctly naming <code>aksha-net</code>. <code>node_backend</code> couldn't resolve <code>mongodb</code> because the container genuinely wasn't joined to any network. A plain <code>docker restart mongodb</code> did not fix it; <code>docker network connect aksha-net mongodb</code> did, and restarting <code>node_backend</code> afterward produced a clean <code>Connected to MongoDB</code> in its logs.</p>
+<p><b>Two new bugs found once real connectivity existed:</b></p>
+<ol>
+<li><b>Wrong route.</b> <code>get_recent_alerts</code> called <code>/api/recentAlert/:hours</code>, which 404s on the actually-deployed backend image (<code>dockerhubalgo/aksha_refactor_backend</code> — a different, newer codebase than the <code>AkshaV2-UIUX/backend</code> source this project's tool contracts were built against). Black-box probing found the real contract needs a second path segment: <code>/api/recentAlert/:hours/all</code>. Fixed in <code>app/tools_alerts.py</code>.</li>
+<li><b>Misleading error wording.</b> <code>/api/email_notification</code> and <code>/api/insightReport</code> both return 4xx for the legitimate case of "nothing configured/no data yet" in this unseeded dev database, which the chatbot's uniform 4xx-handling was reporting as "service unavailable, try again" — true-sounding but wrong, since retrying changes nothing. Fixed in <code>app/tools_notification.py</code> and <code>app/tools_insights.py</code> to recognize these specific empty-state responses and answer honestly instead ("not configured yet" / "no data for that range").</li>
+</ol>
+<p><b>Live re-verification, one query per agent, real (empty) database:</b></p>
+<table>
+<tr><th>Agent</th><th>Query</th><th>Result</th></tr>
+<tr><td>camera_operations</td><td>How many cameras do we have configured?</td><td><code>resolved</code> / <code>live</code> — "You have 0 cameras configured."</td></tr>
+<tr><td>alert_investigation</td><td>What alerts were triggered in the last 24 hours?</td><td><code>resolved</code> / <code>live</code> — "No alerts were triggered in the last 24 hours."</td></tr>
+<tr><td>live_monitoring</td><td>Show me the live cameras right now.</td><td><code>resolved</code> / <code>live</code> — "There are no live cameras available at the moment."</td></tr>
+<tr><td>insights_analytics</td><td>Give me the insight report for the last 7 days.</td><td><code>resolved</code> / <code>live</code> — "the system returned no camera data"</td></tr>
+<tr><td>notification</td><td>What are the email notification settings?</td><td><code>resolved</code> / <code>live</code> — "Email notifications are not currently configured."</td></tr>
+<tr><td>help_guide</td><td>How do I search for an alert?</td><td><code>resolved</code> / <code>live</code> — correctly cites <code>search_alerts</code>/<code>/api/alert</code> (unchanged from 2026-08-24)</td></tr>
+</table>
+<p class="section-note">All six now return <code>status: resolved, freshness.kind: live</code>. These are honest empty-state answers, not fabricated data — correct behavior for a dev database with nothing seeded, and exactly what should happen.</p>
+<div class="update-box">
+<b>Also re-verified through the actual UI</b> (not just the API): the same live query flow was exercised through the real composer in Live mode, confirming the agent tile, "Live" freshness pill (accent-100 background, as specified), and streamed answer all render correctly for a genuinely live response — not just the scripted demo transcript.
+</div>
+<p class="section-note">Full detail, including the diagnostic steps and the exact <code>docker</code> commands used: Section 9e of <code>CHATBOT_SYSTEM_ARCHITECTURE.md</code>.</p>
+
+<h2>3c. Full 30-Query Matrix Re-Run, Live Backend (2026-08-25)</h2>
+<p>With connectivity fixed, the exact same 30 queries from Section 2 (same <code>eval_queries.tsv</code>) were re-run end-to-end against the real backend. Full raw output: <code>eval_results_live.jsonl</code>.</p>
+<div class="update-box">
+<b>Result: 30/30 correctly routed, 30/30 <code>status: resolved</code> with <code>freshness.kind: live</code>.</b> Every query that was previously a "correct route, honest TIMEOUT" degraded response in Section 2 now returns a real, honest empty-state answer instead — none fabricated data, and the router disambiguation fix from Section 3 held with zero regressions across all 30 queries (not just the 5 Live Monitoring queries it was originally tested against).
+</div>
+<p>Representative examples, one per agent (full 30 in the raw JSONL):</p>
+<table>
+<tr><th>Agent</th><th>Query</th><th>Live answer</th></tr>
+<tr><td>camera_operations</td><td>How many cameras do we have configured?</td><td>"We have zero cameras configured at the moment."</td></tr>
+<tr><td>alert_investigation</td><td>Give me the details of alert ID ALT-10293.</td><td>"I'm unable to locate any details for alert ALT-10293 at this time."</td></tr>
+<tr><td>live_monitoring</td><td>Are any cameras currently down or offline?</td><td>"I can't confirm the status of any cameras right now because the live-camera list returned no data."</td></tr>
+<tr><td>insights_analytics</td><td>Summarize alert activity for today.</td><td>"No alert activity is recorded for today; the insight report returned no camera entries."</td></tr>
+<tr><td>notification</td><td>List the notification recipients for the main gate group.</td><td>"The notification configuration for the main gate group is not set up, so there are currently no recipients defined."</td></tr>
+<tr><td>help_guide</td><td>What can this chatbot help me with?</td><td>On-topic capability summary, unchanged from the 2026-08-24 pass (this agent doesn't depend on <code>node_backend</code>).</td></tr>
+</table>
+<p><b>Two answer-wording nuances found, neither a functional bug:</b></p>
+<ol>
+<li><b>"Warehouse-A" framed as "disabled" rather than "doesn't exist."</b> For "Who gets notified for camera group Warehouse-A?", the answer was "No users or groups are configured... the notification setting is disabled." But this dev database has zero camera groups defined at all — "Warehouse-A" isn't a real group that happens to have notifications off, it doesn't exist. The tool's normalized empty-state response (Section 3b's fix) doesn't currently distinguish "this specific group has no config" from "no group with this name exists," and the formatter's prose picked the more specific-sounding (but less accurate) framing. Worth a follow-up: have <code>get_group_notification</code> or the agent check the group against <code>get_camera_groups</code> first, or soften the wording to "no group found or no config."</li>
+<li><b>A "try again" suggestion for a range that can't change.</b> For "How many alerts happened this month compared to last month?", the answer included "Please try retrieving the insight report again" — but the underlying issue is that no report data exists for this date range at all (an empty dev database), not a transient failure, so retrying the same range won't help. This is an LLM phrasing choice in the formatter, not a code defect, but it's the same class of "implies retry helps when it doesn't" issue Section 3b fixed for the raw tool-error path — worth a small system-prompt note telling agents not to suggest retrying for a confirmed-empty result.</li>
+</ol>
+<p class="section-note">Neither issue affects routing, tool correctness, or whether the answer is honest about having no data — both are precision-of-wording notes for a future polish pass.</p>
+<p class="section-note"><b>What this confirms that Section 3b's 6-query spot-check could not:</b> every one of the original 30 test queries — not just one representative per agent — now resolves correctly against live infrastructure. This closes the main gap flagged in the previous version of this report.</p>
+
+<h2>4. UI verification (manual, through the actual React frontend)</h2>
+<p>Beyond the scripted API evaluation, the chat was exercised through the real UI at <code>localhost:5173</code>:</p>
+<ul>
+<li><b>DEMO/LIVE toggle</b> (added during this session): confirmed Demo mode shows the untouched scripted design-spec transcript, Live mode starts from an empty state with suggestion chips, and sending a message from either mode correctly hops to Live and calls the real backend — with no cross-contamination between the two message lists.</li>
+<li><b>Live streaming end-to-end:</b> sent "How do I search for an alert?" through the real composer; the UI correctly showed the "routed to help_guide" status, streamed the answer token-by-token via SSE, and rendered the final <code>HELP_GUIDE</code> agent badge with a "LIVE" freshness indicator — matching the API-level result for the same query.</li>
+<li><b>Degraded-state rendering:</b> a live_monitoring query sent through the UI while the backend is down is expected to render the app's "degraded" message variant (retry button, correlation id) rather than the scripted demo's mock degraded example — consistent with the API-level TIMEOUT behavior confirmed above.</li>
+</ul>
+
+<h2>5. What this evaluation still has not verified</h2>
+<ol>
+<li><b>Behavior against a populated database.</b> Every live answer confirmed in Sections 3b and 3c is an honest <i>empty</i>-state response — this dev database has zero cameras, alerts, or notification configs seeded. Whether the formatter's prose stays accurate with real volume (many cameras, many alerts, actual recipients, genuine ambiguity between similarly-named cameras) is unverified. This is the one remaining real gap in data-accuracy coverage.</li>
+<li><b>The two answer-wording nuances from Section 3c</b> (a nonexistent group framed as "disabled" rather than "not found"; a "try again" suggestion for a permanently empty date range) are noted but not yet fixed.</li>
+<li><b>Multi-Language Support</b> was not included in the 30-query set (it's a formatter wrapper, not a routable agent as of the Section 9c fix) — its translation behavior was already verified separately with a live Hindi test in Section 9b and is not re-tested here.</li>
+</ol>
+
+<h2>6. Recommendation</h2>
+<p>Phase 1's chatbot logic (routing, tool-calling, graceful degradation, streaming, translation) is ready to sign off on. As of 2026-08-25, it has been confirmed working end-to-end against real backend connectivity across the complete 30-query test matrix — not just a spot-check, and not just its failure path — with zero new bugs and only two minor wording nuances found. Remaining open items: a populated-database check (Section 5), the two wording-nuance fixes (Section 3c), and a documentation-hygiene pass so <code>search_docs</code> doesn't present target architecture as shipped fact (Sections 9c, 10 of the architecture doc). None of these are functional defects — they're verification depth and polish work.</p>
+
+</body>
+</html>

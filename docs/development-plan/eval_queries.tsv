@@ -1,0 +1,31 @@
+agent	query
+camera_operations	How many cameras do we have configured?
+camera_operations	Which cameras have email alerts enabled?
+camera_operations	What camera groups exist and which cameras are in them?
+camera_operations	What's the FPS setting on the loading dock camera?
+camera_operations	List all cameras with person-detection enabled.
+alert_investigation	What alerts were triggered in the last 24 hours?
+alert_investigation	Show me alerts for the main entrance camera.
+alert_investigation	Were there any intrusion alerts yesterday?
+alert_investigation	Give me the details of alert ID ALT-10293.
+alert_investigation	Has camera 7 triggered any alerts this week?
+live_monitoring	Show me the live cameras right now.
+live_monitoring	Which cameras are currently in spotlight view?
+live_monitoring	Is the warehouse camera online at this moment?
+live_monitoring	What's the current live status of all cameras?
+live_monitoring	Are any cameras currently down or offline?
+insights_analytics	Give me the insight report for the last 7 days.
+insights_analytics	How many alerts happened this month compared to last month?
+insights_analytics	What's the trend in false-positive alerts recently?
+insights_analytics	Which camera generated the most alerts this week?
+insights_analytics	Summarize alert activity for today.
+notification	What are the email notification settings?
+notification	Who gets notified for camera group Warehouse-A?
+notification	Do we get a notification every time an alert fires, or only for certain types?
+notification	Was the notification for alert ALT-10293 delivered?
+notification	List the notification recipients for the main gate group.
+help_guide	How do I search for an alert?
+help_guide	How does multi-language support work?
+help_guide	What does the spotlight view feature do?
+help_guide	How do camera groups relate to notification settings?
+help_guide	What can this chatbot help me with?

@@ -1,0 +1,501 @@
+<title>Healthcare Vision Dataset Atlas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ink: #211B2E;
+    --ink-soft: #635C74;
+    --line: #E4DEEE;
+    --line-strong: #CFC5E3;
+    --surface: #FFFFFF;
+    --surface-sunken: #F8F6FC;
+    --bg: #FFFFFF;
+    --accent: #6D4AA0;
+    --accent-soft: #EFE7F8;
+
+    --ready: #1E6B45;
+    --ready-bg: #E7F4EC;
+    --adaptable: #92600A;
+    --adaptable-bg: #FDF3DF;
+    --nodata: #7A2E3A;
+    --nodata-bg: #FBEAEC;
+
+    --risk: #A6390B;
+    --risk-bg: #FDEDE2;
+
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Cambria, 'Times New Roman', serif;
+    --sans: 'IBM Plex Sans', Calibri, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  code {
+    font-family: var(--mono);
+    background: var(--surface-sunken);
+    padding: 0.1rem 0.38rem;
+    border-radius: 5px;
+    font-size: 0.85em;
+  }
+  button { font-family: inherit; }
+  *:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem) 6rem; }
+
+  /* ---------- Header ---------- */
+  header.hero { padding: clamp(2.6rem, 6vw, 4.2rem) 0 2.2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .kicker { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  h1.title { font-family: var(--serif); font-weight: 500; font-size: clamp(2.1rem, 4.4vw, 3.1rem); line-height: 1.1; margin: 0; text-wrap: balance; max-width: 24ch; }
+  .dek { font-size: 1.18rem; color: var(--ink-soft); max-width: 70ch; }
+
+  /* ---------- Summary strip ---------- */
+  .summary-row { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 1.6rem 0 0.4rem; }
+  .stat {
+    flex: 1; min-width: 150px;
+    background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 14px;
+    padding: 1.1rem 1.3rem; cursor: pointer; text-align: left;
+  }
+  .stat.active { border-color: currentColor; box-shadow: 0 0 0 2px currentColor inset; }
+  .stat .stat-n { font-family: var(--serif); font-size: 2.1rem; line-height: 1; display: block; }
+  .stat .stat-label { font-family: var(--mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-top: 0.35rem; display: block; }
+  .stat.tier-all { color: var(--ink); }
+  .stat.tier-ready { color: var(--ready); }
+  .stat.tier-adaptable { color: var(--adaptable); }
+  .stat.tier-nodata { color: var(--nodata); }
+
+  .bar { display: flex; height: 12px; border-radius: 100px; overflow: hidden; margin: 1.1rem 0 2.2rem; border: 1px solid var(--line); }
+  .bar span { display: block; }
+  .bar .b-ready { background: var(--ready); }
+  .bar .b-adaptable { background: var(--adaptable); }
+  .bar .b-nodata { background: var(--nodata); }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    position: sticky; top: 0; z-index: 5;
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(6px);
+    padding: 0.9rem 0; border-bottom: 1.5px solid var(--line-strong);
+    display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center;
+  }
+  #search {
+    font-family: var(--sans); font-size: 1rem; padding: 0.6rem 1rem;
+    border: 1.5px solid var(--line-strong); border-radius: 100px; min-width: 240px; flex: 1;
+    background: var(--surface); color: var(--ink);
+  }
+  #search:focus { border-color: var(--accent); }
+  .chip-filter {
+    font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.02em;
+    padding: 0.5rem 1rem; border-radius: 100px; border: 1.5px solid var(--line-strong);
+    background: var(--surface); color: var(--ink-soft); cursor: pointer;
+  }
+  .chip-filter.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .result-count { font-family: var(--mono); font-size: 0.85rem; color: var(--ink-soft); margin-left: auto; white-space: nowrap; }
+
+  /* ---------- Cards ---------- */
+  .grid { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.6rem; }
+  .card {
+    background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 14px;
+    overflow: hidden;
+  }
+  .card-head {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.1rem 1.4rem; background: none; border: none; cursor: pointer; text-align: left;
+  }
+  .card-head-left { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+  .card-cat { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .card-name { font-family: var(--sans); font-weight: 700; font-size: 1.18rem; }
+  .card-summary { font-size: 0.98rem; color: var(--ink-soft); margin-top: 0.15rem; }
+  .card-head-right { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
+  .tier-badge {
+    font-family: var(--mono); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.3rem 0.7rem; border-radius: 100px; white-space: nowrap;
+  }
+  .tier-badge.ready { background: var(--ready-bg); color: var(--ready); }
+  .tier-badge.adaptable { background: var(--adaptable-bg); color: var(--adaptable); }
+  .tier-badge.nodata { background: var(--nodata-bg); color: var(--nodata); }
+  .risk-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--risk); flex-shrink: 0; }
+  .chevron { font-size: 1.3rem; color: var(--ink-soft); transition: transform 0.15s ease; flex-shrink: 0; }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  .card-body { max-height: 0; overflow: hidden; transition: max-height 0.2s ease; }
+  .card.open .card-body { max-height: 900px; }
+  .card-body-inner { padding: 0 1.4rem 1.4rem; border-top: 1px dashed var(--line); }
+
+  .ds-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.95rem; }
+  .ds-table th { text-align: left; font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 0 0.7rem 0.5rem 0; border-bottom: 1px solid var(--line); }
+  .ds-table td { padding: 0.7rem 0.7rem 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .ds-table tr:last-child td { border-bottom: none; }
+  .license-tag { font-family: var(--mono); font-size: 0.78rem; padding: 0.15rem 0.5rem; border-radius: 5px; background: var(--surface-sunken); }
+  .license-tag.risky { background: var(--risk-bg); color: var(--risk); }
+
+  .gap-note { margin-top: 1rem; font-size: 0.98rem; color: var(--ink); background: var(--surface-sunken); border-radius: 10px; padding: 0.8rem 1rem; }
+  .gap-note b { color: var(--accent); }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); font-size: 1.05rem; }
+
+  /* ---------- Risk & recommendation sections ---------- */
+  section.note-block { padding: 3rem 0 0; border-top: 1.5px solid var(--line-strong); margin-top: 3rem; }
+  .note-block h2 { font-family: var(--serif); font-weight: 500; font-size: 1.6rem; margin: 0 0 0.8rem; }
+  .risk-callout {
+    background: var(--risk-bg); border-radius: 14px; padding: 1.4rem 1.6rem;
+  }
+  .risk-callout ul { margin: 0.6rem 0 0; padding-left: 1.2rem; }
+  .risk-callout li { margin-bottom: 0.5rem; font-size: 1rem; }
+  .reco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+  @media (max-width: 820px) { .reco-grid { grid-template-columns: 1fr; } }
+  .reco-card { border-radius: 14px; padding: 1.3rem 1.4rem; }
+  .reco-card.r1 { background: var(--ready-bg); }
+  .reco-card.r2 { background: var(--adaptable-bg); }
+  .reco-card.r3 { background: var(--nodata-bg); }
+  .reco-card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+  .reco-card p { margin: 0; font-size: 0.95rem; }
+
+  footer { margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); font-size: 0.92rem; color: var(--ink-soft); font-family: var(--mono); }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Aksha &middot; Healthcare Vertical</div>
+    <h1 class="title">Healthcare vision dataset atlas</h1>
+    <p class="dek">Every camera-based healthcare use case on the table, checked against what open-source training data actually exists. Filter by feasibility, search by use case, expand any card for the datasets, links, and licensing caveats.</p>
+  </header>
+
+  <div class="summary-row" id="statRow"></div>
+  <div class="bar" id="propBar"></div>
+
+  <div class="controls">
+    <input id="search" type="text" placeholder="Search use cases — e.g. &quot;fall&quot;, &quot;PPE&quot;, &quot;occupancy&quot;&hellip;" aria-label="Search use cases">
+    <button class="chip-filter active" data-cat="all">All categories</button>
+    <button class="chip-filter" data-cat="Patient movement &amp; safety">Patient movement</button>
+    <button class="chip-filter" data-cat="Staff compliance">Staff compliance</button>
+    <button class="chip-filter" data-cat="Occupancy &amp; queue">Occupancy &amp; queue</button>
+    <button class="chip-filter" data-cat="Security &amp; hazard">Security &amp; hazard</button>
+    <button class="chip-filter" data-cat="Niche &amp; privacy-sensitive">Niche</button>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">No use cases match that search.</div>
+
+  <section class="note-block">
+    <h2>License risk before anyone starts training</h2>
+    <div class="risk-callout">
+      <p>These datasets look usable, but their published terms are research/non-commercial only, or unconfirmed. Using them to train a model that ships in a commercial product is a legal question, not just a technical shortcut &mdash; route through IP/compliance before an intern downloads and trains on any of these.</p>
+      <ul>
+        <li><code>CrowdHuman</code> &mdash; explicitly non-commercial, redistribution prohibited</li>
+        <li><code>ShanghaiTech Crowd Counting</code>, <code>PETS2009</code>, <code>Mall Dataset</code> &mdash; research-use license, commercial terms unclear</li>
+        <li><code>RWF-2000</code> (violence detection) &mdash; request-based academic access, no stated commercial terms</li>
+        <li><code>PSKUS / EDI-RIGA</code> (hand hygiene) &mdash; academic license, cite-on-use</li>
+        <li><code>Medical Waste Dataset 4.0</code> &mdash; referenced in a paper, public download/license status unconfirmed</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="note-block">
+    <h2>Recommended intern split for Monday</h2>
+    <div class="reco-grid">
+      <div class="reco-card r1">
+        <h3>Ready &rarr; build now</h3>
+        <p>Clear data, permissive licenses, fast iteration. Good first assignment &mdash; get a baseline model trained and evaluated this week.</p>
+      </div>
+      <div class="reco-card r2">
+        <h3>Adaptable &rarr; second wave</h3>
+        <p>Pair every assignment here with an explicit license-verification task before any training run, plus a plan for hospital-specific fine-tuning data.</p>
+      </div>
+      <div class="reco-card r3">
+        <h3>No data &rarr; reframe the task</h3>
+        <p>Don't send an intern hunting for a dataset that doesn't exist. Reframe as data-collection planning: what footage would need to be captured, from where, under what consent/privacy process.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Aksha &middot; Healthcare vertical research &middot; compiled from open dataset sources, August 2026</footer>
+</div>
+
+<script>
+const DATA = [
+  // Patient movement & safety
+  { cat: "Patient movement & safety", name: "Patient fall detection", tier: "adaptable",
+    summary: "Best-covered movement use case — several transferable datasets, none hospital-native.",
+    datasets: [
+      { name: "UR Fall Detection Dataset", url: "http://fenix.univ.rzeszow.pl/~mkepski/ds/uf.html", size: "30 fall + 40 ADL sequences, RGB+depth+accelerometer", license: "Research use", risky: false },
+      { name: "Le2i Fall Detection Dataset", url: "https://github.com/YifeiYang210/Fall_Detection_dataset", size: "~220 RGB videos, frame-level fall labels", license: "Research use", risky: false },
+      { name: "NTU RGB+D 60/120", url: "https://rose1.ntu.edu.sg/dataset/actionRecognition/", size: "56,880–114,480 clips, RGB+depth+IR+skeleton", license: "Academic, registration, non-commercial", risky: false }
+    ],
+    gap: "Home/lab settings, not wards — no hospital gowns, IV poles, or hospital beds — but posturally transferable with fine-tuning." },
+  { cat: "Patient movement & safety", name: "Bed-exit / unattended bed monitoring", tier: "nodata",
+    summary: "Building blocks exist (bed detection, in-bed pose) but no dataset captures the actual exit event.",
+    datasets: [
+      { name: "Bed-Detection Dataset (Celebal)", url: "https://universe.roboflow.com/celebal-technologies/bed-detection", size: "80 images, bed detection only", license: "Roboflow open", risky: false },
+      { name: "SLP Dataset (in-bed pose)", url: "https://github.com/ostadabbas/SLP-Dataset-and-Code", size: "109 subjects, RGB+IR+depth+pressure, 7 in a real hospital", license: "Research use", risky: false }
+    ],
+    gap: "Nothing labels the on-bed → off-bed → exit transition as a public benchmark. Needs custom capture." },
+  { cat: "Patient movement & safety", name: "Wandering / elopement detection", tier: "nodata",
+    summary: "No public vision dataset exists — only GPS-trace research in other domains.",
+    datasets: [
+      { name: "Geolife GPS Trajectories (not vision)", url: "https://www.microsoft.com/en-us/research/publication/geolife-gps-trajectory-dataset-user-guide/", size: "GPS traces, not camera data", license: "Microsoft Research", risky: false }
+    ],
+    gap: "Dementia/ward-specific wandering has no released video data — proprietary or unpublished where it exists." },
+  { cat: "Patient movement & safety", name: "Prolonged immobility detection", tier: "nodata",
+    summary: "Pressure-ulcer image sets exist but detect wounds after the fact, not movement over time.",
+    datasets: [
+      { name: "Roboflow PressureUlcer", url: "https://universe.roboflow.com/fid-fvcc6/pressureulcer-ctn4w", size: "~481 static wound images", license: "Roboflow open", risky: false }
+    ],
+    gap: "No dataset labels position-change/immobility over time. SLP dataset could serve as a pose-tracking base component." },
+
+  // Staff compliance
+  { cat: "Staff compliance", name: "Hand hygiene compliance", tier: "adaptable",
+    summary: "Real hospital footage exists — the strongest match in the staff-compliance group, but licensed for research only.",
+    datasets: [
+      { name: "PSKUS / EDI-RIGA Handwashing Dataset", url: "https://github.com/edi-riga/handwash", size: "~3,000+ clips, real hospital staff, WHO 6/7-step labels", license: "Academic, cite-on-use", risky: true },
+      { name: "Kaggle Hand Wash Dataset", url: "https://www.kaggle.com/datasets/realtimear/hand-wash-dataset", size: "Video clips, 7 WHO wash steps", license: "Mostly non-commercial", risky: true }
+    ],
+    gap: "Correct taxonomy and real clinical source, but volume/diversity likely insufficient for production without added in-house data." },
+  { cat: "Staff compliance", name: "Face mask detection", tier: "ready",
+    summary: "Clean, public-domain dataset — the most commercially safe PPE dataset available.",
+    datasets: [
+      { name: "Kaggle Face Mask Detection", url: "https://www.kaggle.com/datasets/andrewmvd/face-mask-detection", size: "853 images, bounding boxes", license: "CC0 — commercial-safe", risky: false }
+    ],
+    gap: "Covers masks only — gowns, gloves, and face shields need the broader clinical-PPE dataset below." },
+  { cat: "Staff compliance", name: "Broader clinical PPE (gown, gloves, shield)", tier: "adaptable",
+    summary: "Large volume available, but mostly construction-site imagery rather than clinical attire.",
+    datasets: [
+      { name: "Roboflow \"PPEs\" dataset", url: "https://universe.roboflow.com/search?q=class:ppe+personal+protective+equipement", size: "~24,900 images, 12 classes", license: "Varies by uploader", risky: false },
+      { name: "HF keremberke/protective-equipment-detection", url: "https://huggingface.co/datasets/keremberke/protective-equipment-detection", size: "Image dataset, PPE classes", license: "Check dataset card", risky: false }
+    ],
+    gap: "Needs domain-specific relabeling on real hospital imagery to distinguish surgical gowns/shields from generic safety gear." },
+  { cat: "Staff compliance", name: "Nurse rounding compliance", tier: "nodata",
+    summary: "Only commercial RTLS/badge hardware products exist — no public vision dataset.",
+    datasets: [],
+    gap: "Room-entry/dwell-time-for-rounding is unaddressed by any public dataset. Needs custom data collection." },
+  { cat: "Staff compliance", name: "Housekeeping / sanitization verification", tier: "nodata",
+    summary: "No dataset addresses cleaning-staff activity recognition in a clinical setting.",
+    datasets: [],
+    gap: "Nearest thing found is a hosted 'is this bed clean' classifier product, not an open dataset." },
+
+  // Occupancy & queue
+  { cat: "Occupancy & queue", name: "Ward / room occupancy monitoring", tier: "adaptable",
+    summary: "Generic room/people datasets exist for the detector backbone; bed-occupancy semantics are not covered.",
+    datasets: [
+      { name: "Roboflow Room Occupancy", url: "https://universe.roboflow.com/latifa-sassi-gc2rt/room-occupancy-4wqfr", size: "~2,956 images, bounding boxes", license: "Roboflow Universe (verify per-dataset)", risky: false }
+    ],
+    gap: "Generic indoor scenes, not wards or beds — occupancy-vs-bed semantics need custom labeled hospital footage." },
+  { cat: "Occupancy & queue", name: "Queue management / wait-time estimation", tier: "nodata",
+    summary: "No image/video dataset models queue length or dwell time — only tabular timestamp data or BLE-based commercial products.",
+    datasets: [],
+    gap: "Generic crowd-counting sets can supply a people-counter, but nothing models a linear queue." },
+  { cat: "Occupancy & queue", name: "Visitor overcrowding detection", tier: "adaptable",
+    summary: "Multiple crowd-counting benchmarks exist, but nearly all are non-commercial-licensed and none depict hospital corridors.",
+    datasets: [
+      { name: "ShanghaiTech Crowd Counting", url: "#", size: "1,198 images, density maps", license: "Research-only (unverified commercial terms)", risky: true },
+      { name: "CrowdHuman", url: "https://www.crowdhuman.org", size: "~15,000 images, dense bounding boxes", license: "Non-commercial, redistribution prohibited", risky: true },
+      { name: "Mall Dataset", url: "#", size: "2,000 frames, indoor mall", license: "Research-only", risky: true },
+      { name: "PETS2009", url: "http://www.pets2009.net", size: "Multi-camera outdoor crowd video", license: "Academic benchmark, unclear terms", risky: true }
+    ],
+    gap: "All are generic crowd scenes (streets, malls, campuses) — none hospital-specific, and licensing blocks direct commercial training." },
+  { cat: "Occupancy & queue", name: "Corridor / exit obstruction detection", tier: "nodata",
+    summary: "Only commercial product marketing found — no downloadable dataset or academic benchmark.",
+    datasets: [],
+    gap: "Would combine generic object detection (COCO) with custom-collected hospital corridor footage." },
+
+  // Security & hazard
+  { cat: "Security & hazard", name: "Unauthorized-zone access / intrusion", tier: "adaptable",
+    summary: "Not really a dataset problem — the zone logic is software Aksha already builds elsewhere.",
+    datasets: [
+      { name: "PDIWS (thermal person detection)", url: "https://arxiv.org/pdf/2302.13293", size: "Small thermal person-detection set", license: "Research (check paper)", risky: false }
+    ],
+    gap: "A generic person-detector (even COCO-based) plus polygon-zone logic — the same pattern already used in Aksha_Pipeline — covers this; no zone-specific dataset needed." },
+  { cat: "Security & hazard", name: "Weapon detection (ED entrance)", tier: "ready",
+    summary: "Good volume, CCTV-angle coverage is the closest visual match of any dataset in this whole atlas.",
+    datasets: [
+      { name: "Weapon Detection CCTV v3", url: "https://universe.roboflow.com/weapon-detection-cctv/weapon-detection-cctv-v3-dataset", size: "~2,614 CCTV-style images, 11 classes", license: "Check per-upload (many CC BY 4.0)", risky: false },
+      { name: "Gun and Knife Detection", url: "https://universe.roboflow.com/mahad-ahmed/gun-and-knife-detection", size: "~8,451 images", license: "Check per-upload", risky: false }
+    ],
+    gap: "Not hospital-specific, but CCTV framing transfers well to an ED-entrance camera with light fine-tuning." },
+  { cat: "Security & hazard", name: "Aggression / violence detection", tier: "adaptable",
+    summary: "Best base dataset is real CCTV-style footage, but licensing is unclear for commercial use.",
+    datasets: [
+      { name: "RWF-2000", url: "https://arxiv.org/abs/1911.05913", size: "2,000 five-second clips, real CCTV via YouTube", license: "Academic/request-based, no stated commercial terms", risky: true }
+    ],
+    gap: "No healthcare-setting fights in the dataset — needs hospital-context fine-tuning plus a licensing check." },
+  { cat: "Security & hazard", name: "Fire / smoke detection", tier: "ready",
+    summary: "Strong Kaggle coverage, YOLO-ready formats already exist.",
+    datasets: [
+      { name: "Fire and Smoke Dataset", url: "https://www.kaggle.com/datasets/dataclusterlabs/fire-and-smoke-dataset", size: "Thousands of images", license: "Mostly CC0/CC-BY", risky: false },
+      { name: "Smoke-Fire-Detection-YOLO", url: "https://www.kaggle.com/datasets/sayedgamal99/smoke-fire-detection-yolo", size: "Pre-formatted YOLO labels", license: "Check dataset page", risky: false }
+    ],
+    gap: "Mostly generic indoor/outdoor scenes — needs adaptation for ward/OT lighting and camera angles." },
+  { cat: "Security & hazard", name: "Slip / spill hazard detection", tier: "nodata",
+    summary: "No standardized public benchmark — real deployments use proprietary data.",
+    datasets: [],
+    gap: "Would require custom collection or synthetic wet-floor generation." },
+
+  // Niche
+  { cat: "Niche & privacy-sensitive", name: "NICU / infant crib monitoring", tier: "adaptable",
+    summary: "A real NICU dataset exists, but it's tiny and pose-only, not an 'empty crib' detector.",
+    datasets: [
+      { name: "babyPose", url: "https://zenodo.org/record/3891404", size: "16 depth videos, NICU, joint-annotated", license: "CC BY 4.0", risky: false }
+    ],
+    gap: "Only 16 videos, and it teaches infant pose, not the specific empty-crib or distress signal Aksha would need." },
+  { cat: "Niche & privacy-sensitive", name: "Infant abduction alert", tier: "nodata",
+    summary: "Only commercial RFID/tag hardware exists — nothing vision-based and public.",
+    datasets: [],
+    gap: "Generic person/zone-crossing detection could be adapted, but nothing infant-specific exists." },
+  { cat: "Niche & privacy-sensitive", name: "Restraint-check compliance", tier: "nodata",
+    summary: "No dataset addresses restraint checks or check-interval timestamps.",
+    datasets: [],
+    gap: "In-bed monitoring datasets exist generally but don't cover this specific protocol." },
+  { cat: "Niche & privacy-sensitive", name: "Code Blue / response-time tracking", tier: "nodata",
+    summary: "Only alarm-signal/EHR datasets found — nothing camera-based for staff-arrival timing.",
+    datasets: [],
+    gap: "Would need custom video capture correlated with real alert timestamps." },
+  { cat: "Niche & privacy-sensitive", name: "Biomedical waste segregation", tier: "adaptable",
+    summary: "Relevant datasets are referenced in literature, but download/license status isn't confirmed.",
+    datasets: [
+      { name: "Medical Waste Dataset 4.0", url: "https://arxiv.org/abs/2508.07450", size: "RGB 1920×1080, gauze/gloves/caps/etc.", license: "Unconfirmed — verify before use", risky: true },
+      { name: "TrashNet (weak proxy)", url: "https://github.com/garythung/trashnet", size: "~2,500 images, household recyclables", license: "MIT / CC-BY-4.0", risky: false }
+    ],
+    gap: "TrashNet is public but domain-mismatched (household recycling, not medical/color-coded bins)." },
+  { cat: "Niche & privacy-sensitive", name: "Hospital equipment tracking", tier: "ready",
+    summary: "The most training-ready dataset in the whole atlas — good volume, permissive license.",
+    datasets: [
+      { name: "Hospital_Scene_Data", url: "https://github.com/Wangmmstar/Hospital_Scene_Data", size: "Labeled infusion pump/ventilator/cart images", license: "Open (GitHub)", risky: false },
+      { name: "Deep Detection of People and Mobility Aids", url: "https://arxiv.org/abs/1708.00674", size: "17,000+ RGB-D images", license: "Academic", risky: false },
+      { name: "Wheelchair Detection", url: "https://universe.roboflow.com/2458761304-qq-com/wheelchair-detection", size: "514 images", license: "Roboflow open", risky: false }
+    ],
+    gap: "Covers crash carts, ventilators, wheelchairs, infusion pumps directly — minimal adaptation needed." }
+];
+
+const TIERS = { ready: "Ready", adaptable: "Adaptable", nodata: "No data" };
+
+let activeTier = "all";
+let activeCat = "all";
+let query = "";
+
+function renderStats() {
+  const counts = { all: DATA.length, ready: 0, adaptable: 0, nodata: 0 };
+  DATA.forEach(d => counts[d.tier]++);
+  const statRow = document.getElementById("statRow");
+  statRow.innerHTML = `
+    <button class="stat tier-all ${activeTier==='all'?'active':''}" data-tier="all">
+      <span class="stat-n">${counts.all}</span><span class="stat-label">All use cases</span>
+    </button>
+    <button class="stat tier-ready ${activeTier==='ready'?'active':''}" data-tier="ready">
+      <span class="stat-n">${counts.ready}</span><span class="stat-label">Ready to train</span>
+    </button>
+    <button class="stat tier-adaptable ${activeTier==='adaptable'?'active':''}" data-tier="adaptable">
+      <span class="stat-n">${counts.adaptable}</span><span class="stat-label">Adaptable</span>
+    </button>
+    <button class="stat tier-nodata ${activeTier==='nodata'?'active':''}" data-tier="nodata">
+      <span class="stat-n">${counts.nodata}</span><span class="stat-label">No public data</span>
+    </button>
+  `;
+  statRow.querySelectorAll(".stat").forEach(el => el.addEventListener("click", () => {
+    activeTier = el.dataset.tier;
+    renderAll();
+  }));
+
+  const pct = k => (counts[k] / counts.all * 100).toFixed(1);
+  document.getElementById("propBar").innerHTML = `
+    <span class="b-ready" style="width:${pct('ready')}%" title="Ready: ${counts.ready}"></span>
+    <span class="b-adaptable" style="width:${pct('adaptable')}%" title="Adaptable: ${counts.adaptable}"></span>
+    <span class="b-nodata" style="width:${pct('nodata')}%" title="No data: ${counts.nodata}"></span>
+  `;
+}
+
+function matches(d) {
+  const tierOk = activeTier === "all" || d.tier === activeTier;
+  const catOk = activeCat === "all" || d.cat === activeCat;
+  const q = query.trim().toLowerCase();
+  const qOk = !q || d.name.toLowerCase().includes(q) || d.summary.toLowerCase().includes(q) || d.cat.toLowerCase().includes(q);
+  return tierOk && catOk && qOk;
+}
+
+function cardHtml(d, idx) {
+  const riskAny = d.datasets.some(ds => ds.risky);
+  const rows = d.datasets.map(ds => `
+    <tr>
+      <td><a href="${ds.url}" target="_blank" rel="noopener">${ds.name}</a></td>
+      <td>${ds.size}</td>
+      <td><span class="license-tag ${ds.risky ? 'risky' : ''}">${ds.license}</span></td>
+    </tr>
+  `).join("");
+  const tableOrNote = d.datasets.length
+    ? `<table class="ds-table"><thead><tr><th>Dataset</th><th>Size / format</th><th>License</th></tr></thead><tbody>${rows}</tbody></table>`
+    : `<p style="color:var(--ink-soft); margin-top:0.8rem;">No usable public dataset found.</p>`;
+  return `
+    <div class="card" data-idx="${idx}">
+      <button class="card-head" aria-expanded="false">
+        <div class="card-head-left">
+          <span class="card-cat">${d.cat}</span>
+          <span class="card-name">${d.name}</span>
+          <span class="card-summary">${d.summary}</span>
+        </div>
+        <div class="card-head-right">
+          ${riskAny ? '<span class="risk-dot" title="License risk — verify before commercial training"></span>' : ''}
+          <span class="tier-badge ${d.tier}">${TIERS[d.tier]}</span>
+          <span class="chevron">&#9662;</span>
+        </div>
+      </button>
+      <div class="card-body">
+        <div class="card-body-inner">
+          ${tableOrNote}
+          <div class="gap-note"><b>Gap / mapping note &mdash;</b> ${d.gap}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGrid() {
+  const filtered = DATA.filter(matches);
+  const grid = document.getElementById("grid");
+  const empty = document.getElementById("emptyState");
+  document.getElementById("resultCount").textContent = `${filtered.length} of ${DATA.length} use cases`;
+  if (!filtered.length) {
+    grid.innerHTML = "";
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+  grid.innerHTML = filtered.map((d, i) => cardHtml(d, i)).join("");
+  grid.querySelectorAll(".card-head").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".card");
+      const isOpen = card.classList.toggle("open");
+      btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  });
+}
+
+function renderAll() {
+  renderStats();
+  renderGrid();
+  document.querySelectorAll(".chip-filter").forEach(el => {
+    el.classList.toggle("active", el.dataset.cat === activeCat);
+  });
+}
+
+document.getElementById("search").addEventListener("input", (e) => {
+  query = e.target.value;
+  renderGrid();
+});
+
+document.querySelectorAll(".chip-filter").forEach(el => {
+  el.addEventListener("click", () => {
+    activeCat = el.dataset.cat;
+    renderAll();
+  });
+});
+
+renderAll();
+</script>

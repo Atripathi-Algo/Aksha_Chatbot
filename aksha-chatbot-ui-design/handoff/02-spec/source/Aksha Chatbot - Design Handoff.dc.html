@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-f9c53fc5-43e0-423e-925e-69a398c0640a/styles.css">
+<script src="_ds/modernist-f9c53fc5-43e0-423e-925e-69a398c0640a/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+<script src="./doc-page.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1b2029"/><rect x="28" y="24" width="44" height="52" fill="#fbfbfc"/><rect x="34" y="34" width="32" height="4" fill="#326bc9"/><rect x="34" y="44" width="32" height="2" fill="#b2b7c0"/><rect x="34" y="52" width="32" height="2" fill="#b2b7c0"/><rect x="34" y="60" width="20" height="2" fill="#b2b7c0"/></svg></template>
+<style>
+doc-page:not(:defined){visibility:hidden}
+:root{--color-bg:#f4f5f7;--color-surface:#e8eaee;--color-text:#1b2029;--color-accent:#326bc9;--color-divider:color-mix(in srgb,#1b2029 40%,transparent);
+--color-accent-100:#eef3fc;--color-accent-200:#d6e3f7;--color-accent-300:#b3caf0;--color-accent-500:#4176cd;--color-accent-700:#1f4788;--color-accent-800:#163364;
+--color-neutral-100:#fbfbfc;--color-neutral-200:#e6e8ec;--color-neutral-300:#d0d4db;--color-neutral-400:#b2b7c0;--color-neutral-500:#92979f;--color-neutral-600:#757a83;--color-neutral-700:#595e66;--color-neutral-800:#3d4149;--color-neutral-900:#272b33}
+doc-page{font-family:"Archivo",system-ui,sans-serif;color:#1b2029}
+h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;text-wrap:balance}
+p,li,td,th{text-wrap:pretty}
+table.spec{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:12.5px}
+table.spec th{text-align:left;font:700 9.5px/1.3 "Archivo";letter-spacing:.12em;text-transform:uppercase;border-bottom:2px solid #1b2029;padding:6px 8px 6px 0;vertical-align:bottom}
+table.spec td{border-bottom:1px solid rgba(27,32,41,.25);padding:8px 8px 8px 0;vertical-align:top;line-height:1.5}
+table.spec tr{break-inside:avoid}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:#e6e8ec;padding:1px 4px}
+.callout{border-left:2px solid #326bc9;padding:2px 0 2px 14px;margin:18px 0;break-inside:avoid;orphans:3;widows:3}
+.kicker{font:700 9.5px/1 "Archivo";letter-spacing:.16em;text-transform:uppercase;color:#1f4788;margin:0 0 6px}
+</style>
+</helmet>
+<doc-page margin="0.8in">
+<div slot="header" style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #1b2029;padding-bottom:6px;font:600 9px/1 'Archivo';letter-spacing:.14em;text-transform:uppercase;color:#595e66">
+  <span>Aksha · Support chatbot UI</span><span>Design handoff · v1.0 · 24 Aug 2026</span>
+</div>
+<div slot="footer" style="border-top:1px solid rgba(27,32,41,.25);padding-top:6px;font:500 9px/1 'Archivo';letter-spacing:.1em;text-transform:uppercase;color:#757a83">Aksha assistant — engineering handoff · design source: <code>Aksha Chatbot UI.dc.html</code>, option 3a</div>
+
+<h1 style="font:800 30px/1.1 'Archivo';letter-spacing:-.02em;margin:0 0 10px">Aksha support chatbot — UI design handoff</h1>
+<p style="font:400 14.5px/1.65 'Archivo';margin:0 0 6px;max-width:62ch">Specification for the in-app support chatbot panel: container, message-type ladder, agent attribution, rich output types, evidence and trust affordances, degraded states, responsive behaviour and accessibility. Built as an evolution of the existing <code>ChatPopover.tsx</code>, MUI v5, light theme only.</p>
+<p style="font:400 12.5px/1.6 'Archivo';color:#595e66;margin:0 0 22px">Design source of truth: option <b>3a</b> (ruled ledger) with the agent and chart work from <b>4a–4c</b>. Anything not stated here is deliberately left to engineering discretion.</p>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">1 · Decisions and rationale</h2>
+<table class="spec">
+<thead><tr><th style="width:26%">Decision</th><th style="width:34%">What we chose</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Container</td><td>Docked right-hand side panel, 420px, full height; overlays only the rightmost dashboard column</td><td>Operators watch live feeds while asking. A floating popover occludes tiles and is too small for cited answers; full-screen breaks monitoring.</td></tr>
+<tr><td>Launcher</td><td>Docked right-edge tab, 40px, with an unread dot</td><td>A floating action button always lands on top of a camera tile.</td></tr>
+<tr><td>Message layout</td><td>Flush-left ledger rows separated by 1px rules; no chat bubbles for assistant replies</td><td>Answers carry tables, charts and frames — a bubble constrains them. Role and freshness live on a meta line above each message.</td></tr>
+<tr><td>Weight ladder</td><td>Visual weight rises with consequence; only the approval type gets a solid accent band</td><td>Operators must be able to spot a state-changing request at a glance without reading.</td></tr>
+<tr><td>Density</td><td>Calmer than the dashboard: 16px gutters, 13.5px body, one accent</td><td>The panel's job is to reduce cognitive load, not add another dense surface.</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">2 · Panel shell</h2>
+<p style="font:400 14px/1.65 'Archivo';margin:0 0 10px">Four fixed regions, top to bottom:</p>
+<table class="spec">
+<thead><tr><th style="width:22%">Region</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Header</td><td>48px, <code>neutral-100</code> ground, 2px ink bottom rule. 22px brand mark, "AKSHA ASSISTANT" at 11px/700, letter-spacing .14em. Right: <b>Agents</b> disclosure (chevron-down), <b>Download</b>, close (Lucide <code>x</code>, 15px).</td></tr>
+<tr><td>Scope strip</td><td>Optional. Active context chips (camera, date, severity) with per-chip dismiss (Lucide <code>x</code>, 11px) and a Clear action. Present whenever the conversation carries implicit scope; hidden when empty.</td></tr>
+<tr><td>Message list</td><td>Scrolling flow, one padded row per message, 1px divider between rows. Auto-scrolls only when already pinned to the bottom.</td></tr>
+<tr><td>Composer</td><td>2px ink top rule, <code>neutral-100</code> ground. Input line, language segmented control (EN / हिं / मर), primary Send. Send is 32px tall minimum; on touch viewports 44px.</td></tr>
+</tbody>
+</table>
+<div class="callout"><p class="kicker">Empty state</p><p style="font:400 13.5px/1.6 'Archivo';margin:0">Display line ("Ask instead of navigating."), one sentence of capability, then exactly three clickable example questions as full-width rows with a trailing arrow. No wall of text, no capability list.</p></div>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">3 · Message-type ladder</h2>
+<p style="font:400 14px/1.65 'Archivo';margin:0 0 4px">Seven types. The left marker and fill are the entire encoding — nothing else changes.</p>
+<table class="spec">
+<thead><tr><th style="width:20%">Type</th><th style="width:38%">Treatment</th><th>Contains</th></tr></thead>
+<tbody>
+<tr><td>Operator message</td><td><code>surface</code> fill, 2px ink left rule</td><td>Text only, any script</td></tr>
+<tr><td>Answer</td><td>2px <code>divider</code> left rule, no fill</td><td>Prose, optional table / chart / frames, citation chips, freshness label</td></tr>
+<tr><td>Streaming</td><td>2px accent left rule + 2px animated progress bar; block caret at the text head</td><td>Partial prose, "sources resolving · n of m", Stop action</td></tr>
+<tr><td>Clarification</td><td>2px accent box on <code>accent-100</code>; header "NEEDS YOUR ANSWER"</td><td>Question + 2–3 full-width option buttons</td></tr>
+<tr><td>Degraded</td><td>1px <code>neutral-600</code> box on <code>neutral-200</code>; header "PARTIAL ANSWER"</td><td>What failed, what still works, correlation ref, Retry / Copy ref</td></tr>
+<tr><td>Escalation</td><td>Answer rule + captured-detail table</td><td>Ticket, camera, alert, description; Edit details / View ticket</td></tr>
+<tr><td>Approval <span style="color:#757a83">(future)</span></td><td>2px ink box, solid accent band, expiry countdown</td><td>Action statement, consequence line, Approve / Reject (full width, flush-left labels)</td></tr>
+</tbody>
+</table>
+<div class="callout"><p class="kicker">Rule</p><p style="font:400 13.5px/1.6 'Archivo';margin:0">Approval is the only type allowed a solid accent field, because it is the only one that changes system state. Ship it visually de-emphasised (85% opacity, disabled actions) until the backend exists — do not invent a second red-field type.</p></div>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">4 · Agents</h2>
+<p style="font:400 14px/1.65 'Archivo';margin:0 0 4px">Every answer names the agent that produced it. The badge replaces the generic role label in the same position and size, so the ledger rhythm is unchanged. API-backed agents get an accent-tinted badge; chatbot-layer agents a neutral one and <b>no freshness label</b>, since they read nothing live.</p>
+<table class="spec">
+<thead><tr><th style="width:30%">Agent</th><th style="width:38%">Reads</th><th>Badge / notes</th></tr></thead>
+<tbody>
+<tr><td>Help &amp; Product Guide</td><td>Indexed docs / UserManual</td><td>Neutral badge; cites a manual section, shows doc version</td></tr>
+<tr><td>Alert Investigation (basic)</td><td><code>/api/alert</code> · <code>/api/myAlert</code></td><td>Accent badge; alert-ID chips + frames</td></tr>
+<tr><td>Camera Operations</td><td><code>/api/camera</code> · <code>/api/camgroup</code></td><td>Accent badge; usually a table answer</td></tr>
+<tr><td>Live Monitoring</td><td><code>/api/active</code> · Socket.IO</td><td>Accent badge; freshness reads "Socket · n s ago"</td></tr>
+<tr><td>Insights &amp; Analytics</td><td><code>/api/insight</code> · <code>/api/insightReport</code></td><td>Accent badge; bar / pie / table + date-range label</td></tr>
+<tr><td>Notification (read)</td><td><code>/api/notification</code></td><td>Accent badge; delivery status, never sends mail itself</td></tr>
+<tr><td>Multi-Language Support</td><td>Chatbot layer only</td><td>Neutral badge with language code; phrases another agent's result — footer states both</td></tr>
+<tr><td>Error Code Explanation</td><td>Chatbot layer only</td><td>Neutral badge; mono code header + plain-language cause block</td></tr>
+</tbody>
+</table>
+<p style="font:400 13.5px/1.6 'Archivo';margin:0 0 6px"><b>Directory.</b> The header's Agents disclosure opens a two-column grid of all eight, each with its endpoints in mono. Accent-200 tiles read live endpoints; plain tiles answer from the chatbot layer. It is informational — routing is automatic; a manual override is out of scope for phase one.</p>
+<p style="font:400 13.5px/1.6 'Archivo';margin:0"><b>Multi-agent answers.</b> When several agents contribute, the badge collapses to "n agents" with their names beside it and the answer is presented as one labelled fact list (Alert / Delivery / Meaning) — never as several separate replies.</p>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">5 · Rich output types</h2>
+<p style="font:400 14px/1.65 'Archivo';margin:0 0 4px">All rich output shares one container: 1px ink box, header strip with the title and an export action, footer naming the endpoint and range. Series colours are accent ramp steps only — <code>800</code> / <code>500</code> / <code>200</code> — so charts stay mono and remain legible printed in grayscale.</p>
+<table class="spec">
+<thead><tr><th style="width:18%">Type</th><th style="width:42%">Spec</th><th>Rules</th></tr></thead>
+<tbody>
+<tr><td>Table</td><td>Design-system <code>.table</code>, 11.5px, header row repeats; max 5 rows inline with "showing 5 of n"</td><td>Expand opens the full result in the Alerts/Cameras screen. CSV export. Never horizontally scroll — drop columns instead.</td></tr>
+<tr><td>Bar chart</td><td>Horizontal bars, 14px tall, 96px label gutter, value flush right; track <code>neutral-200</code></td><td>Horizontal so camera names stay readable. Max 6 bars inline; more goes to a report link. Always print the value — the bar is secondary.</td></tr>
+<tr><td>Pie / donut</td><td>110px inline SVG donut, 22px stroke, no rounded caps; legend right with label, count and percent</td><td>Max 4 segments; a fifth becomes "Other". Legend, not labels-on-slices. <code>role="img"</code> with a summarising <code>aria-label</code>.</td></tr>
+<tr><td>Frames</td><td>16:9, 180–200px wide, 1px ink border, grayscale, caption strip with alert ID and time</td><td>One per cited alert, max two side by side; click opens the alert in review. Grayscale per the imagery rule.</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">6 · Evidence, freshness, language</h2>
+<table class="spec">
+<thead><tr><th style="width:22%">Element</th><th>Spec</th></tr></thead>
+<tbody>
+<tr><td>Citation chips</td><td>1px ink border, 10px/600 label, zero radius, indented to the answer's text column under a "SOURCES" kicker. Content: alert ID + time, camera name, or document section. Hover inverts to ink fill. Cached answers use a dashed border.</td></tr>
+<tr><td>Freshness label</td><td>Right end of the meta line, above the answer — a different band from the citations, so the two never compete. Three forms: filled dot + "LIVE · hh:mm:ss"; hollow dot + "CACHED · LAST KNOWN hh:mm"; agent-specific "SOCKET · n s ago". Cached answers also carry a Retry live action.</td></tr>
+<tr><td>Endpoint read</td><td>Mono, <code>neutral-700</code>, beside the citation chips. Informational for operators, diagnostic for support.</td></tr>
+<tr><td>Mixed script</td><td>Body line-height rises from 1.6 to 1.75 for Devanagari. Camera names, alert IDs and timestamps stay Latin, marked with a 2px accent underline and <code>white-space: nowrap</code> so they never break mid-identifier.</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">7 · Responsive</h2>
+<table class="spec">
+<thead><tr><th style="width:22%">Viewport</th><th>Behaviour</th></tr></thead>
+<tbody>
+<tr><td>≥ 1100px</td><td>Docked side panel, 420px, full height.</td></tr>
+<tr><td>600–1100px</td><td>Bottom sheet at 64% viewport height with a drag handle (40% / 64% / 88% stops). At least two camera tiles stay visible — deliberately not a full-screen overlay.</td></tr>
+<tr><td>&lt; 600px</td><td>Full-screen with a persistent "back to wall" bar. Touch targets 44px; Send grows to 44px tall.</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">8 · Accessibility</h2>
+<table class="spec">
+<thead><tr><th style="width:22%">Area</th><th>Requirement</th></tr></thead>
+<tbody>
+<tr><td>Open / close</td><td><code>Alt+K</code> toggles the panel from anywhere; focus lands on the input. <code>Esc</code> closes and returns focus to the launcher tab. Focus is trapped in the panel only when it is a full-screen overlay.</td></tr>
+<tr><td>Tab order</td><td>Scope chips → message list (one stop per message, arrow keys move between messages) → frames → citation chips → composer → Send. Clarification options and Approve/Reject are real buttons in DOM order; <b>Approve is never the first focus stop</b>.</td></tr>
+<tr><td>Streaming</td><td>The streaming region is <code>aria-live="off"</code>. A separate polite region announces "Answer in progress" once, then the complete answer plus "n sources" on stream end. Never announce per token. Offer a "read as it arrives" preference that switches to <code>aria-live="polite"</code> chunked by sentence.</td></tr>
+<tr><td>Charts</td><td><code>role="img"</code> with an <code>aria-label</code> stating the summary in words; the legend's counts and percentages are real text, and every chart's headline figure also appears in the answer prose.</td></tr>
+<tr><td>Contrast</td><td>Ink <code>#1b2029</code> on <code>#f4f5f7</code> = 14.1:1. Accent <code>#326BC9</code> on the ground = 4.6:1 — passes AA for the 10px chip and label text and for white-on-accent bands. Freshness labels use <code>neutral-700</code> (5.1:1); do not lighten. Focus is a 2px accent <code>:focus-visible</code> ring at 2px offset — never the browser default.</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">9 · Tokens to reconcile with the MUI theme</h2>
+<table class="spec">
+<thead><tr><th style="width:34%">Token</th><th style="width:22%">Value</th><th>Use</th></tr></thead>
+<tbody>
+<tr><td><code>palette.primary.main</code></td><td>#326BC9</td><td>From the Aksha app mark. Primary action, left rules on streaming, accent bands, identifier underlines.</td></tr>
+<tr><td><code>palette.chat.userFill</code></td><td>#e8eaee</td><td>Operator message ground</td></tr>
+<tr><td><code>palette.chat.rule</code></td><td>#1b2029 @ 2px</td><td>Region dividers and message left markers</td></tr>
+<tr><td><code>palette.evidence.chipBorder</code></td><td>#1b2029 @ 1px</td><td>Citation chips (dashed variant when cached)</td></tr>
+<tr><td><code>palette.freshness.live / cached</code></td><td>#326BC9 / #595e66</td><td>Freshness dot and label</td></tr>
+<tr><td><code>palette.chart.series</code></td><td>#163364 · #4176cd · #d6e3f7</td><td>Bar and donut series, in that order</td></tr>
+<tr><td><code>palette.approval.band</code></td><td>#326BC9 / #fbfbfc text</td><td>Approval header band only</td></tr>
+<tr><td><code>shape.borderRadius</code></td><td>0</td><td>Inside the panel only — overrides MUI's 4px default</td></tr>
+<tr><td>Type</td><td>Archivo 400/500/600/700/800</td><td>Body 13.5px/1.6; meta labels 9.5px/700 uppercase, letter-spacing .16em; display 22px/800</td></tr>
+<tr><td>Icons</td><td>Lucide, inline SVG</td><td><code>currentColor</code>, 15px in chrome, 11px in chips</td></tr>
+</tbody>
+</table>
+
+<h2 style="font:800 17px/1.2 'Archivo';margin:26px 0 8px;border-top:2px solid #1b2029;padding-top:10px">10 · Open questions</h2>
+<ol style="font:400 14px/1.7 'Archivo';margin:0;padding-left:20px">
+<li>Does the operator ever need to force a specific agent, or is automatic routing enough for phase one?</li>
+<li>Frames: served from the alert record directly, or fetched on demand when the answer renders? Affects panel load time.</li>
+<li>Retention — how long does a conversation persist, and does Download capture frames and charts or text only?</li>
+<li>Approval: which actions will be in scope first, and who authorises them (operator vs site administrator)?</li>
+<li>Escalation target — existing ticketing system, or a new support queue?</li>
+</ol>
+<p style="font:400 12.5px/1.6 'Archivo';color:#595e66;margin:18px 0 0;border-top:1px solid rgba(27,32,41,.25);padding-top:8px">Mobile application designs follow once option 3a is signed off. Interactive mockups: <code>Aksha Chatbot UI.dc.html</code> — turn 3 (shell and full thread) and turn 4 (agents, tables and charts).</p>
+</doc-page>
+</x-dc>
+</body>
+</html>
