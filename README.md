@@ -17,17 +17,30 @@ reviewed, and deployed independently.
 - `docs/SUPPORT_CHATBOT_AGENT_CATALOG.md` — per-agent responsibilities and tool ownership
 - `docs/development-plan/` — build plans, evaluation results, and vertical-specific (healthcare) use-case research
 - `docker-compose.chatbot.yml` + `chatbot.env.example` — plug-and-play deployment onto a machine already running the real Aksha stack
+- `install.sh` — one-click Linux installer wrapping the above (checks Docker, the `aksha-net` network, and config, then builds/starts/health-checks)
 
-## Running it
+## Running it (Linux, one click)
+
+```bash
+./install.sh
+```
+
+First run copies `chatbot.env.example` to `chatbot.env` and stops so you can
+fill in your LLM provider settings (`CHATBOT_MODEL_PROVIDER` + the matching
+`GROQ_API_KEY` or `OLLAMA_*` values). Run it again and it builds both images,
+starts the stack, and waits for both containers to report healthy. Safe to
+re-run any time after that to rebuild and restart.
+
+## Running it manually (any OS)
 
 ```bash
 cp chatbot.env.example chatbot.env   # fill in GROQ_API_KEY or OLLAMA_*, adjust ports if needed
 docker compose -f docker-compose.chatbot.yml --env-file chatbot.env up -d --build
 ```
 
-This expects the real Aksha stack's `aksha-net` Docker network to already
-exist on the target machine (see `docker-compose.chatbot.yml`'s comments for
-the non-Docker-Aksha fallback).
+Either way, this expects the real Aksha stack's `aksha-net` Docker network to
+already exist on the target machine (see `docker-compose.chatbot.yml`'s
+comments for the non-Docker-Aksha fallback).
 
 ## Local development (without Docker)
 
