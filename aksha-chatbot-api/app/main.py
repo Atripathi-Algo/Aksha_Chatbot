@@ -183,7 +183,7 @@ def _run_turn(req: "ChatRequest", turn_id: str):
     # Best-effort, non-critical — only for a real resolved answer, so we
     # never spend an extra LLM call chasing suggestions for a stub/degraded
     # turn where there's nothing concrete to follow up on.
-    follow_ups = suggest_follow_ups(agent, req.user_query, english_text, client) if status == "resolved" else []
+    follow_ups = suggest_follow_ups(agent, results) if status == "resolved" else []
 
     yield _sse("done", {
         "status": status,

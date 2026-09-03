@@ -8,6 +8,7 @@ name is a validation error, not a guess.
 """
 
 import json
+import re
 
 from app.agents import AGENTS, ROUTER_AGENT_CHOICES
 from app.logging_config import get_logger
@@ -80,6 +81,23 @@ and provide clarification_options. You must call emit_route exactly once — nev
 
 
 def route(user_query: str, current_date_iso: str, client: LLMClient) -> RouterDecision:
+    # Count/report questions have an unambiguous local owner. Keeping this
+    # guard ahead of the model prevents "how many alerts" from being confused
+    # with an alert-list lookup by the supervisor model.
+    query_lower = user_query.lower()
+    is_alert_count = (
+        "alert" in query_lower
+        and ("how many" in query_lower or "total" in query_lower or "count" in query_lower)
+    )
+    is_report_query = bool(re.search(r"\b(insight|kpi)\s+(report|data|count|summary)", query_lower))
+    if is_alert_count or is_report_query:
+        return RouterDecision(
+            domain="insights_analytics",
+            agent="insights_analytics",
+            intent="report_counts",
+            confidence=1.0,
+        )
+
     messages = [
         {"role": "system", "content": f"{_SYSTEM_PROMPT}\nCurrent date: {current_date_iso}"},
         {"role": "user", "content": user_query},

@@ -5,6 +5,7 @@ so the tool schema requires them too rather than defaulting silently."""
 
 from pydantic import BaseModel, Field
 
+from app.aksha_data import read_insight_report
 from app.node_client import NodeApiError, post
 from app.tool_registry import ToolSpec, register_tool
 
@@ -18,6 +19,16 @@ class GetInsightReportInput(BaseModel):
 
 
 def _get_insight_report(params: GetInsightReportInput) -> dict:
+    local_report = read_insight_report(
+        params.start_date,
+        params.end_date,
+        params.start_time,
+        params.end_time,
+        params.camera_names,
+    )
+    if local_report is not None:
+        return local_report
+
     body = {
         "startDate": params.start_date,
         "endDate": params.end_date,

@@ -20,8 +20,18 @@ dismissive, even when the news is "no data" or "I can't confirm that."
 If a tool failed, say plainly what you can't confirm right now — do not guess."""
 
 
-def _build_messages(agent: AgentSpec, user_query: str, tool_results: list[ToolResult]) -> list[dict]:
+MAX_RESULT_CHARS = 12000
+
+
+def compact_results_json(tool_results: list[ToolResult]) -> str:
     results_json = json.dumps([r.model_dump() for r in tool_results], default=str)
+    if len(results_json) <= MAX_RESULT_CHARS:
+        return results_json
+    return results_json[:MAX_RESULT_CHARS] + '...[result truncated; use summary fields above]'
+
+
+def _build_messages(agent: AgentSpec, user_query: str, tool_results: list[ToolResult]) -> list[dict]:
+    results_json = compact_results_json(tool_results)
     return [
         {"role": "system", "content": _SYSTEM_PROMPT},
         {
@@ -99,26 +109,52 @@ Reply with ONLY a JSON array of 0-3 short question strings, nothing else. Exampl
 If no good follow-up applies, reply with an empty array: []"""
 
 
-def suggest_follow_ups(agent: AgentSpec, user_query: str, answer_text: str, client: LLMClient) -> list[str]:
-    """Best-effort, non-critical — cheap follow-up suggestions grounded in
-    the turn just completed. Never let a parsing hiccup break the turn."""
-    if not agent.implemented or not answer_text:
+def suggest_follow_ups(agent: AgentSpec, tool_results: list[ToolResult]) -> list[str]:
+    """Return suggestions built only from verified tool-result entities."""
+    if not agent.implemented:
         return []
-    messages = [
-        {"role": "system", "content": _FOLLOW_UP_SYSTEM_PROMPT},
-        {
-            "role": "user",
-            "content": f"Agent: {agent.label}\nOperator's question: {user_query}\nAnswer given: {answer_text}",
-        },
-    ]
-    try:
-        response = client.chat(messages)
-        suggestions = json.loads(response.content or "[]")
-        if not isinstance(suggestions, list):
-            return []
-        return [str(s) for s in suggestions if isinstance(s, str) and s.strip()][:3]
-    except Exception:
-        return []
+
+    camera_names: list[str] = []
+    for result in tool_results:
+        if agent.key == "insights_analytics":
+            for name, value in result.data.items():
+                if isinstance(value, dict) and ("alerts" in value or "object_detection_alerts" in value):
+                    if name not in camera_names:
+                        camera_names.append(str(name))
+        for key in ("cameras", "groups", "alerts"):
+            items = result.data.get(key)
+            if key == "cameras" and isinstance(items, dict):
+                for name in items:
+                    if name not in camera_names:
+                        camera_names.append(str(name))
+                continue
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                name = item.get("Camera_Name") or item.get("cameraName") or item.get("camera_name")
+                if name and name not in camera_names:
+                    camera_names.append(str(name))
+
+    if agent.key == "insights_analytics":
+        return [
+            f"How many alerts did {camera_name} have on 2026-09-03?"
+            for camera_name in camera_names[:2]
+        ] or ["Give me the insight report for 2026-09-03."]
+    if agent.key == "alert_investigation":
+        return [f"Show alerts for {camera_name}." for camera_name in camera_names[:2]] or [
+            "Show me the alerts from the last 24 hours."
+        ]
+    if agent.key == "camera_operations":
+        return [f"What settings are configured for {camera_name}?" for camera_name in camera_names[:2]] or [
+            "Show the camera groups."
+        ]
+    if agent.key == "live_monitoring":
+        return [f"Is {camera_name} live right now?" for camera_name in camera_names[:2]] or [
+            "Which cameras are live right now?"
+        ]
+    return []
 
 
 def extract_sources(tool_results: list[ToolResult]) -> list[SourceRef]:

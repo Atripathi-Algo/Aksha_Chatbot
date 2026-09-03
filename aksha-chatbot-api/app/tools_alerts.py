@@ -12,13 +12,10 @@ class GetRecentAlertsInput(BaseModel):
 
 
 def _get_recent_alerts(params: GetRecentAlertsInput) -> dict:
-    # The deployed backend's real route is /api/recentAlert/:hours/:camera_name
-    # (a required second segment) — confirmed 2026-08-25 by black-box probing
-    # against the actual running node_backend container, which does not match
-    # the single-segment /recentAlert/:hours route this tool originally
-    # targeted from reading AkshaV2-UIUX/backend source. "all" is the
-    # wildcard for "every camera", matching what the endpoint accepts.
-    alerts = get(f"/api/recentAlert/{params.hours}/all")
+    # The deployed backend exposes the all-camera query as the single-segment
+    # route /api/recentAlert/:hours. The documented two-segment variant returns
+    # 404 on the currently running backend.
+    alerts = get(f"/api/recentAlert/{params.hours}")
     return {"alerts": alerts, "window_hours": params.hours}
 
 

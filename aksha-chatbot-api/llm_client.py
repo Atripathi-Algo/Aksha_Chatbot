@@ -1,7 +1,7 @@
 """
 Provider-switchable LLM client for the Aksha chatbot.
 
-Swaps between Groq (cloud, free developer tier) and Ollama (local, always free)
+Swaps between Gemini, Groq, and Ollama
 based on the CHATBOT_MODEL_PROVIDER env var, per Section 8.2 of
 docs/CHATBOT_SYSTEM_ARCHITECTURE.md. Both providers speak the same
 messages/tools shape, so callers never need to know which one is active.
@@ -27,10 +27,12 @@ class ChatResult:
 class LLMClient:
     def __init__(self, provider: str | None = None):
         self.provider = (provider or os.getenv("CHATBOT_MODEL_PROVIDER", "ollama")).lower()
-        if self.provider not in ("groq", "ollama"):
-            raise ValueError(f"Unknown CHATBOT_MODEL_PROVIDER: {self.provider!r} (expected 'groq' or 'ollama')")
+        if self.provider not in ("gemini", "groq", "ollama"):
+            raise ValueError(f"Unknown CHATBOT_MODEL_PROVIDER: {self.provider!r} (expected 'gemini', 'groq', or 'ollama')")
 
     def chat(self, messages: list[dict[str, str]], tools: list[dict[str, Any]] | None = None) -> ChatResult:
+        if self.provider == "gemini":
+            return self._chat_gemini(messages, tools)
         if self.provider == "groq":
             return self._chat_groq(messages, tools)
         return self._chat_ollama(messages, tools)
@@ -38,7 +40,9 @@ class LLMClient:
     def stream_chat(self, messages: list[dict[str, str]]) -> Iterator[str]:
         """Yield text deltas as they arrive. No tools — this is for the
         formatter's final prose pass, not tool-calling turns."""
-        if self.provider == "groq":
+        if self.provider == "gemini":
+            yield from self._stream_gemini(messages)
+        elif self.provider == "groq":
             yield from self._stream_groq(messages)
         else:
             yield from self._stream_ollama(messages)
@@ -51,6 +55,23 @@ class LLMClient:
             raise RuntimeError("GROQ_API_KEY is not set (check .env)")
         client = Groq(api_key=api_key)
         model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+        stream = client.chat.completions.create(model=model, messages=messages, stream=True)
+        for chunk in stream:
+            delta = chunk.choices[0].delta.content
+            if delta:
+                yield delta
+
+    def _stream_gemini(self, messages) -> Iterator[str]:
+        from openai import OpenAI
+
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY is not set (check chatbot.env)")
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+        model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
         stream = client.chat.completions.create(model=model, messages=messages, stream=True)
         for chunk in stream:
             delta = chunk.choices[0].delta.content
@@ -77,6 +98,25 @@ class LLMClient:
 
         client = Groq(api_key=api_key)
         model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+        resp = client.chat.completions.create(model=model, messages=messages, tools=tools)
+        choice = resp.choices[0].message
+        tool_calls = [
+            {"id": tc.id, "name": tc.function.name, "arguments": tc.function.arguments}
+            for tc in (choice.tool_calls or [])
+        ]
+        return ChatResult(content=choice.content, tool_calls=tool_calls, raw=resp)
+
+    def _chat_gemini(self, messages, tools) -> ChatResult:
+        from openai import OpenAI
+
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY is not set (check chatbot.env)")
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+        model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
         resp = client.chat.completions.create(model=model, messages=messages, tools=tools)
         choice = resp.choices[0].message
         tool_calls = [

@@ -129,9 +129,9 @@ export const conversation = [
 ];
 
 export const suggestedQuestions = [
-  'Show all high-risk alerts from Camera 12 today.',
-  'Which cameras have email alerts enabled?',
-  'Is anything happening right now near the loading bay?',
+  'How many alerts did cam1-Gate-Camera have on 2026-09-03?',
+  'Show recent alerts from cam3.',
+  'Which cameras are live right now?',
 ];
 
 // The six real, implemented Phase 1 agents (see docs/CHATBOT_SYSTEM_ARCHITECTURE.md
