@@ -1,0 +1,71 @@
+.add-camera-modal .ant-modal-close{
+    right: 40px;
+    top: 27px;
+    background: #0a57eb;
+    color: #fff;
+    border-radius: 50%;
+    padding: 0 0;
+}
+.add-camera-modal  .anticon-close{
+    color: #fff;
+    position: relative;
+    top: -8px;
+}
+.add-camera-modal .ant-modal-close-x {
+    width: 44px !important;
+    height: 45px !important;
+}
+/* width */
+.camera-list-scroll::-webkit-scrollbar {
+    width: 8px;
+}  
+/* Track */
+.camera-list-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}   
+/* Handle */
+.camera-list-scroll::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 20px; 
+}  
+/* Handle on hover */
+.camera-list-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+@media only screen and (max-width:600px){
+    .add-camera-step-form .step-items{
+        margin-top:29px !important;
+    }
+}
+.green-teek{
+    height: 16px;
+    width: 16px;
+    background: red;
+    position: absolute;
+    top: 9px;
+    z-index: 1025;
+    left: 36.6%;
+    border-radius: 50%;
+}
+.ant-modal-wrap {
+    z-index: 1335 !important;
+}
+@media only screen and (min-width:800px) {
+    .right-content.camera{
+        margin-top: 15px !important;
+    }   
+}
+
+@media only screen and (max-width:600px) {
+    .green-teek{
+        left: 36px !important;
+        top: 3px;
+    }
+}
+@media only screen and (max-width:850px) and (min-width:768px){
+    .green-teek{
+        left: 57% !important;
+        top: 3px;
+    }
+}

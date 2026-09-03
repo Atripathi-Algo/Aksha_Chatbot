@@ -1,0 +1,52 @@
+.tabsColor {
+  button {
+    color: black;
+  }
+}
+.tab-container-1 {
+  .tabBg {
+    background: white;
+  }
+
+  .toggleButtonContainer {
+    position: absolute;
+    right: 0;
+    border: 1px solid #0a57eb;
+    border-radius: 17px;
+  }
+
+  .dropBtn {
+    position: absolute;
+    right: 0;
+    top: -11px;
+  }
+
+  .toggleClass {
+    background: #0a57eb;
+    color: white;
+    border-radius: 16px;
+
+    &:hover {
+      background: #0a57eb;
+      color: white;
+      border-radius: 16px;
+    }
+  }
+
+  .quantityRoot {
+    &:hover,
+    &:focus-within {
+      background-color: transparent;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border: 0px solid red;
+
+      &:hover,
+      &.Mui-focused {
+        border: 0px solid #484850;
+        border-width: 0px;
+      }
+    }
+  }
+}

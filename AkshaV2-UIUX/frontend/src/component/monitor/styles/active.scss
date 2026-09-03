@@ -1,0 +1,228 @@
+$breakpoints: (
+  md: 768px,
+  // xl: 1536px
+);
+
+@mixin respond-above($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}
+
+.camera-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+
+  // Default: 1 column for mobile
+  grid-template-columns: 1fr;
+
+  @include respond-above(md) {
+    // 2 columns from md breakpoint
+    grid-template-columns: repeat(4, 1fr);
+    
+    // If 3 childrem, use 3 column
+    &:has(> :last-child:nth-child(3)) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    // If 2 childrem, use 2 column
+    &:has(> :last-child:nth-child(2)) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // If only 1 child, use 1 column
+    &:has(> :last-child:nth-child(1)) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // @include respond-above(xl) {
+  //   // 3 columns from xl breakpoint
+  //   grid-template-columns: repeat(3, 1fr);
+
+  //   // If only 1 child, use 1 column
+  //   &:has(> :last-child:nth-child(1)) {
+  //     grid-template-columns: 1fr;
+  //   }
+
+  //   // If only 2 children, use 2 columns
+  //   &:has(> :last-child:nth-child(2)) {
+  //     grid-template-columns: repeat(2, 1fr);
+  //   }
+  // }
+}
+
+.videoContainer2 {
+  position: relative;
+  // width: 100%;
+  height: auto;
+}
+video {
+  opacity: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: 0.5s ease;
+  backface-visibility: hidden;
+}
+.middle1 {
+  transition: 0.5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+  // width: 100%;
+}
+.middle2 {
+  transition: 0.5s ease;
+  opacity: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+  // width: 100%;
+}
+.flex-end2 {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  z-index: 10;
+  top: 1%;
+  right: 0;
+  opacity: 1;
+}
+.bottom-content2 {
+  position: absolute;
+  margin-top: 0rem;
+  bottom: 0.5rem;
+  left: 18px;
+  opacity: 1;
+  border-radius: 2px;
+}
+
+.camera-image {
+  min-height: auto;
+  border-radius: 12px;
+}
+
+.black-cam-image{
+  height: 100%;
+  border-radius: 12px;
+
+}
+
+
+
+.videoContainer2 .flex-end{
+  opacity: 0;
+}
+.videoContainer2 .bottom-content{
+  opacity: 0;
+}
+
+.videoContainer2:hover .camera-image {
+  opacity: 1;
+}
+
+.videoContainer2:hover .middle1 {
+  opacity: 1;
+}
+
+.videoContainer2:hover .flex-end {
+  opacity: 1;
+}
+
+.videoContainer2:hover .bottom-content {
+  opacity: 1;
+}
+
+.text {
+  background-color: #04aa6d;
+  color: white;
+  font-size: 16px;
+  padding: 16px 32px;
+}
+
+.css-13xfq8m-MuiTabPanel-root {
+  padding: 16px 0px 0 9px !important;
+}
+
+//doesnt work
+@media only screen and (min-width: 1000px) {
+  body.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+.css-19kzrtu {
+  padding: 10px !important;
+  padding-top: 22px !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .css-mhi025-MuiButtonBase-root-MuiTab-root {
+    min-width: 0px!important;
+  }
+}
+
+.grayBack {
+  .rowstyle {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .flex-end {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    z-index: 10;
+    top: 1%;
+    right: 0;
+    opacity: 0;
+  }
+
+  
+  
+
+  .auto-alert {
+    position: absolute;
+    top: 12px;
+    left: 23px;
+    color: #dd3030;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .bottom-content {
+    position: absolute;
+    margin-top: 0rem;
+    bottom: 0.5rem;
+    left: 0;
+    opacity: 0;
+    .bottomTextContainer {
+      text-align: initial;
+      margin-left: 1rem;
+    }
+    .parentText {
+      color: #3158eb;
+      font-weight: 600;
+      border-radius: 5px;
+    }
+    .childText {
+      color: white;
+      font-weight: 200;
+    }
+  }
+}
+

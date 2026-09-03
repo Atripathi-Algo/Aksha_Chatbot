@@ -1,0 +1,24 @@
+.data-not-found {
+    text-align: center;
+    position: relative;
+    top: 40%;
+    z-index:-1;
+  
+    h2 {
+      font-weight: 800;
+      padding-left: 50px;
+    }
+    p {
+      color: #6c7689;
+    }
+    img {
+      width: 60%;
+    }
+  }
+  .center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10vh 15vh;
+  }
+  

@@ -1,0 +1,472 @@
+.userName {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.anchor-style {
+  color: #000;
+}
+
+.icon-styled {
+  font-size: 15px;
+}
+
+.user-manual-img {
+  width: 23px;
+  height: 23px;
+  cursor: pointer;
+}
+
+.aksha-logo-img {
+  width: 117px;
+  height: 46px;
+  cursor: pointer;
+}
+
+.setting-icon-style {
+  width: 23px;
+  height: 23px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  top: 10px; 
+}
+
+.setting-active-link {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  background: #0a57eb;
+  top: 17px;
+}
+
+.pdf-outer-style {
+  min-height: 500px;
+}
+
+.user-profile-dropdown {
+  background-color: #F6F6F6;
+  padding: 6px 4px;
+  border-radius: 12px;
+}
+
+a.anchor-style:focus,
+a.anchor-style:hover {
+  color: inherit !important;
+  background: inherit !important;
+}
+
+.profile-model-custom{
+  padding: 0 !important;
+  min-width: 100% !important;
+}
+
+.flex-main-info-custom{
+  margin-top: 0 !important;
+  display: block !important;
+}
+
+.admin-login-custom{
+  color: #000 !important;
+}
+
+.btn-reset-pass-custom{
+  max-width: 144px !important;
+}
+
+@media only screen and (min-width: 800px) and (max-width: 1200px) and (orientation : portrait) {
+  .css-1kwt6pw-MuiPaper-root-MuiAppBar-root {
+    width: 100% !important;
+  }
+}
+
+
+/* menu item wrapper */
+.anchor-style {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* icon next to text */
+.icon-styled,
+.anchor-style svg,
+.anchor-style img {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* desktop menu buttons */
+.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px;
+}
+
+/* mobile menu items */
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px;
+}
+// .css-1kwt6pw-MuiPaper-root-MuiAppBar-root{
+//   width:92%;
+//   display: flex!important;
+//   align-items: center;
+//   justify-content: space-between;
+//   padding: auto;
+
+// }
+
+.headerCls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row !important;
+  width: 100% !important;
+  padding-right: 15px;
+  padding-left: 16px;
+}
+
+.green-teek {
+  height: 25px;
+  left: 38.2%;
+  text-align: center;
+  display: inline;
+  padding: 2px 5px 5px 5px;
+  top: 2px;
+  white-space: nowrap;
+  width: 25px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.green-teek:hover {
+  overflow: visible;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px;
+}
+
+//{=======Mobile View Responsess======}
+@media only screen and (min-width: 360px) and (max-width: 374px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 9px;
+    padding-left: 1px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 6.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 375px) and (max-width: 389px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 9px;
+    padding-left: 0px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 6.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 390px) and (max-width: 411px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 8px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 56.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 7px;
+    top: 2px
+  }
+
+}
+
+@media only screen and (min-width: 412px) and (max-width: 413px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 8px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 6.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 414px) and (max-width: 427px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 8px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 6.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 428px) and (max-width: 799px) and (orientation : portrait) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 8px;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 7.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+
+  .css-vg8xv8-MuiButtonBase-root-MuiIconButton-root {
+    display: flex;
+    max-width: 60px;
+  }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 1200px) and (orientation : portrait) {
+
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+
+    .css-vg8xv8-MuiButtonBase-root-MuiIconButton-root {
+      display: flex;
+      max-width: 60px;
+    }
+
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 57% !important;
+    text-align: center;
+    display: inline;
+    padding: 7px;
+    top: 3px;
+  }
+}
+
+
+//{=======Desk view Responses=======}
+@media only screen and (min-width: 1280px) and (max-width: 1365px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 36.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 1366px) and (max-width: 1439px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 37.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 1440px) and (max-width: 1535px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 39.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 7px;
+    top: 12px;
+  }
+}
+
+@media only screen and (min-width: 1536px) and (max-width: 1599px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+}
+
+@media only screen and (min-width: 1600px) and (max-width: 1919px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 39.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
+
+@media only screen and (min-width: 1920px) and (max-width: 1990px) {
+  .headerCls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+    width: 100% !important;
+    padding-right: 15px;
+    padding-left: 16px;
+  }
+
+  .headerCls.objectOfInterest {
+    width: 92%;
+  }
+
+  .green-teek {
+    height: fit-content;
+    width: fit-content;
+    left: 40.2% !important;
+    text-align: center;
+    display: inline;
+    padding: 5px;
+    top: 2px
+  }
+}
