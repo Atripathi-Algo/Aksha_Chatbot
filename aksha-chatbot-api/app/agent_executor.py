@@ -17,6 +17,7 @@ from collections.abc import Iterator
 from typing import Any
 
 from app.agents import AgentSpec
+from app.formatter import compact_results_json
 from app.logging_config import get_logger
 from app.state import ToolResult
 from app.tool_registry import execute_tool, get_openai_tools
@@ -54,7 +55,7 @@ def run_agent(agent: AgentSpec, user_query: str, entities: dict, client: LLMClie
             yield {"type": "tool_result", "tool": call["name"], "ok": result.ok, "error_code": result.error_code}
 
             messages.append({"role": "assistant", "content": f"Called {call['name']} with {args}"})
-            messages.append({"role": "user", "content": f"Tool result: {json.dumps(result.model_dump())}"})
+            messages.append({"role": "user", "content": f"Tool result: {compact_results_json([result])}"})
         # Previously stopped the whole loop after the first successful call,
         # regardless of whether that result actually answered the question —
         # found live 2026-08-29: for an agent with two tools (e.g. Alert

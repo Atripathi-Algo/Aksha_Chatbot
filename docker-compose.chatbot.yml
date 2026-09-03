@@ -26,10 +26,14 @@ services:
     restart: always
     networks:
       - aksha-net
+    volumes:
+      - ${AKSHA_HOST_DATA_PATH:-../Aksha}:/srv/Aksha:ro
     ports:
       - "${CHATBOT_API_PORT:-8010}:8010"
     env_file:
       - ./chatbot.env
+    environment:
+      AKSHA_DATA_PATH: /srv/Aksha
 
   aksha-chatbot-ui:
     build: ./aksha-chatbot-ui
