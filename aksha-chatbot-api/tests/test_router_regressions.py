@@ -55,6 +55,21 @@ CASES = [
     ("How many alerts did cam3 have yesterday?", "insights_analytics"),
     ("How do I use multi-language support?", "help_guide"),
     ("What does the camera status 'creating' mean?", "error_explanation"),
+
+    # Added 2026-09-16 with the two Phase 2 agents. Each pair has a diagnostic /
+    # chronological phrasing that must route to the new agent, and the existing
+    # cases above ("Is cam3 live right now?" -> live_monitoring, "What is the FPS
+    # for cam3?" -> camera_operations) guard against the new rules over-reaching.
+    ("Why is cam3 not showing any video?", "camera_troubleshooting",
+     "a fault/'why' framing is diagnostic, not a live status snapshot"),
+    ("Which cameras have stopped sending frames?", "camera_troubleshooting",
+     "'stopped sending frames' is a problem report, not a settings question"),
+    ("Give me a timeline of today's alerts on cam3.", "timeline",
+     "explicit 'timeline' framing, not a plain alert list"),
+    ("What happened on cam3 between 12:30 and 12:45?", "timeline",
+     "'what happened between X and Y' is chronological, not a list lookup"),
+    ("Show me the recent alerts for cam3.", "alert_investigation",
+     "a plain alert list must NOT be pulled into timeline by the new rule"),
 ]
 
 

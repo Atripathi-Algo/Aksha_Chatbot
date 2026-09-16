@@ -14,7 +14,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from app import conversation_store, tools_alerts, tools_camera, tools_errors, tools_help, tools_insights, tools_live, tools_notification
+from app import (
+    conversation_store,
+    tools_alerts,
+    tools_camera,
+    tools_errors,
+    tools_help,
+    tools_insights,
+    tools_live,
+    tools_notification,
+    tools_timeline,
+    tools_troubleshooting,
+)
 from app.agent_executor import run_agent
 from app.agents import AGENTS
 from app.cost_tracker import get_daily_summary
@@ -35,6 +46,8 @@ tools_insights.register()
 tools_notification.register()
 tools_help.register()
 tools_errors.register()
+tools_troubleshooting.register()
+tools_timeline.register()
 tools_help.warm_up()  # pay the embedding cold-start cost now, not on an operator's first query
 
 app = FastAPI(title="Aksha Chatbot API", version="0.1.0-phase0")
@@ -153,7 +166,10 @@ def _run_turn(req: "ChatRequest", turn_id: str):
         if step["type"] == "tool_call":
             yield _sse("thinking", {"phase": "tool_call", "tool": step["tool"], "args": step["args"]})
         elif step["type"] == "tool_result":
-            yield _sse("thinking", {"phase": "tool_result", "tool": step["tool"], "ok": step["ok"], "error_code": step["error_code"]})
+            yield _sse("thinking", {
+                "phase": "tool_result", "tool": step["tool"], "ok": step["ok"],
+                "error_code": step["error_code"], "latency_ms": step.get("latency_ms"),
+            })
         elif step["type"] == "done":
             results = step["results"]
 

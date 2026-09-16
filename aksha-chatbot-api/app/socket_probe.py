@@ -34,7 +34,15 @@ from app.logging_config import get_logger
 logger = get_logger(component="socket_probe")
 
 NODE_SOCKET_URL = os.getenv("NODE_API_BASE_URL", "http://localhost:5000")
-PROBE_TIMEOUT_SECONDS = float(os.getenv("LIVE_PROBE_TIMEOUT_SECONDS", "1.5"))
+# Measured live 2026-09-16 against three cameras configured at 3 FPS: a 1.5s
+# listen window was flaky — in 2 of 3 back-to-back runs it reported a
+# camera as NOT streaming that demonstrably was (frame delivery over the
+# socket is bursty, not a steady 333ms cadence). 3s and 6s windows were
+# correct for every camera on every run. A false "no frames" here becomes a
+# false "camera is broken" answer downstream, so the default sits above the
+# shortest window that measured reliable, trading ~2.5s of turn latency for
+# not misdiagnosing a healthy feed. Tunable via LIVE_PROBE_TIMEOUT_SECONDS.
+PROBE_TIMEOUT_SECONDS = float(os.getenv("LIVE_PROBE_TIMEOUT_SECONDS", "4.0"))
 MAX_PROBE_CAMERAS = 10  # bound worst-case turn latency regardless of how many the REST snapshot lists
 
 

@@ -50,7 +50,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run pytest
         working-directory: aksha-chatbot-api
-        run: python -m pytest tests/test_router_parsing.py tests/test_tool_registry.py tests/test_formatter_branches.py -v
+        run: python -m pytest tests/test_router_parsing.py tests/test_tool_registry.py tests/test_formatter_branches.py tests/test_troubleshooting_rules.py tests/test_timeline.py -v
 
   camera-filter-regression:
     name: Camera-name filter regression (free, deterministic)

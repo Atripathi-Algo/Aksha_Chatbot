@@ -9,6 +9,7 @@ import {
   CircleCheck,
   CircleHelp,
   Clock3,
+  History,
   Mail,
   Play,
   Plus,
@@ -17,6 +18,7 @@ import {
   Square,
   Trash2,
   Video,
+  Wrench,
   X,
 } from "lucide-react";
 import { socket } from "../../router/socket";
@@ -48,6 +50,8 @@ const AGENTS = {
   live_monitoring: { label: "Live Monitoring", icon: Clock3, tone: "accent" },
   insights_analytics: { label: "Insights & Analytics", icon: BarChart3, tone: "accent" },
   notification: { label: "Notification", icon: Mail, tone: "accent" },
+  camera_troubleshooting: { label: "Camera Troubleshooting", icon: Wrench, tone: "accent" },
+  timeline: { label: "Timeline & Sequence", icon: History, tone: "accent" },
   help_guide: { label: "Help & Product Guide", icon: BookOpen, tone: "neutral" },
   error_explanation: { label: "Error & Status Explanation", icon: CircleHelp, tone: "neutral" },
 };

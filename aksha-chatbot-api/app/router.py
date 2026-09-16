@@ -84,6 +84,16 @@ Disambiguation rules (apply these before guessing):
   decoding one specific thing the operator is looking at right now.
 - Questions with no camera/alert/date reference at all and a conceptual/definitional phrasing
   ("how do X and Y relate") default to help_guide, not to whichever agent happens to own X or Y.
+- DIAGNOSTIC questions about a camera or feed PROBLEM — "why is X not showing video", "why is the
+  stream delayed/frozen", "which cameras stopped sending frames", "check cameras with low FPS",
+  "what's wrong with cam3", "is anything broken" — are camera_troubleshooting. The signal is a
+  fault or a "why"/"what's wrong"/"not working" framing. Contrast: "is cam3 online right now" (a
+  plain status snapshot, no fault implied) stays live_monitoring, and "what FPS is cam3 set to" (a
+  setting, no fault implied) stays camera_operations.
+- CHRONOLOGICAL questions about alert activity — "timeline of today's incidents", "sequence of
+  events", "what happened before/after/between X and Y", "order these alerts by time", "gaps
+  between alerts", "when did alerts start/stop on cam3" — are timeline. Contrast: "show alerts for
+  cam3" / "recent alerts" (a list, with no ordering or sequence framing) stays alert_investigation.
 
 Resolve relative dates (e.g. "today", "yesterday") to actual dates using the current date provided.
 Earlier turns of this conversation, if any, appear before the current question — use them only to
