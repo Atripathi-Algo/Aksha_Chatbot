@@ -6,12 +6,14 @@ row still applies once JWT work lands — see Section 5.6 for the known gaps).
 CORS is wide open for the same reason — do not deploy this file as-is.
 """
 
+import time
 import uuid
 from datetime import date
+from typing import Literal
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 from app import (
@@ -63,7 +65,13 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     thread_id: str
     user_query: str
-    language: str = "en"  # 'en' | 'hi' | 'mr' — drives the Multi-Language formatter wrapper
+    # Audit finding (second pass, 2026-09-16): this used to be a bare `str`,
+    # unvalidated all the way into translate_stream's system prompt — a
+    # request could put arbitrary instruction text in the `language` field
+    # and have it land in the system role of the translation call. Literal
+    # rejects anything outside the three real language codes at the FastAPI
+    # request-validation boundary, before it ever reaches formatter.py.
+    language: Literal["en", "hi", "mr"] = "en"
 
 
 @app.get("/v1/health/live")
@@ -71,12 +79,47 @@ def health_live():
     return {"status": "ok"}
 
 
+# Reachability is cached briefly rather than re-checked on every hit — the
+# Dockerfile's HEALTHCHECK polls this every 15s, and re-hitting even a cheap
+# provider endpoint that often forever is unnecessary load for a value that
+# doesn't change second to second.
+_REACHABILITY_CACHE_SECONDS = 20
+_reachability_cache: dict = {}
+
+
+def _cached_reachability(client: LLMClient) -> tuple[bool, str]:
+    now = time.monotonic()
+    cached = _reachability_cache.get(client.provider)
+    if cached and now - cached[0] < _REACHABILITY_CACHE_SECONDS:
+        return cached[1], cached[2]
+    ok, detail = client.check_reachable()
+    _reachability_cache[client.provider] = (now, ok, detail)
+    return ok, detail
+
+
 @app.get("/v1/health/ready")
 def health_ready():
     # daily_cost is Section 6.1's dashboard ("token/cost usage by tenant and
     # agent") scaled to Phase 0 — one process-wide counter surfaced here
     # rather than a separate dashboard; see app/cost_tracker.py.
-    return {"status": "ok", "provider": LLMClient().provider, "daily_cost": get_daily_summary()}
+    client = LLMClient()
+    ok, detail = _cached_reachability(client)
+    body = {
+        "status": "ok" if ok else "degraded",
+        "provider": client.provider,
+        "provider_reachable": ok,
+        "daily_cost": get_daily_summary(),
+    }
+    if not ok:
+        # Audit finding (second pass, 2026-09-16): this endpoint returned 200
+        # unconditionally, so a misconfigured provider (e.g. OLLAMA_BASE_URL
+        # pointing at the container's own localhost instead of the host) produced
+        # a container Docker itself reports as healthy while every real turn
+        # fails. A non-2xx here is what actually flips the Dockerfile's
+        # HEALTHCHECK to unhealthy.
+        body["detail"] = detail
+        return JSONResponse(status_code=503, content=body)
+    return body
 
 
 @app.post("/v1/chat/invoke")
@@ -89,9 +132,33 @@ def chat_invoke(req: ChatRequest):
 
     graph = get_graph()
     config = {"configurable": {"thread_id": req.thread_id}}
-    result = graph.invoke(
-        {"user_query": req.user_query, "turn_id": turn_id, "thread_id": req.thread_id}, config=config
-    )
+    try:
+        result = graph.invoke(
+            {"user_query": req.user_query, "turn_id": turn_id, "thread_id": req.thread_id}, config=config
+        )
+    except Exception as e:
+        # Audit finding (second pass, 2026-09-16): this endpoint had no
+        # containment at all — an unhandled exception anywhere in the graph
+        # (a malformed tool-call JSON, a hallucinated agent name, a provider
+        # error) surfaced as a raw HTTP 500 instead of the same kind of
+        # honest degraded answer /v1/chat/stream already gives. Router-level
+        # containment (app/router.py's agent-enum check) and
+        # agent_executor.py's json.loads containment close the two concrete
+        # causes; this is the backstop for anything else.
+        logger.error("turn_unhandled_error", error=str(e))
+        clear_turn_context()
+        return {
+            "thread_id": req.thread_id,
+            "turn_id": turn_id,
+            "status": "failed",
+            "agent": None,
+            "answer": f"Something went wrong processing that request (ref {turn_id[:8]}). Please try again.",
+            "sources": [],
+            "frames": [],
+            "analytics": [],
+            "freshness": {"kind": "degraded", "label": "Error"},
+            "correlation_id": turn_id,
+        }
 
     logger.info("turn_end", status=result.get("response_status"))
     clear_turn_context()

@@ -27,7 +27,11 @@ from llm_client import LLMClient
 
 logger = get_logger(component="agent_executor")
 
-MAX_TOOL_CALLS = 3  # Section 5.3 allows up to 8; kept tight for Phase 0.
+MAX_TOOL_CALLS = 3  # Section 5.3 allows up to 8; kept tight for Phase 0. Caps
+# total tool INVOCATIONS across the turn, not model round-trips — a single
+# round can return several parallel tool_calls (audit finding, second pass,
+# 2026-09-16: the old per-round loop bound let a round with 2 parallel calls
+# execute up to 2x MAX_TOOL_CALLS actual tool invocations).
 
 
 @traceable(run_type="chain", name="agent_executor.run_agent")
@@ -50,7 +54,8 @@ def run_agent(
     ]
 
     results: list[ToolResult] = []
-    for _ in range(MAX_TOOL_CALLS):
+    calls_made = 0
+    while calls_made < MAX_TOOL_CALLS:
         # Strong tier, explicit: this is the domain-reasoning call Section
         # 4.5 #2 says to keep on the capable model — it decides which tool
         # to call, with what arguments, and when it has enough to stop.
@@ -58,8 +63,36 @@ def run_agent(
         if not response.tool_calls:
             break
         for call in response.tool_calls:
+            if calls_made >= MAX_TOOL_CALLS:
+                # This round returned more calls than the remaining budget —
+                # stop mid-round rather than executing past the cap (the bug
+                # this loop shape fixes: a round can hand back several
+                # parallel tool_calls at once).
+                break
+            calls_made += 1
             raw_args = call["arguments"]
-            args = json.loads(raw_args) if isinstance(raw_args, str) else (raw_args or {})
+            # Audit finding (second pass, 2026-09-16): this json.loads used to
+            # sit outside any containment — a provider that emits malformed
+            # tool-call JSON (no schema-enum enforcement, e.g. Ollama) raised
+            # JSONDecodeError straight out of this generator, past
+            # execute_tool's own "never raise" contract. Give it the same
+            # ToolResult-shaped failure execute_tool already returns for a bad
+            # call, instead of a different failure mode for the same class of
+            # problem (bad model output).
+            try:
+                args = json.loads(raw_args) if isinstance(raw_args, str) else (raw_args or {})
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.warning("tool_call_args_unparseable", tool=call["name"], raw=raw_args, error=str(e))
+                result = ToolResult(
+                    tool_name=call["name"], ok=False, error_code="VALIDATION",
+                    message=f"The model's tool-call arguments weren't valid JSON: {e}", retryable=False,
+                )
+                yield {"type": "tool_call", "tool": call["name"], "args": {}}
+                results.append(result)
+                yield {"type": "tool_result", "tool": call["name"], "ok": False, "error_code": "VALIDATION", "latency_ms": 0}
+                messages.append({"role": "assistant", "content": f"Called {call['name']} with unparseable arguments"})
+                messages.append({"role": "user", "content": f"Tool result: {compact_results_json([result])}"})
+                continue
             yield {"type": "tool_call", "tool": call["name"], "args": args}
 
             result = execute_tool(call["name"], args)

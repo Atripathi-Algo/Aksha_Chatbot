@@ -36,7 +36,28 @@ services:
       # data path above: bind-mount the real docs/ in, point the app at it
       # via CHATBOT_DOCS_DIR (see app/tools_help.py).
       - ./docs:/srv/docs:ro
+      # Audit finding (second pass, 2026-09-16): date.today() in app/main.py
+      # and app/graph.py resolves "today"/"yesterday" using the container's
+      # own clock. Every other service in the real Aksha stack's
+      # docker-compose.yml mounts these two files for exactly this reason;
+      # this file omitted them. Without it, an operator east of UTC asking
+      # about "today" between midnight and their UTC offset gets yesterday.
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
+      # Audit finding (second pass, 2026-09-16) recommended binding this to
+      # 127.0.0.1, reasoning the UI never needs direct access — true for
+      # aksha-chatbot-ui (this file's own frontend, same-origin nginx proxy,
+      # VITE_CHATBOT_API_URL="" at build time). NOT true for this repo's
+      # actual production deployment: AkshaV2-UIUX/frontend's ChatbotWidget
+      # calls this exact port directly from the browser at the host's LAN
+      # address (REACT_APP_CHATBOT_API_URL, .env.prod.example) — binding to
+      # loopback would break every LAN browser's live chat. Left published;
+      # the real fix is proxying that widget's calls through its own nginx
+      # (AkshaV2-UIUX/frontend/nginx/conf.d/default.conf already proxies
+      # /v1/ — pointing REACT_APP_CHATBOT_API_URL at a relative path instead
+      # of the LAN IP would let this bind to loopback safely) and adding
+      # auth (Section 5.1), tracked as a known gap rather than done here.
       - "${CHATBOT_API_PORT:-8010}:8010"
     env_file:
       - ./chatbot.env

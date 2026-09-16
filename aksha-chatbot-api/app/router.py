@@ -149,7 +149,23 @@ def route(
     raw_args = result.tool_calls[0]["arguments"]
     try:
         parsed = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
-        return RouterDecision.model_validate(parsed)
+        decision = RouterDecision.model_validate(parsed)
+        # Audit finding (second pass, 2026-09-16): the docstring above claims
+        # an out-of-catalog agent name is "a validation error, not a guess",
+        # but RouterDecision.agent is a plain str — that claim was only true
+        # when the provider actually enforces the tool schema's enum. Ollama
+        # (a supported provider, Section 4.6) does not, so a hallucinated
+        # agent name previously reached AGENTS[decision.agent] as a bare dict
+        # lookup in main.py/graph.py and raised KeyError. Enforce the enum
+        # ourselves here, once, regardless of provider.
+        if decision.agent not in AGENTS:
+            logger.warning("router_unknown_agent", agent=decision.agent)
+            return RouterDecision(
+                domain="help_guide", agent="help_guide", intent="fallback",
+                needs_clarification=True,
+                clarification_question="I couldn't classify that question — could you rephrase it?",
+            )
+        return decision
     except Exception as e:
         logger.warning("router_invalid_route", error=str(e), raw=raw_args)
         return RouterDecision(

@@ -86,6 +86,15 @@ _gemini_client = None
 _groq_client = None
 _ollama_client = None
 
+# Audit finding (second pass, 2026-09-16): none of the three provider clients
+# passed a timeout, so a stalled provider held the request open indefinitely —
+# on the streaming path that meant an SSE connection (and a FastAPI worker
+# thread) stuck open for as long as nginx's own read timeout allowed (3600s
+# in aksha-chatbot-ui/nginx.conf), with the UI stuck on "thinking…" the whole
+# time. This bounds it at the client level, well under that ceiling, so a
+# stalled call fails fast with a real error instead of hanging near an hour.
+LLM_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "60"))
+
 
 def _get_gemini_client():
     global _gemini_client
@@ -100,6 +109,7 @@ def _get_gemini_client():
                 _gemini_client = OpenAI(
                     api_key=api_key,
                     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                    timeout=LLM_TIMEOUT_SECONDS,
                 )
     return _gemini_client
 
@@ -114,7 +124,7 @@ def _get_groq_client():
                 api_key = os.getenv("GROQ_API_KEY")
                 if not api_key:
                     raise RuntimeError("GROQ_API_KEY is not set (check .env)")
-                _groq_client = Groq(api_key=api_key)
+                _groq_client = Groq(api_key=api_key, timeout=LLM_TIMEOUT_SECONDS)
     return _groq_client
 
 
@@ -126,7 +136,7 @@ def _get_ollama_client():
                 from ollama import Client
 
                 base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-                _ollama_client = Client(host=base_url)
+                _ollama_client = Client(host=base_url, timeout=LLM_TIMEOUT_SECONDS)
     return _ollama_client
 
 
@@ -257,6 +267,25 @@ class LLMClient:
         if getattr(resp, "usage", None):
             record_call("gemini", model, tier, node, resp.usage.prompt_tokens, resp.usage.completion_tokens, duration_ms=duration_ms)
         return ChatResult(content=choice.content, tool_calls=tool_calls, raw=resp)
+
+    def check_reachable(self) -> tuple[bool, str]:
+        """Audit finding (second pass, 2026-09-16): /v1/health/ready reported
+        healthy unconditionally — it never actually contacted the configured
+        provider, so a wrong OLLAMA_BASE_URL (localhost inside a container
+        points at the container itself, not the host) or a bad API key
+        produced two "healthy" containers in which every turn failed. Uses
+        each provider's cheap metadata listing, never a real generation call,
+        so this is safe to run on every health check tick."""
+        try:
+            if self.provider == "gemini":
+                _get_gemini_client().models.list()
+            elif self.provider == "groq":
+                _get_groq_client().models.list()
+            else:
+                _get_ollama_client().list()
+            return True, "ok"
+        except Exception as e:
+            return False, str(e)
 
     def _chat_ollama(self, messages, tools, tier: Tier, node: str) -> ChatResult:
         client = _get_ollama_client()

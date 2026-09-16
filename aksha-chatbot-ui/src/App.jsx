@@ -69,6 +69,17 @@ export default function App() {
   const revealTimerRef = useRef(null);
   const REVEAL_CHARS_PER_TICK = 3;
   const REVEAL_TICK_MS = 15;
+  // Audit finding (second pass, 2026-09-16): revealTimerRef used to be the
+  // only shared state across turns — a second sendMessage cleared the first
+  // turn's interval, then the first turn's own startReveal() saw the ref
+  // already occupied (by the second turn) and returned early, so its
+  // pendingFinalize callback was never invoked. The first message's bubble
+  // stayed showing a spinner and partial text forever. activeTurnRef tracks
+  // the one turn allowed to be "in flight" at a time; a new send now
+  // explicitly aborts and finalizes whatever was previously in flight
+  // instead of abandoning it.
+  const activeTurnRef = useRef(null);
+  const [sending, setSending] = useState(false);
 
   const pushLiveStep = (step, autoClearMs) => {
     if (liveStepTimerRef.current) clearTimeout(liveStepTimerRef.current);
@@ -92,14 +103,35 @@ export default function App() {
   // Persist every live conversation to this device's recent-chats list —
   // there's no backend session store yet (no auth, in-memory checkpointer
   // only), so this is the only place a conversation survives a page reload.
+  //
+  // Audit findings (second pass, 2026-09-16), both from the same root cause:
+  // every reveal tick (every REVEAL_TICK_MS = 15ms, for the duration of any
+  // streaming answer) mutates liveMessages via replaceById, and this effect
+  // depended on liveMessages directly — so the whole conversation was
+  // JSON-serialized and written to localStorage on every single tick
+  // (finding #13), and whatever got saved mid-stream still had that
+  // message's `type: 'streaming'` placeholder in it (finding #15), which
+  // restores on reload as a permanent spinner with no way to finish (its
+  // onStop handler doesn't survive JSON serialization). Debouncing the write
+  // fixes the frequency; filtering out in-flight placeholders before saving
+  // fixes what gets restored — a reload mid-answer now just omits that
+  // bubble rather than freezing on it, and the answer reappears complete on
+  // the next save once it finishes.
+  const saveTimerRef = useRef(null);
   useEffect(() => {
     if (liveMessages.length === 0) return;
-    const firstOperatorMsg = liveMessages.find((m) => m.type === 'operator');
-    const title = firstOperatorMsg
-      ? firstOperatorMsg.props.text.slice(0, 60) + (firstOperatorMsg.props.text.length > 60 ? '…' : '')
-      : 'New conversation';
-    saveSession(threadId, title, liveMessages, Date.now());
-    setSessions(listSessions());
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      const persistable = liveMessages.filter((m) => m.type !== 'streaming');
+      if (persistable.length === 0) return;
+      const firstOperatorMsg = persistable.find((m) => m.type === 'operator');
+      const title = firstOperatorMsg
+        ? firstOperatorMsg.props.text.slice(0, 60) + (firstOperatorMsg.props.text.length > 60 ? '…' : '')
+        : 'New conversation';
+      saveSession(threadId, title, persistable, Date.now());
+      setSessions(listSessions());
+    }, 400);
+    return () => clearTimeout(saveTimerRef.current);
   }, [liveMessages, threadId]);
 
   const openPanel = () => { setOpen(true); setUnread(0); };
@@ -129,6 +161,23 @@ export default function App() {
 
   const sendMessage = (text, lang = 'EN') => {
     setMode('live'); // sending always means real chat — hop off the scripted demo transcript
+
+    // Finalize whatever the previous turn was doing before starting a new
+    // one, rather than leaving it to strand in the streaming state or race
+    // the new turn's reveal loop. abort() rejects the old fetch (a no-op if
+    // it already finished) and finalizeStranded() replaces its bubble with
+    // whatever text it had accumulated, marked as interrupted.
+    if (activeTurnRef.current) {
+      activeTurnRef.current.abort();
+      activeTurnRef.current.finalizeStranded();
+      activeTurnRef.current = null;
+    }
+    if (revealTimerRef.current) {
+      clearInterval(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
+
+    setSending(true);
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const streamingId = newId();
 
@@ -196,7 +245,7 @@ export default function App() {
     setLiveTools([]);
     pushLiveStep({ phase: 'sent' });
 
-    streamChat(threadId, text, lang, {
+    const handle = streamChat(threadId, text, lang, {
       onRouted: (agent) => {
         routedAgent = agent;
         setLiveAgent(agent);
@@ -230,6 +279,8 @@ export default function App() {
       },
       onDone: (payload) => {
         pushLiveStep({ phase: 'done', status: payload.status, agent: payload.agent }, 5000);
+        activeTurnRef.current = null;
+        setSending(false);
         // The clarification path never streams tokens and already rendered
         // its own card via onClarification — finalizing here would overwrite
         // it with an empty "agent" bubble (blank body, no sources).
@@ -275,7 +326,18 @@ export default function App() {
         }
       },
       onError: (err) => {
+        // Audit finding (second pass, 2026-09-16): this used to be the only
+        // path that ever fired, and only for a failed initial fetch — a
+        // mid-stream failure (chatClient.js's reader.read() loop) previously
+        // rejected unhandled and never reached here at all, leaving the
+        // bubble stuck showing a spinner forever.
         pushLiveStep({ phase: 'error' }, 5000);
+        activeTurnRef.current = null;
+        setSending(false);
+        if (revealTimerRef.current) {
+          clearInterval(revealTimerRef.current);
+          revealTimerRef.current = null;
+        }
         replaceById(streamingId, {
           id: streamingId,
           type: 'degraded',
@@ -283,6 +345,26 @@ export default function App() {
         });
       },
     });
+
+    activeTurnRef.current = {
+      abort: handle.abort,
+      // Called only when THIS turn is superseded by a new send before it
+      // reached onDone/onError — replaces its bubble with whatever partial
+      // text had accumulated, marked as interrupted, instead of leaving a
+      // spinner that will never resolve (chatClient.js's abort() rejects the
+      // fetch, so neither onDone nor onError will fire for this turn).
+      finalizeStranded: () => {
+        replaceById(streamingId, {
+          id: streamingId,
+          type: 'degraded',
+          props: {
+            body: accumulated || 'Interrupted by a new message before finishing.',
+            correlationId: 'interrupted',
+            onRetry: () => sendMessage(text, lang),
+          },
+        });
+      },
+    };
   };
 
   return (
@@ -333,6 +415,7 @@ export default function App() {
         onSelectSession={selectSession}
         onNewChat={startNewChat}
         onDeleteSession={removeSession}
+        sending={mode === 'live' && sending}
       />
     </Box>
   );

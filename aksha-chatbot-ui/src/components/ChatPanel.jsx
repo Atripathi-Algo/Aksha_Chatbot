@@ -9,7 +9,7 @@ import Composer from './Composer';
 
 export default function ChatPanel({
   open, onClose, messages, scope, onClear, onRemoveScope, onSend, onClarificationSelect, onPickSuggestion,
-  sessions, activeThreadId, onSelectSession, onNewChat, onDeleteSession,
+  sessions, activeThreadId, onSelectSession, onNewChat, onDeleteSession, sending,
 }) {
   const theme = useTheme();
   const isBottomSheet = useMediaQuery(theme.breakpoints.down('lg')); // < 1100px per mockup 3c
@@ -64,7 +64,7 @@ export default function ChatPanel({
       ) : (
         <MessageList items={messages} onClarificationSelect={onClarificationSelect} />
       )}
-      <Composer onSend={onSend} />
+      <Composer onSend={onSend} disabled={sending} />
     </Box>
   );
 }

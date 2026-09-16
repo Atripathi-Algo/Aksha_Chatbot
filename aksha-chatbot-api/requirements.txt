@@ -3,14 +3,19 @@ ollama==0.6.2
 openai==3.3.1
 python-dotenv==1.2.3
 pydantic==2.13.4
-fastapi
-uvicorn
-httpx
-langgraph
-langchain-core
-structlog
-sse-starlette
+# Audit finding (second pass, 2026-09-16): these seven were unpinned, so two
+# builds of the same commit could install different major versions of the
+# web/graph stack. Pinned to what's actually installed and verified working.
+fastapi==0.141.1
+uvicorn==0.53.0
+httpx==0.28.1
+langgraph==1.2.11
+langchain-core==1.6.3
+structlog==26.1.0
+# sse-starlette removed (was unpinned and unused — main.py streams via
+# fastapi.responses.StreamingResponse directly, never sse_starlette).
 fastembed==0.8.0
 numpy==2.4.6
 python-socketio[client]==5.17.0
 pytest==9.1.1
+langsmith==0.12.5

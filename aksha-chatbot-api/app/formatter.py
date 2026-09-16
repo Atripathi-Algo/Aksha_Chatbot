@@ -118,18 +118,6 @@ def translate_stream(english_text: str, target_language: str, client: LLMClient)
     yield from client.stream_chat(messages, tier="cheap", node="translator")
 
 
-_FOLLOW_UP_SYSTEM_PROMPT = """You suggest follow-up questions for the Aksha support chatbot.
-Given the operator's question, which agent answered, and the answer given, suggest up to 3 short,
-natural follow-up questions the operator might genuinely ask next — grounded only in what the
-answer actually said (camera names, groups, dates it mentioned), never inventing a new camera,
-alert, or group name that wasn't in the answer. If the answer was a "no data" / "can't confirm"
-result, prefer suggestions that make sense given that (e.g. try a different camera or range),
-not questions that assume the missing data exists.
-Reply with ONLY a JSON array of 0-3 short question strings, nothing else. Example:
-["Which cameras are in the Perimeter group?", "Were there any alerts yesterday?"]
-If no good follow-up applies, reply with an empty array: []"""
-
-
 def _normalize_question(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", text.lower())
 

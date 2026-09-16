@@ -10,13 +10,13 @@ const LANGS = [
   { code: 'HI', label: 'हिं' },
 ];
 
-export default function Composer({ onSend, placeholder = 'Ask about alerts, cameras or events…' }) {
+export default function Composer({ onSend, placeholder = 'Ask about alerts, cameras or events…', disabled = false }) {
   const [value, setValue] = useState('');
   const [lang, setLang] = useState('EN');
   const [focused, setFocused] = useState(false);
 
   const send = () => {
-    if (!value.trim()) return;
+    if (!value.trim() || disabled) return;
     onSend?.(value, lang);
     setValue('');
   };
@@ -56,11 +56,12 @@ export default function Composer({ onSend, placeholder = 'Ask about alerts, came
           onKeyDown={(e) => e.key === 'Enter' && send()}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          placeholder={placeholder}
+          placeholder={disabled ? 'Waiting for a reply…' : placeholder}
           aria-label="Message Aksha assistant"
+          disabled={disabled}
           sx={{
             flex: 1, border: 'none', outline: 'none', background: 'transparent', padding: 0,
-            font: `400 12.5px/1.3 ${font.body}`, color: color.ink,
+            font: `400 12.5px/1.3 ${font.body}`, color: disabled ? color.neutral500 : color.ink,
             '&::placeholder': { color: color.neutral600 },
           }}
         />
@@ -68,9 +69,15 @@ export default function Composer({ onSend, placeholder = 'Ask about alerts, came
           component="button"
           onClick={send}
           aria-label="Send message"
+          disabled={disabled}
+          // Audit finding (second pass, 2026-09-16): send was never disabled
+          // while a turn was streaming, so a second send could strand the
+          // first turn's bubble in a permanent "typing" state. Disabling
+          // here is the primary fix; App.jsx's activeTurnRef additionally
+          // makes a send arriving anyway (e.g. a follow-up chip) safe.
           sx={{
-            all: 'unset', cursor: 'pointer', width: 26, height: 26, borderRadius: '7px', flex: 'none',
-            background: color.accent, color: '#fff',
+            all: 'unset', cursor: disabled ? 'default' : 'pointer', width: 26, height: 26, borderRadius: '7px', flex: 'none',
+            background: disabled ? color.neutral300 : color.accent, color: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
