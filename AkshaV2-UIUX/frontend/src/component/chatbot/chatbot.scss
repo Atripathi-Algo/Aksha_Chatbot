@@ -1,0 +1,249 @@
+// Tokens lifted from the chatbot design handoff (§11), mapped onto this
+// widget's existing brand blue rather than the handoff's MUI palette — this
+// widget is plain CSS on plain HTML, not MUI.
+$ink: #24324a;
+$muted: #526078;
+$rule: #e6e8ec;
+$pill-border: #d0d4db;
+$accent: #4176cd;
+$accent-dark: #163364;
+$accent-100: #eaf0fb;
+$accent-700: #1f4788;
+$neutral-100: #f4f5f7;
+$neutral-200: #eceef2;
+$radius-card: 10px;
+$radius-pill: 999px;
+
+// A column flex stack, not two independently-sized blocks — the panel's
+// height budget must leave room for the launcher sitting below it in this
+// same bottom-anchored fixed container, or a short viewport pushes their
+// combined height above y=0 and clips the panel's own header off-screen
+// (found live: panel height alone was capped against 100vh, but the launcher
+// button's height was never subtracted, so panel + launcher together could
+// still exceed the viewport). flex:1 1 auto + min-height:0 on the panel lets
+// it shrink to whatever room actually remains instead of a fixed number that
+// ignores its sibling.
+.aksha-chatbot-widget {
+  position: fixed; right: 24px; bottom: 24px; z-index: 1200; font-family: "Inter", sans-serif;
+  display: flex; flex-direction: column; align-items: flex-end;
+  max-height: calc(100vh - 48px); // 24px top clearance + the 24px bottom offset above
+}
+.aksha-chatbot-launcher { flex: none; display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 24px; padding: 12px 17px; color: #fff; background: $accent-dark; box-shadow: 0 8px 24px #03122e33; cursor: pointer; font-weight: 700; }
+.aksha-chatbot-launcher:hover { background: #0e244a; }
+
+.aksha-chatbot-panel {
+  width: 410px; max-height: 720px; margin-bottom: 12px;
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid #d9e0ec; border-radius: 12px; background: #fff; box-shadow: 0 14px 40px #03122e2b;
+}
+.aksha-chatbot-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; color: #fff; background: $accent-dark; }
+.aksha-chatbot-title { display: flex; align-items: center; gap: 9px; }
+.aksha-chatbot-title div { display: grid; gap: 3px; }
+.aksha-chatbot-panel-header span { font-size: 11px; font-weight: 400; opacity: .8; }
+.aksha-chatbot-header-actions { display: flex; gap: 8px; }
+.aksha-chatbot-panel-header button { display: grid; place-items: center; border: 0; color: inherit; background: transparent; cursor: pointer; }
+
+.aksha-chatbot-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 16px; color: $muted; border-bottom: 1px solid $rule; font-size: 11px;
+}
+.aksha-chatbot-toolbar span { display: flex; align-items: center; gap: 5px; }
+.aksha-chatbot-toolbar button { display: flex; align-items: center; gap: 4px; border: 0; color: $muted; background: transparent; cursor: pointer; font-size: 11px; }
+
+.aksha-chatbot-messages {
+  flex: 1; overflow-y: auto; padding: 16px; background: #f6f8fb;
+  scrollbar-width: thin; scrollbar-color: $pill-border transparent;
+}
+.aksha-chatbot-messages::-webkit-scrollbar { width: 8px; }
+.aksha-chatbot-messages::-webkit-scrollbar-track { background: transparent; }
+.aksha-chatbot-messages::-webkit-scrollbar-thumb { background: $pill-border; border-radius: $radius-pill; border: 2px solid #f6f8fb; }
+.aksha-chatbot-messages::-webkit-scrollbar-thumb:hover { background: darken($pill-border, 12%); }
+.aksha-chatbot-welcome { margin: 4px 0 14px; color: $muted; font-size: 13px; line-height: 1.5; }
+
+// Base message shell. User bubbles stay the accent-filled pill the widget
+// already had; assistant replies switch to the unbubbled "generic answer
+// card" from the design handoff §3 — a white card housing an agent header,
+// prose body, and the optional evidence/caveat/follow-up rows below it.
+.aksha-chatbot-message { width: fit-content; max-width: 88%; margin: 8px 0; padding: 10px 12px; border-radius: $radius-card; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; }
+.aksha-chatbot-message.user { margin-left: auto; color: #fff; background: $accent; border-radius: 12px 12px 4px 12px; }
+.aksha-chatbot-message.assistant { color: $ink; background: #fff; border: 1px solid #e1e6ef; }
+
+.aksha-card-answer { max-width: 96%; }
+// Degraded: neutral greys only, per §5 — this room has genuine alarms, a
+// backend hiccup must never compete with a real intrusion alert for red.
+.aksha-card-degraded { background: $neutral-100; border-color: #d7d3d3; }
+.aksha-card-stub { border-style: dashed; color: $muted; }
+
+.aksha-agent-header-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+.aksha-agent-header-row .aksha-agent-header { margin-bottom: 0; }
+.aksha-repoll { display: inline-flex; align-items: center; gap: 4px; border: 1px solid $pill-border; border-radius: $radius-pill; padding: 2px 9px; font-size: 10px; color: $muted; background: transparent; cursor: pointer; flex: none; }
+.aksha-repoll:hover { background: $neutral-100; color: $accent-dark; }
+.aksha-agent-header { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+.aksha-agent-tile { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 7px; flex: none; }
+.aksha-agent-tile-accent { background: $accent-100; color: $accent-700; }
+.aksha-agent-tile-neutral { background: $neutral-200; color: $muted; }
+.aksha-card-stub .aksha-agent-tile { border: 1px dashed $pill-border; background: transparent; }
+.aksha-agent-name { font-size: 11px; font-weight: 700; color: $accent-dark; }
+.aksha-card-stub .aksha-agent-name { color: $muted; }
+
+.aksha-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 500; line-height: 1.4; padding: 2px 9px; border-radius: $radius-pill; white-space: nowrap; }
+.aksha-pill-fresh-live { background: $accent-100; color: $accent-700; }
+.aksha-pill-fresh-live::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: $accent; }
+.aksha-pill-fresh-degraded { border: 1px solid $pill-border; color: $muted; }
+.aksha-pill-fresh-degraded::before { content: ""; width: 5px; height: 5px; border-radius: 50%; border: 1px solid $muted; }
+.aksha-pill-fresh-stub { border: 1px dashed $pill-border; color: $muted; }
+// Outlined, never filled — a REST poll snapshot must read as less certain
+// than a genuinely live feed (§4, Live Monitoring).
+.aksha-pill-fresh-snapshot { border: 1px solid $pill-border; color: $muted; }
+.aksha-pill-writing { background: $neutral-100; color: $muted; }
+
+.aksha-writing-bar { position: relative; height: 3px; margin: 2px 0 8px; border-radius: $radius-pill; background: $neutral-200; overflow: hidden; }
+.aksha-writing-bar span { position: absolute; inset: 0; width: 40%; border-radius: $radius-pill; background: $accent; animation: aksha-writing-slide 1.1s ease-in-out infinite; }
+@keyframes aksha-writing-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.aksha-answer-body { white-space: pre-wrap; }
+
+// Alert frames, §3 — 16:9, grayscale by default (an unreviewed alert image
+// isn't a confirmed detection), caption strip naming the camera + time.
+.aksha-frame-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 9px; }
+.aksha-frame { margin: 0; border: 1px solid $pill-border; border-radius: 9px; overflow: hidden; background: $neutral-100; }
+.aksha-frame img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.aksha-frame figcaption { padding: 4px 7px; font-size: 10px; color: $muted; background: $neutral-100; border-top: 1px solid $pill-border; }
+
+// Insights & Analytics table/chart, §8 — a "Show data" disclosure under the
+// prose, not a replacement for it. Bars restate the table's own alert_count
+// column, so both stay in the same pre-sorted (highest-first) row order the
+// backend already established — neither one re-ranks independently.
+.aksha-analytics { margin-top: 10px; border: 1px solid $pill-border; border-radius: 9px; background: #fff; overflow: hidden; }
+.aksha-analytics > summary {
+  cursor: pointer; padding: 7px 11px; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: $muted; background: $neutral-100; list-style: none;
+}
+.aksha-analytics > summary::-webkit-details-marker { display: none; }
+.aksha-analytics > summary::before { content: "▾ "; }
+.aksha-analytics[open] > summary::before { content: "▸ "; }
+
+.aksha-analytics-chart { display: flex; flex-direction: column; gap: 7px; padding: 11px; }
+.aksha-chart-row { display: grid; grid-template-columns: minmax(64px, auto) 1fr minmax(38px, auto); align-items: center; gap: 8px; font-size: 11px; }
+.aksha-chart-label { color: $ink; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aksha-chart-track { height: 12px; border-radius: $radius-pill; background: $neutral-200; overflow: hidden; }
+.aksha-chart-bar { display: block; height: 100%; min-width: 4px; border-radius: $radius-pill; background: $accent; }
+.aksha-chart-value { font-variant-numeric: tabular-nums; color: $muted; text-align: right; }
+
+.aksha-table-wrap { overflow-x: auto; border-top: 1px solid $pill-border; }
+.aksha-analytics-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.aksha-analytics-table th {
+  text-align: left; font-weight: 600; color: $muted; padding: 6px 10px;
+  border-bottom: 1px solid $pill-border; white-space: nowrap;
+}
+.aksha-analytics-table td { padding: 6px 10px; border-bottom: 1px solid $rule; color: $ink; white-space: nowrap; }
+.aksha-analytics-table tr:last-child td { border-bottom: none; }
+.aksha-analytics-table .aksha-num { font-variant-numeric: tabular-nums; text-align: right; }
+
+.aksha-source-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.aksha-pill-source { border: 1px solid $pill-border; background: #fff; color: $ink; }
+
+// The camera pill itself is the watch-live control for Live Monitoring
+// answers — sits in the same wrapping row a plain source pill would, but is
+// a real button. `display: contents` on the wrapper un-boxes it so the pill
+// stays inline with its siblings while an opened feed (flex-basis 100%)
+// breaks onto its own full-width row below the whole pill row, rather than
+// only under the one pill that opened it.
+.aksha-live-camera-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.aksha-live-camera { display: contents; }
+.aksha-pill-live {
+  font-family: inherit; cursor: pointer;
+  border: 1px solid $pill-border; background: #fff; color: $ink;
+}
+.aksha-pill-live:hover { background: $neutral-100; }
+.aksha-pill-live[aria-pressed="true"] { background: $accent-100; border-color: transparent; color: $accent-700; }
+// A disabled pill (concurrent-feed cap reached) reads as unavailable, not
+// just unstyled — dashed border matches the same "can't do this right now"
+// language used elsewhere (stub freshness pill), not a color that could be
+// mistaken for an error.
+.aksha-pill-live:disabled { border-style: dashed; color: $muted; cursor: not-allowed; opacity: 0.7; }
+.aksha-live-frame { flex: 1 1 100%; position: relative; margin-top: 2px; border: 1px solid $pill-border; border-radius: 9px; overflow: hidden; background: $neutral-100; }
+.aksha-live-frame img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+// A frozen last frame must never keep reading as current once the socket's
+// gone quiet — desaturating it is the same "don't overstate freshness"
+// principle as the Snapshot pill, just applied to a still image instead of
+// a status pill.
+.aksha-live-frame img.is-stale { filter: grayscale(1) brightness(0.75); }
+.aksha-live-frame-waiting {
+  display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9;
+  font-size: 11px; color: $muted;
+}
+.aksha-live-badge {
+  position: absolute; top: 6px; left: 6px; padding: 2px 7px; border-radius: $radius-pill;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; color: #fff;
+  background: rgba(20, 24, 31, 0.65);
+}
+// Neutral, not red — same reasoning as the Degraded freshness pill: a lost
+// camera feed is a real operational fact worth surfacing plainly, not an
+// alarm competing with a genuine security event elsewhere in the room.
+.aksha-live-badge-stale { background: rgba(82, 96, 120, 0.85); animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .aksha-live-badge:not(.aksha-live-badge-stale) { animation: aksha-live-pulse 1.8s ease-in-out infinite; }
+}
+@keyframes aksha-live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.aksha-caveat-card {
+  margin-top: 9px; padding: 7px 10px; font-size: 11px; line-height: 1.5; color: $muted;
+  background: #f6f8fb; border-left: 2px solid $accent;
+}
+
+.aksha-card-clarify { background: $accent-100; border-color: #cddaf5; }
+.aksha-clarify-question { font-size: 13px; font-weight: 600; color: $accent-dark; margin-bottom: 8px; }
+.aksha-clarify-options { display: grid; gap: 6px; }
+.aksha-clarify-options button {
+  border: 1px solid #d9e0ec; border-radius: 8px; padding: 8px 10px; width: 100%;
+  color: $accent-dark; background: #fff; cursor: pointer; text-align: left; font-size: 12px;
+}
+.aksha-clarify-options button:hover { background: #f2f6fd; }
+
+.aksha-chatbot-working { margin: 0 0 8px; padding: 10px 12px; color: $muted; background: #fff; border: 1px solid #d9e0ec; border-radius: 10px; font-size: 11px; }
+.aksha-chatbot-working > button { display: flex; align-items: center; gap: 5px; border: 0; color: $accent-dark; background: transparent; cursor: pointer; font-weight: 700; padding: 0; }
+.aksha-chatbot-working ul { margin: 8px 0 0; padding-left: 18px; }
+.aksha-chatbot-working li { margin: 4px 0; }
+.aksha-chatbot-live-answer { padding-top: 8px; border-top: 1px solid #edf0f5; }
+
+.aksha-chatbot-reasoning { margin-bottom: 9px; color: $muted; font-size: 11px; }
+.aksha-chatbot-reasoning summary { cursor: pointer; color: $accent-dark; font-weight: 700; }
+.aksha-chatbot-reasoning ul { margin: 7px 0 0; padding-left: 17px; }
+
+// Suggested follow-ups render as accent-100 pills, per §6 — visually
+// distinct from a source pill (neutral border) or a clarification option
+// (full-width row): these are the widget suggesting the next question,
+// not evidence for the current one.
+.aksha-chatbot-recommendations { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; padding-top: 9px; border-top: 1px solid $rule; }
+.aksha-chatbot-recommendations span { flex-basis: 100%; color: $muted; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.aksha-chatbot-recommendations button { border: 1px solid transparent; border-radius: $radius-pill; padding: 6px 12px; color: $accent-700; background: $accent-100; cursor: pointer; text-align: left; font-size: 11.5px; font-weight: 500; }
+.aksha-chatbot-recommendations button:hover { background: darken($accent-100, 4%); border-color: $pill-border; }
+
+.aksha-chatbot-suggestions { display: grid; gap: 6px; padding: 0 14px 12px; }
+.aksha-chatbot-suggestions button { border: 1px solid #d9e0ec; border-radius: 7px; padding: 8px 10px; color: $accent-dark; background: #fff; cursor: pointer; text-align: left; font-size: 11px; }
+.aksha-chatbot-suggestions button:hover { background: #edf3fc; }
+
+.aksha-chatbot-composer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #e1e6ef; background: #fff; }
+.aksha-chatbot-composer input { min-width: 0; flex: 1; border: 1px solid #cbd4e2; border-radius: 7px; padding: 10px; outline: none; font-size: 13px; }
+.aksha-chatbot-composer input:focus { border-color: $accent; }
+.aksha-chatbot-composer input:disabled { background: $neutral-100; }
+.aksha-chatbot-composer button { display: grid; place-items: center; width: 38px; border: 0; border-radius: 7px; color: #fff; background: $accent; cursor: pointer; }
+.aksha-chatbot-composer button:disabled { cursor: not-allowed; opacity: .45; }
+
+@media (max-width: 520px) {
+  // right+left with no explicit width makes the flex column stretch full
+  // width; align-items:flex-end (from the base rule) no longer matters here
+  // since there's only one possible width, but max-height still comes from
+  // the base rule's calc(100vh - 48px) — a second fixed `height` here would
+  // reintroduce the same overflow-above-the-viewport bug on short screens.
+  .aksha-chatbot-widget { right: 12px; bottom: 12px; left: 12px; }
+  .aksha-chatbot-panel { width: 100%; }
+}

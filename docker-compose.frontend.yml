@@ -1,0 +1,18 @@
+name: aksha-frontend
+
+services:
+  aksha-frontend:
+    build:
+      context: ./AkshaV2-UIUX/frontend
+      dockerfile: dockerfile
+    image: aksha-frontend:dev
+    container_name: aksha-frontend
+    restart: always
+    networks:
+      - aksha-net
+    ports:
+      - "8080:80"
+
+networks:
+  aksha-net:
+    external: true

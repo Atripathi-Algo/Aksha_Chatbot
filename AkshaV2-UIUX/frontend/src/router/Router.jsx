@@ -23,6 +23,7 @@ import Alerts from "../component/common/customAlertModal/Alerts";
 import Loginpage from "../pages/Login";
 import Signup from '../pages/Signup';
 import ForgotPassword from "../pages/ForgotPassword";
+import ChatbotWidget from "../component/chatbot/ChatbotWidget";
 
 
 // router functional component for protected routes
@@ -38,6 +39,7 @@ const Router = () => {
   return (
     <div>
       {!hideHeaderRoutes.includes(location.pathname) && <Header />}
+      {!hideHeaderRoutes.includes(location.pathname) && <ChatbotWidget />}
       <Routes>
         <Route 
           path="/" 

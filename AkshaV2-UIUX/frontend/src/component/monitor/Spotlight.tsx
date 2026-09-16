@@ -41,7 +41,7 @@ interface SpotLightCameraType {
   image: string;
 }
 
-const Spotlight = ({ selectedGroup, cameraGroups }: SpotlightProps) => {
+const Spotlight = ({ selectedGroup = "default", cameraGroups = [] }: Partial<SpotlightProps>) => {
   const [spotLightCameras, setSpotLightCameras] = useState<SpotLightCameraType[]>([]);
   const [imageLoader, setImageLoader] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -55,7 +55,7 @@ const Spotlight = ({ selectedGroup, cameraGroups }: SpotlightProps) => {
 
   // Fetch cameras from backend
   const fetchSpotLightCameras = async () => {
-    const res = await axiosJWT.get("http://localhost:5000/api/active/getSpotlightCamera") as any;
+    const res = await axiosJWT.get(`${process.env.REACT_APP_BASE_URL}/api/active/getSpotlightCamera`) as any;
     res.data.info && setSpotLightCameras(res.data.info);
   };
 

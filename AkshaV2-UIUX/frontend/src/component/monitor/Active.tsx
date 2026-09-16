@@ -71,7 +71,7 @@ interface ActiveProps {
   cameraGroups: CameraGroupType[];
 }
 
-const Active = ({ selectedGroup, cameraGroups }: ActiveProps) => {
+const Active = ({ selectedGroup = "default", cameraGroups = [] }: Partial<ActiveProps>) => {
   const [cameraDetails, setCameraDetails] = useState<CameraDetailType[]>([]);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -81,7 +81,7 @@ const Active = ({ selectedGroup, cameraGroups }: ActiveProps) => {
     // Fetch initial camera data
   const fetchLiveCamera = async () => {
     const res = await axiosJWT.get(
-      "http://localhost:5000/api/active/getLiveCamera"
+      `${process.env.REACT_APP_BASE_URL}/api/active/getLiveCamera`
     ) as any;
     res.data.info && setCameraDetails(res.data.info);
   };
