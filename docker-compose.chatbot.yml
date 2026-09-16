@@ -28,12 +28,21 @@ services:
       - aksha-net
     volumes:
       - ${AKSHA_HOST_DATA_PATH:-../Aksha}:/srv/Aksha:ro
+      # Found live 2026-09-16: the Dockerfile's build context is
+      # aksha-chatbot-api/ alone, so docs/ (a sibling directory at the repo
+      # root, next to aksha-chatbot-api/) was never in the image —
+      # search_docs (Help & Product Guide) silently returned zero results in
+      # every real deployment of this container. Same fix shape as the Aksha
+      # data path above: bind-mount the real docs/ in, point the app at it
+      # via CHATBOT_DOCS_DIR (see app/tools_help.py).
+      - ./docs:/srv/docs:ro
     ports:
       - "${CHATBOT_API_PORT:-8010}:8010"
     env_file:
       - ./chatbot.env
     environment:
       AKSHA_DATA_PATH: /srv/Aksha
+      CHATBOT_DOCS_DIR: /srv/docs
 
   aksha-chatbot-ui:
     build: ./aksha-chatbot-ui

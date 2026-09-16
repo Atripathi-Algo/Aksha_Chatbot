@@ -8,6 +8,8 @@
 **Owner:** Aksha Platform Engineering
 **Companion documents:** `development-plan/Aksha_Chatbot_Development_Plan.html` (rollout sequencing), `development-plan/Phase0_Phase1_Agent_Details.html` (Phase 0/1 build specification and architecture diagram), `development-plan/Phase1_Evaluation_Report.{md,pdf}` (30-query evaluation, both pre- and post-fix), `development-plan/Claude_Design_Prompt_Live_Agents.md` (the v3.0 UI redesign brief)
 
+> **How to read this document — added during the 2026-09-16 docs-hygiene pass.** Sections 1–8 below are the original target-architecture design — what the system is *meant* to become, mostly written before most of it existed. Section 9 (Implementation Plan / Build Reports) is the only section describing what actually runs today, and it is kept current as real testing happens. Where the two disagree, Section 9 is correct and Sections 1–8 are aspirational, not a report of shipped behavior. Each of Sections 2–8 now carries its own short **Implementation status** line for the reason Section 4.4 already flagged: `search_docs` (Help & Product Guide's retrieval tool, Section 9b) reads this file's raw text with no way to tell "decided" from "shipped" apart — Sections 9c and 9i both caught it presenting planned architecture as current fact to an operator. If you are an agent answering from a chunk of this document, check that chunk's **Implementation status** line (or this note) before stating anything in it as fact about the running system.
+
 ## 0. Purpose and Scope
 
 This document defines a production architecture for an authenticated, agentic support chatbot for the Aksha video-surveillance platform. The chatbot helps operators understand alerts, investigate incidents, diagnose cameras, query insights, find product guidance, and escalate unresolved issues.
@@ -201,6 +203,8 @@ Graph limits:
 
 ## 2. State Management and Data Flow
 
+**Implementation status:** `ChatbotState` (2.1) is implemented close to this schema — see `app/state.py`. Checkpointing (2.3) is NOT MongoDB-backed as designed; it's LangGraph's in-memory `MemorySaver` (Section 9a), and short-term conversation history is a separate, also in-memory, per-thread store (`app/conversation_store.py`, added 2026-09-04) — neither survives a process restart.
+
 ### 2.1 Canonical State Schema
 
 Use a versioned Pydantic model as the LangGraph state contract. Persist only fields required for resumption and audit; do not persist raw secrets or unrestricted prompts.
@@ -337,6 +341,8 @@ chat_audit_events
 Redis is recommended for distributed locks, rate limits, and short-lived approval tokens, not as the source of durable conversation state.
 
 ## 3. Tool Registry and Contract Specifications
+
+**Implementation status:** The typed tool registry (3.1) is implemented and real — `app/tool_registry.py`, Pydantic-validated, see Sections 9a/9b for the live tool list. The image-agent contracts (3.2a) remain entirely unbuilt (Phase 2, not started — Section 9). The general error-class table (3.3) is the target shape; what actually ships is narrower, hand-written per-tool handling of specific known error cases (Sections 9e/9i), not this generalized framework.
 
 ### 3.1 Tool Registry
 
@@ -486,6 +492,8 @@ Internal calls should use service-to-service authentication and a short timeout.
 
 ## 4. Context Window and Memory Management
 
+**Implementation status:** Short-term memory (4.1) is real but simpler than designed — a fixed last-4-turn window per thread (`app/conversation_store.py`), not the token-budget algorithm in 4.2 (not implemented as a general mechanism, though individual tool adapters do pre-aggregate their own results — e.g. `tools_insights.py`'s `_prepare_camera_report` drops raw per-alert detail before it reaches the model). Long-term memory (4.3) is not built. RAG ingestion (4.4) is partially built — see that section's own status note. Model tiering (4.5 #2 / 4.6) is implemented as of 2026-09-16 (`llm_client.py`'s `tier` parameter, cheap for router/formatter, strong for domain-worker reasoning). 4.5 #8's cost tracking is also implemented as of 2026-09-16 (`app/cost_tracker.py`: exact token counts and estimated cost logged per call, a process-wide — not per-tenant, Section 5.6 — daily budget with 70/90/100% alert logging, summary on `GET /v1/health/ready`); per-token dollar rates default to $0 (unpriced) rather than an invented figure until an operator configures real ones. The rest of 4.5's cost items (collapsing LLM calls for simple agents, precomputed KPIs beyond what already exists) are still design, not code.
+
 ### 4.1 Short-Term Memory
 
 Maintain the current conversation as a bounded set of structured messages:
@@ -539,7 +547,7 @@ Do not store sensitive alert images, credentials, or personal data in semantic m
 
 ### 4.4 RAG Ingestion and Retrieval
 
-**Implementation status (2026-08-29): NOT BUILT.** Everything below this line is target-architecture design, not what runs today. The actual Help & Product Guide implementation (`app/tools_help.py`, Section 9b) is a plain keyword/term-overlap match over this repo's own `docs/*.md` files — no embeddings, no vector index, no reranking, no ACL/tenant filtering, no ingestion pipeline. This distinction matters because this document is itself one of `search_docs`'s two source files: an operator asking "how does document search work" gets this section's text back, so the design language below must never be read as a claim about current behavior. If you are an agent answering from this chunk, say plainly that FAISS/hybrid retrieval is planned, not implemented, and describe `tools_help.py`'s real keyword-matching approach instead.
+**Implementation status, updated 2026-09-16: PARTIALLY BUILT.** `app/tools_help.py` now does real semantic retrieval — local embeddings (fastembed's ONNX runtime, `BAAI/bge-small-en-v1.5`, no GPU/torch) over this repo's own `docs/*.md` files, brute-force cosine similarity (no chunk count here needs an index), with the original keyword/term-overlap score kept only as a tie-breaker. That closes the real gap between "designed" and "shipped" for the retrieval *method*. Still not built: reranking, ACL/tenant filtering, and any real ingestion pipeline (this is two static files, not a managed corpus) — the pipeline diagram and per-chunk metadata schema below remain target design, not current behavior. Also found and fixed in the same pass: a real deployment bug (not a design gap) — `DOCS_DIR`'s path resolution was silently wrong inside the actual Docker container (a docs/ directory that was never in the image), so `search_docs` had been returning zero results in every real deployment until the fix (bind-mounted docs/ + `CHATBOT_DOCS_DIR` env var). If you are an agent answering from this chunk, describe the real embedding-based retrieval as implemented, but reranking/ACL/ingestion as still planned.
 
 Ingestion pipeline:
 
@@ -624,6 +632,8 @@ If only three of these ship before Phase 1 launches, prioritize (2) model tierin
 **Guardrail model:** Groq also offers `gpt-oss-safeguard-20b`, a purpose-built safety-classification model, on the same free tier. Recommended as a dedicated second-opinion classifier for the Section 5.2 prompt-injection/jailbreak checks rather than overloading the router or agent model with that responsibility. There is no equivalent Ollama model yet; the local-only guardrail path relies on LLM Guard's scanners (Section 5.7) instead.
 
 ## 5. Guardrails, Security, and Human-in-the-Loop
+
+**Implementation status:** Almost entirely NOT implemented. There is no authentication (5.1 — Section 9a: no JWT trust boundary, "by direct instruction," CORS wide open), no prompt-injection scanning, human-approval gates, or guardrails framework (5.2, 5.4, 5.7 — no `llm-guard`/`guardrails-ai` dependency exists in `requirements.txt`). What is real: Pydantic input validation on every tool call (a concrete instance of 5.7 #1); the credential-redaction pattern added 2026-09-04 — RTSP links and notification bot tokens stripped in `app/node_client.py`/`app/tools_notification.py` before any tool result reaches the model; and basic PII log redaction added 2026-09-16 (`app/logging_config.py`'s `_redact_pii` structlog processor — regex-based, scoped to emails and phone numbers, applied to every log line including raw `user_query` text). All three are narrow, concrete instances of 5.1's redaction principle, not the general framework this section describes. Section 5.6's known gaps are still open.
 
 ### 5.1 Authentication and Authorization
 
@@ -743,6 +753,8 @@ Layered rather than one framework carrying every control:
 **Explicitly not used:** NVIDIA NeMo Guardrails. Its Colang topical-flow DSL solves a problem the Supervisor Router (Section 1.1) already solves — hard routing to exactly one bounded domain agent — so adopting it would add a second, redundant control surface rather than a new capability.
 
 ## 6. Observability, Testing, and Evaluation
+
+**Implementation status:** Structured logging (`structlog`, thread_id/turn_id-bound per turn, with basic PII redaction — Section 5) is real — Section 9a. Per-call latency (`duration_ms` on every `llm_call_cost` log line, `latency_ms` on every `ToolResult`) and token/cost tracking (`app/cost_tracker.py`) are both implemented as of 2026-09-16, covering a real slice of 6.1's "Latency by node and tool" / "Input/output token counts. Estimated cost." trace attributes — via structured logs, not a dashboard. Optional LangSmith tracing (`@traceable` on `llm_client.py`'s dispatch methods, `router.route`, `agent_executor.run_agent`, `tool_registry.execute_tool`, and the formatter functions) was also added 2026-09-16 — off by default (safe no-op unless `LANGSMITH_TRACING`/`LANGSMITH_API_KEY` are set), matching this section's own "LangSmith... may be enabled for development and evaluation" language; deliberately NOT relying on LangGraph's own auto-instrumentation, since that only covers `graph.invoke()` (the `/v1/chat/invoke` path) and real traffic goes through `/v1/chat/stream`, which never touches the compiled graph. Full OpenTelemetry tracing and the dashboards in 6.1/6.4 remain design only — no `opentelemetry-*` package exists in `requirements.txt`. Testing: `tests/test_router_regressions.py` (live-LLM routing cases) plus a real `pytest` suite added 2026-09-16 (`tests/test_router_parsing.py`, `test_tool_registry.py`, `test_formatter_branches.py`, `test_camera_filter.py` — pure-Python logic, no LLM calls, no live backend needed) are real, narrow instances of 6.2/6.3's testing vision. CI (`.github/workflows/chatbot-regression.yml`) runs the pytest suite and the camera-filter check automatically on every push/PR; the live router-regression suite stays manual-dispatch-only given its real API cost. Not the full evaluation-set framework this section describes.
 
 ### 6.1 Observability Stack
 
@@ -876,6 +888,8 @@ A release may proceed only when:
 
 ## 7. API Surface
 
+**Implementation status:** The two Python endpoints actually implemented are `/v1/chat/stream` and `/v1/chat/invoke` (`app/main.py`), matching 7.2. The Node-backend adapter routes in 7.1 (`/api/chatbot/*`) do not exist — the frontend's `ChatbotWidget.jsx` calls the chatbot API directly (proxied by nginx), not through a Node-side adapter layer.
+
 ### 7.1 Node Backend Adapter
 
 Proposed authenticated routes:
@@ -928,6 +942,8 @@ Example terminal response:
 ```
 
 ## 8. Deployment and Operations
+
+**Implementation status:** `aksha-chatbot-api` runs as its own container per 8.1, alongside the real Aksha stack on `aksha-net` — see `docker-compose.chatbot.yml` and `docker-compose.frontend.yml`. `aksha-chatbot-worker`, `redis`, `vector-index`, and `otel-collector` are not provisioned. Configuration mostly matches 8.2's env-var list (see `chatbot.env.example`), with model-tiering vars (`*_MODEL_CHEAP`) added 2026-09-16 not yet reflected there. The failure-mode table (8.3) matches real, verified behavior — see Sections 9a/9e.
 
 ### 8.1 Service Layout
 
@@ -1184,6 +1200,30 @@ Diagnosing both required adding tool-call logging (`tool_called` in `app/agent_e
 **Also found, not yet fixed:** `extract_sources` (`app/formatter.py`) pulls up to 5 items from *any* `cameras` list in tool results, so a Live Monitoring answer about one specific camera showed all 3 seeded cameras as sources rather than just the one discussed. Cosmetic, not a correctness bug in the answer text itself.
 
 **Live "thinking" trace — new capability.** `app/agent_executor.py`'s `run_agent` is now a generator, yielding a step event the instant each thing happens (`tool_call`, `tool_result`) instead of only returning a final list once the whole turn is done; a `run_agent_collect` wrapper preserves the old return-a-list contract for `app/graph.py`'s non-streaming `/v1/chat/invoke` path. `app/main.py`'s `/v1/chat/stream` forwards each step live as a new `thinking` SSE event, plus a `routing` step (intent/confidence/risk level) right after the router decision and a `formatting` step before the answer starts streaming. On the frontend, `ThinkingTrace` (`aksha-chatbot-ui/src/components/shared.jsx`) renders this as a live-growing list while streaming, then collapses into a "Show reasoning · N steps" disclosure on the finished answer — verified live end-to-end in the browser, showing the real routing intent, the exact tool called with its arguments, and success/failure, not a simulated placeholder.
+
+### 9j. Development-Plan Follow-Through: Retrieval, Tiering, Cost, Live Verification, Observability, Testing (2026-09-16)
+
+A backlog pass against this document's own stated gaps (Sections 4.4–4.6, 5.6, 6.1–6.2, 9b), each item chosen because the design already called for it and it hadn't been claimed yet. Every item below was verified live against the real running service (`aksha-chatbot-api` container), not just written and assumed correct.
+
+**Real retrieval for Help & Product Guide, and a real bug found while building it.** `app/tools_help.py` now does genuine semantic search — local embeddings (`fastembed`, `BAAI/bge-small-en-v1.5`, ONNX runtime, no GPU/torch) over the two docs, brute-force cosine similarity (this corpus is small enough that a vector index buys nothing), keyword overlap kept only as a tie-breaker. `MIN_SIMILARITY` was calibrated live against this actual corpus (0.55 — relevant queries scored 0.62–0.79, unrelated queries still scored 0.43–0.50 against their best match, higher than intuition suggests for an all-chatbot-text corpus). While building this, found that `search_docs` had been **silently returning zero results in every real Docker deployment** — `DOCS_DIR`'s path computation resolved to `/docs` inside the container, which never existed (the Dockerfile's build context is `aksha-chatbot-api/` alone). Every "verified live" Help & Product Guide answer in Sections 9b/9d must have been run outside Docker. Fixed with a `CHATBOT_DOCS_DIR` env var plus a `docs/:/srv/docs:ro` bind mount in `docker-compose.chatbot.yml` (same shape as the existing `AKSHA_HOST_DATA_PATH` mount). Verified live after the fix: `search_docs` now returns real, relevant chunks (confirmed by direct inspection, not just a plausible-sounding answer).
+
+**Model tiering (Section 4.5 #2 / 4.6), implemented.** `llm_client.py` gained a `tier` parameter (`"cheap"` / `"strong"`); router classification and formatter prose now request `"cheap"`, domain-worker tool-calling reasoning requests `"strong"` explicitly. Verified live: Gemini's assumed cheap-tier model name (`gemini-3.6-flash-lite`) turned out not to exist on the real account — caught by calling `client.models.list()` live rather than trusting the guess (same discipline Section 4.6 already established) — corrected to `gemini-flash-lite-latest`, confirmed working, along with Groq's `openai/gpt-oss-20b`. Full 10-case router regression suite still passes 10/10 on the cheap-tier model.
+
+**Cost/budget tracking (Section 4.5 #8 / 5.3 / 8.2), implemented.** `app/cost_tracker.py` logs exact token counts and cost per call (real `usage` fields from every provider, including a `stream_options.include_usage`-based fix for streamed calls, which don't return usage by default), a process-wide (not per-tenant — Section 5.6, no `tenant_id` exists yet) daily accumulator with 70/90/100% budget-alert log lines, and a summary on `GET /v1/health/ready`. Per-token dollar rates default to $0 (unpriced) rather than an invented figure — Groq's tracked models are free-tier/unmetered and Ollama is always local, so $0 is accurate for both; Gemini's real rate isn't independently verified in this codebase, so it stays $0 until an operator configures real numbers via `*_COST_PER_1M_*` env vars.
+
+**Latency tracking, implemented.** `ToolResult` gained the `latency_ms` field the doc's own Section 2.1 schema always claimed it had but the real Pydantic model (`app/state.py`) never actually defined — added and wired through `tool_registry.execute_tool`. Every `llm_call_cost` log line also carries `duration_ms`.
+
+**Camera-name filter bug, fixed with a regression test.** `_matches_camera_filter` (`app/formatter.py`) used raw-substring containment after the 2026-09-04 fix, which meant "cam1" matched "cam11" as a character substring — a real over-matching risk for frame/source scoping. Replaced with token-based subset comparison; `tests/test_camera_filter.py` (8 cases) locks this in.
+
+**Live Monitoring verification, and a real infrastructure finding.** Section 9b listed "Socket.IO live-push for Live Monitoring" as still open. Probed the real `node_backend` Socket.IO server directly (not assumed): there is no separate camera-presence/status channel to subscribe to — the only real-time traffic is raw per-camera video-frame events, named exactly by `Camera_Name`, the same channels the frontend's "Watch live" feature already uses. Section 1.2's original framing assumed a push channel that doesn't exist. Built the closest honest equivalent instead: `app/socket_probe.py` briefly subscribes to the named cameras' frame channels and reports whether a frame actually arrived, surfaced as `verified_streaming` per camera on `get_live_cameras`/`get_spotlight_cameras`, with the `live_monitoring` agent instructed to weight it over the REST snapshot's own `Status`/`Live` fields when they disagree. Verified live: all three seeded cameras confirmed `verified_streaming: true`, matching a direct Socket.IO probe.
+
+**Optional LangSmith tracing, off by default.** `@traceable` decorators on `llm_client.py`'s `chat`/`stream_chat`, `router.route`, `agent_executor.run_agent`, `tool_registry.execute_tool`, and the three formatter entry points — safe no-op unless `LANGSMITH_TRACING`/`LANGSMITH_API_KEY` are set (confirmed live: no exceptions, no behavior change with tracing disabled). Deliberately not relying on LangGraph's own auto-instrumentation for this — that only covers `graph.invoke()` (the `/v1/chat/invoke` path), and real frontend traffic goes through `/v1/chat/stream`, which never touches the compiled graph at all, so graph-level tracing alone would miss almost everything.
+
+**Basic PII log redaction, implemented.** A regex-based structlog processor (`app/logging_config.py`) redacts emails and phone numbers from every log field, including raw `user_query` text (several call sites log the operator's query verbatim). Deliberately scoped to what a phone-number pattern can safely distinguish from a Mongo ObjectId or UUID (requires at least one separator between digit groups) — a basic scrubber, not a PII-detection model.
+
+**A real pytest suite, added alongside the existing plain-script tests.** `tests/test_router_parsing.py`, `test_tool_registry.py`, `test_formatter_branches.py` (23 cases total) cover the pure-Python logic that needs no LLM call — router fast-path guards and fallback/error-recovery, `tool_registry.execute_tool`'s full containment contract (unknown tool, validation failure, `NodeApiError`, an unexpected exception, never a raised exception), and `formatter.py`'s stub/no-results/all-failed short-circuit branches (proven via a client that raises if called at all). This reverses `tests/test_router_regressions.py`'s original documented decision not to add a test-framework dependency — a deliberate choice made explicitly for this pass, not an oversight.
+
+**CI, split by cost.** `.github/workflows/chatbot-regression.yml`: the new pytest suite and the camera-filter regression (both free, deterministic, no API keys) now run automatically on every push/PR touching `aksha-chatbot-api/`; the live router-regression suite (real LLM calls per case) stays `workflow_dispatch`-only, requiring a repo secret.
 
 ## 10. Open Questions
 

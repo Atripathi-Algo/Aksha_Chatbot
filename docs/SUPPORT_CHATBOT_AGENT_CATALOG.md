@@ -5,6 +5,8 @@
 **Date:** 2026-08-21
 **Related design:** [Chatbot System Architecture](CHATBOT_SYSTEM_ARCHITECTURE.md)
 
+> **Docs-hygiene note, added 2026-09-16:** every agent card below is a PROPOSED design, not a report of what's built — this entire file predates almost all of the real implementation work and was never updated against it. Whether an agent actually exists and works is answered only by `CHATBOT_SYSTEM_ARCHITECTURE.md`'s Section 9 (Implementation Plan / Build Reports), never by this catalog. As of that section's latest build report, the only real, working agents are: Camera Operations, Alert Investigation (basic filters only — no image analysis), Live Monitoring, Insights & Analytics, Notification (read-only), Help & Product Guide, Multi-Language Support (a formatter wrapper, not its own agent), and Error & Status Explanation. Every other card here — Alert Summary, Image & Anomaly Analysis, Camera Troubleshooting, KPI Report, Timeline & Sequence, System Health, Model & Detection, Video Retrieval, Incident Investigation, Camera Configuration, Surveillance Control, Notification Configuration, User & Access, Report Export, Compliance & Audit, Escalation & Human Support, False Positive & Feedback — remains unbuilt. Section 1's "Existing Foundation" list below (Code Explainer, Document/Knowledge, Image/Anomaly Analysis agents, etc.) is also proposed, not existing, despite its heading — `CHATBOT_SYSTEM_ARCHITECTURE.md` Section 1.2 confirms none of those modules exist in this repository.
+
 ## 1. Existing Foundation
 
 The current chatbot design already defines these shared capabilities:

@@ -10,3 +10,7 @@ langgraph
 langchain-core
 structlog
 sse-starlette
+fastembed==0.8.0
+numpy==2.4.6
+python-socketio[client]==5.17.0
+pytest==9.1.1

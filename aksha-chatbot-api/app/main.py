@@ -14,10 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from app import tools_alerts, tools_camera, tools_errors, tools_help, tools_insights, tools_live, tools_notification
+from app import conversation_store, tools_alerts, tools_camera, tools_errors, tools_help, tools_insights, tools_live, tools_notification
 from app.agent_executor import run_agent
 from app.agents import AGENTS
-from app.formatter import extract_sources, format_answer, stream_answer, suggest_follow_ups, translate_stream
+from app.cost_tracker import get_daily_summary
+from app.formatter import extract_analytics, extract_frames, extract_sources, format_answer, stream_answer, suggest_follow_ups, translate_stream
 from app.graph import get_graph
 from app.logging_config import bind_turn_context, clear_turn_context, configure_logging, get_logger
 from app.router import route
@@ -34,6 +35,7 @@ tools_insights.register()
 tools_notification.register()
 tools_help.register()
 tools_errors.register()
+tools_help.warm_up()  # pay the embedding cold-start cost now, not on an operator's first query
 
 app = FastAPI(title="Aksha Chatbot API", version="0.1.0-phase0")
 
@@ -58,7 +60,10 @@ def health_live():
 
 @app.get("/v1/health/ready")
 def health_ready():
-    return {"status": "ok", "provider": LLMClient().provider}
+    # daily_cost is Section 6.1's dashboard ("token/cost usage by tenant and
+    # agent") scaled to Phase 0 — one process-wide counter surfaced here
+    # rather than a separate dashboard; see app/cost_tracker.py.
+    return {"status": "ok", "provider": LLMClient().provider, "daily_cost": get_daily_summary()}
 
 
 @app.post("/v1/chat/invoke")
@@ -71,7 +76,9 @@ def chat_invoke(req: ChatRequest):
 
     graph = get_graph()
     config = {"configurable": {"thread_id": req.thread_id}}
-    result = graph.invoke({"user_query": req.user_query, "turn_id": turn_id}, config=config)
+    result = graph.invoke(
+        {"user_query": req.user_query, "turn_id": turn_id, "thread_id": req.thread_id}, config=config
+    )
 
     logger.info("turn_end", status=result.get("response_status"))
     clear_turn_context()
@@ -83,6 +90,8 @@ def chat_invoke(req: ChatRequest):
         "agent": result.get("selected_agent"),
         "answer": result.get("final_response"),
         "sources": result.get("source_refs", []),
+        "frames": result.get("frames", []),
+        "analytics": result.get("analytics", []),
         "freshness": result.get("freshness", {}),
         "correlation_id": turn_id,
     }
@@ -115,8 +124,9 @@ def chat_stream(req: ChatRequest):
 
 def _run_turn(req: "ChatRequest", turn_id: str):
     client = LLMClient()
+    history = conversation_store.get_history(req.thread_id)
 
-    decision = route(req.user_query.strip(), date.today().isoformat(), client)
+    decision = route(req.user_query.strip(), date.today().isoformat(), client, history=history)
     logger.info("stream_routed", agent=decision.agent, needs_clarification=decision.needs_clarification)
 
     if decision.needs_clarification:
@@ -125,6 +135,8 @@ def _run_turn(req: "ChatRequest", turn_id: str):
             "options": decision.clarification_options,
         })
         yield _sse("done", {"status": "needs_clarification", "agent": decision.agent, "turn_id": turn_id})
+        if decision.clarification_question:
+            conversation_store.append_turn(req.thread_id, req.user_query, decision.clarification_question)
         return
 
     agent = AGENTS[decision.agent]
@@ -137,7 +149,7 @@ def _run_turn(req: "ChatRequest", turn_id: str):
     })
 
     results: list[ToolResult] = []
-    for step in run_agent(agent, req.user_query, decision.entities.model_dump(), client):
+    for step in run_agent(agent, req.user_query, decision.entities.model_dump(), client, history=history):
         if step["type"] == "tool_call":
             yield _sse("thinking", {"phase": "tool_call", "tool": step["tool"], "args": step["args"]})
         elif step["type"] == "tool_result":
@@ -148,7 +160,9 @@ def _run_turn(req: "ChatRequest", turn_id: str):
     if results:
         yield _sse("thinking", {"phase": "formatting"})
 
-    sources = extract_sources(results)
+    sources = extract_sources(results, decision.entities.camera_names)
+    frames = extract_frames(results, decision.entities.camera_names)
+    analytics = extract_analytics(results)
 
     # Kept in English regardless of req.language — used only to ground the
     # follow-up suggestions below, never shown to the operator directly, so
@@ -183,16 +197,19 @@ def _run_turn(req: "ChatRequest", turn_id: str):
     # Best-effort, non-critical — only for a real resolved answer, so we
     # never spend an extra LLM call chasing suggestions for a stub/degraded
     # turn where there's nothing concrete to follow up on.
-    follow_ups = suggest_follow_ups(agent, results) if status == "resolved" else []
+    follow_ups = suggest_follow_ups(agent, results, req.user_query) if status == "resolved" else []
 
     yield _sse("done", {
         "status": status,
         "agent": decision.agent,
         "sources": [s.model_dump() for s in sources],
+        "frames": frames,
+        "analytics": analytics,
         "follow_ups": follow_ups,
         "freshness": freshness,
         "turn_id": turn_id,
     })
+    conversation_store.append_turn(req.thread_id, req.user_query, english_text)
     logger.info("stream_turn_end", status=status)
 
 

@@ -10,9 +10,11 @@ this is a placeholder hook, not a no-op: real scope injection plugs in here
 once Section 5.6's JWT work lands.
 """
 
+import time
 from dataclasses import dataclass
 from typing import Any, Callable
 
+from langsmith import traceable
 from pydantic import BaseModel, ValidationError
 
 from app.logging_config import get_logger
@@ -61,29 +63,42 @@ def get_openai_tools(tool_names: list[str]) -> list[dict]:
     return tools
 
 
+@traceable(run_type="tool", name="execute_tool")
 def execute_tool(name: str, arguments: dict) -> ToolResult:
     """Validate arguments, run the handler, and always return a ToolResult —
     never raise. This is what keeps a bad tool call from crashing a turn."""
+    start = time.perf_counter()
+
+    def _elapsed_ms() -> int:
+        return round((time.perf_counter() - start) * 1000)
+
     spec = _REGISTRY.get(name)
     if not spec:
         logger.warning("unknown_tool_call", tool=name)
-        return ToolResult(tool_name=name, ok=False, error_code="UNKNOWN_TOOL", message=f"No tool named {name!r} is registered.")
+        return ToolResult(
+            tool_name=name, ok=False, error_code="UNKNOWN_TOOL",
+            message=f"No tool named {name!r} is registered.", latency_ms=_elapsed_ms(),
+        )
 
     try:
         parsed_input = spec.input_model.model_validate(arguments)
     except ValidationError as e:
         logger.info("tool_input_invalid", tool=name, error=str(e))
-        return ToolResult(tool_name=name, ok=False, error_code="VALIDATION", message=str(e), retryable=False)
+        return ToolResult(tool_name=name, ok=False, error_code="VALIDATION", message=str(e), retryable=False, latency_ms=_elapsed_ms())
 
     try:
         data = spec.handler(parsed_input)
-        return ToolResult(tool_name=name, ok=True, data=data)
+        latency_ms = _elapsed_ms()
+        logger.info("tool_call_succeeded", tool=name, latency_ms=latency_ms)
+        return ToolResult(tool_name=name, ok=True, data=data, latency_ms=latency_ms)
     except NodeApiError as e:
-        logger.info("tool_call_degraded", tool=name, error_code=e.error_code)
-        return ToolResult(tool_name=name, ok=False, error_code=e.error_code, message=e.message, retryable=e.retryable)
+        latency_ms = _elapsed_ms()
+        logger.info("tool_call_degraded", tool=name, error_code=e.error_code, latency_ms=latency_ms)
+        return ToolResult(tool_name=name, ok=False, error_code=e.error_code, message=e.message, retryable=e.retryable, latency_ms=latency_ms)
     except Exception as e:  # last-resort containment — a tool bug must not crash the turn
-        logger.error("tool_call_unexpected_error", tool=name, error=str(e))
-        return ToolResult(tool_name=name, ok=False, error_code="INTERNAL", message="Tool failed unexpectedly.", retryable=False)
+        latency_ms = _elapsed_ms()
+        logger.error("tool_call_unexpected_error", tool=name, error=str(e), latency_ms=latency_ms)
+        return ToolResult(tool_name=name, ok=False, error_code="INTERNAL", message="Tool failed unexpectedly.", retryable=False, latency_ms=latency_ms)
 
 
 def list_domains() -> dict[str, list[str]]:

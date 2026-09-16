@@ -50,6 +50,7 @@ class ToolResult(BaseModel):
     error_code: Optional[str] = None
     message: Optional[str] = None
     retryable: bool = False
+    latency_ms: int = 0  # Section 6.1's "Latency by node and tool" — see app/tool_registry.py's execute_tool
 
 
 class RouterDecision(BaseModel):
@@ -77,6 +78,8 @@ class ChatbotState(TypedDict, total=False):
     selected_agent: str
     tool_results: list[dict]  # list[ToolResult.model_dump()]
     source_refs: list[dict]  # list[SourceRef.model_dump()]
+    frames: list[dict]  # alert frame images — see app/formatter.py's extract_frames
+    analytics: list[dict]  # insights table/chart rows — see app/formatter.py's extract_analytics
     freshness: dict  # {"kind": "live"|"cached"|"degraded", "label": str}
     final_response: str
     response_status: str  # resolved | needs_clarification | denied | escalated | failed

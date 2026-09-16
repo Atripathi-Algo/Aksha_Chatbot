@@ -11,6 +11,13 @@ WORKDIR /srv
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-fetch the Help & Product Guide embedding model at build time (~130MB),
+# not on first request — fastembed downloads it from Hugging Face Hub on
+# first use otherwise, which would mean every fresh container's first real
+# query pays a slow, network-dependent cold start (and fails outright if the
+# deployment target has no outbound internet at runtime).
+RUN python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='BAAI/bge-small-en-v1.5')"
+
 COPY . .
 
 ENV PYTHONUNBUFFERED=1 \

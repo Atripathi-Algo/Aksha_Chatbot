@@ -16,6 +16,8 @@ import json
 from collections.abc import Iterator
 from typing import Any
 
+from langsmith import traceable
+
 from app.agents import AgentSpec
 from app.formatter import compact_results_json
 from app.logging_config import get_logger
@@ -28,7 +30,14 @@ logger = get_logger(component="agent_executor")
 MAX_TOOL_CALLS = 3  # Section 5.3 allows up to 8; kept tight for Phase 0.
 
 
-def run_agent(agent: AgentSpec, user_query: str, entities: dict, client: LLMClient) -> Iterator[dict[str, Any]]:
+@traceable(run_type="chain", name="agent_executor.run_agent")
+def run_agent(
+    agent: AgentSpec,
+    user_query: str,
+    entities: dict,
+    client: LLMClient,
+    history: list[dict] | None = None,
+) -> Iterator[dict[str, Any]]:
     if not agent.implemented:
         yield {"type": "done", "results": []}
         return
@@ -36,12 +45,16 @@ def run_agent(agent: AgentSpec, user_query: str, entities: dict, client: LLMClie
     tools = get_openai_tools(agent.tool_names)
     messages = [
         {"role": "system", "content": f"{agent.system_prompt}\nExtracted entities so far: {json.dumps(entities)}"},
+        *(history or []),
         {"role": "user", "content": user_query},
     ]
 
     results: list[ToolResult] = []
     for _ in range(MAX_TOOL_CALLS):
-        response = client.chat(messages, tools=tools)
+        # Strong tier, explicit: this is the domain-reasoning call Section
+        # 4.5 #2 says to keep on the capable model — it decides which tool
+        # to call, with what arguments, and when it has enough to stop.
+        response = client.chat(messages, tools=tools, tier="strong", node=f"agent:{agent.key}")
         if not response.tool_calls:
             break
         for call in response.tool_calls:
@@ -51,8 +64,8 @@ def run_agent(agent: AgentSpec, user_query: str, entities: dict, client: LLMClie
 
             result = execute_tool(call["name"], args)
             results.append(result)
-            logger.info("tool_called", tool=call["name"], args=args, ok=result.ok, error_code=result.error_code)
-            yield {"type": "tool_result", "tool": call["name"], "ok": result.ok, "error_code": result.error_code}
+            logger.info("tool_called", tool=call["name"], args=args, ok=result.ok, error_code=result.error_code, latency_ms=result.latency_ms)
+            yield {"type": "tool_result", "tool": call["name"], "ok": result.ok, "error_code": result.error_code, "latency_ms": result.latency_ms}
 
             messages.append({"role": "assistant", "content": f"Called {call['name']} with {args}"})
             messages.append({"role": "user", "content": f"Tool result: {compact_results_json([result])}"})
@@ -70,11 +83,17 @@ def run_agent(agent: AgentSpec, user_query: str, entities: dict, client: LLMClie
     yield {"type": "done", "results": results}
 
 
-def run_agent_collect(agent: AgentSpec, user_query: str, entities: dict, client: LLMClient) -> list[ToolResult]:
+def run_agent_collect(
+    agent: AgentSpec,
+    user_query: str,
+    entities: dict,
+    client: LLMClient,
+    history: list[dict] | None = None,
+) -> list[ToolResult]:
     """Non-streaming callers (app/graph.py) just want the final results —
     drain the generator and discard the intermediate step events."""
     results: list[ToolResult] = []
-    for step in run_agent(agent, user_query, entities, client):
+    for step in run_agent(agent, user_query, entities, client, history=history):
         if step["type"] == "done":
             results = step["results"]
     return results

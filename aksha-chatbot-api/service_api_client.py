@@ -24,6 +24,10 @@ logger = get_logger(component="service_api_client")
 SERVICE_API_BASE_URL = os.getenv("SERVICE_API_BASE_URL", "http://localhost:4000")
 TIMEOUT_SECONDS = float(os.getenv("SERVICE_API_TIMEOUT_SECONDS", "15"))  # image analysis is slower than a plain data lookup
 
+# Mirrors app/node_client.py's shared-client reasoning — reuse the pooled
+# connection across calls instead of opening a fresh one each time.
+_CLIENT = httpx.Client(timeout=TIMEOUT_SECONDS)
+
 
 class ServiceApiError(Exception):
     def __init__(self, error_code: str, message: str, retryable: bool = False):
@@ -49,7 +53,7 @@ def _handle_response(resp: httpx.Response, url: str) -> dict:
 def post(path: str, json_body: dict) -> dict:
     url = f"{SERVICE_API_BASE_URL}{path}"
     try:
-        resp = httpx.post(url, json=json_body, timeout=TIMEOUT_SECONDS)
+        resp = _CLIENT.post(url, json=json_body)
     except httpx.ConnectError as e:
         logger.warning("service_api_unreachable", url=url, error=str(e))
         raise ServiceApiError("SERVICE_UNAVAILABLE", "ServiceAPI is not reachable right now.", retryable=True) from e

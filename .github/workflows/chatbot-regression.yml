@@ -1,0 +1,89 @@
+# Two trigger shapes, on purpose:
+#
+# - push/pull_request (automatic): the pytest suite and the camera-filter
+#   regression. Both are pure-Python/deterministic — no LLM calls, no API
+#   keys needed — so they're free and safe to run on every push.
+# - workflow_dispatch (manual only): additionally runs the router
+#   regression suite (tests/test_router_regressions.py), which makes real
+#   calls to a live LLM provider for every case — real cost and the
+#   ordinary flakiness of any single LLM call, so it must never run
+#   unattended on every push/PR. Run it from the Actions tab (or
+#   `gh workflow run chatbot-regression.yml`) when you've touched
+#   app/router.py, app/agents.py, or app/formatter.py and want to confirm
+#   no routing regression before merging.
+#
+# The live job requires repo secrets GROQ_API_KEY and/or GEMINI_API_KEY
+# (Settings > Secrets and variables > Actions) for whichever provider you
+# select on manual dispatch — these are not set by this workflow file and
+# must be added once, manually.
+name: Chatbot regression suite
+
+on:
+  push:
+    paths:
+      - "aksha-chatbot-api/**"
+  pull_request:
+    paths:
+      - "aksha-chatbot-api/**"
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "LLM provider to route against for the live suite (real API calls — costs apply)"
+        required: true
+        default: groq
+        type: choice
+        options:
+          - groq
+          - gemini
+
+jobs:
+  pytest:
+    name: Pytest suite (free, deterministic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: aksha-chatbot-api
+        run: pip install -r requirements.txt
+      - name: Run pytest
+        working-directory: aksha-chatbot-api
+        run: python -m pytest tests/test_router_parsing.py tests/test_tool_registry.py tests/test_formatter_branches.py -v
+
+  camera-filter-regression:
+    name: Camera-name filter regression (free, deterministic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: aksha-chatbot-api
+        run: pip install -r requirements.txt
+      - name: Run camera filter regression
+        working-directory: aksha-chatbot-api
+        run: python -m tests.test_camera_filter
+
+  router-regression:
+    name: Router classification regression (live LLM calls — manual dispatch only)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    needs: [pytest, camera-filter-regression]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: aksha-chatbot-api
+        run: pip install -r requirements.txt
+      - name: Run router regression matrix
+        working-directory: aksha-chatbot-api
+        env:
+          CHATBOT_MODEL_PROVIDER: ${{ github.event.inputs.provider }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m tests.test_router_regressions

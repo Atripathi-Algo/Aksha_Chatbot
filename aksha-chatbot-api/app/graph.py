@@ -13,9 +13,10 @@ from datetime import date
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 
+from app import conversation_store
 from app.agent_executor import run_agent_collect
 from app.agents import AGENTS
-from app.formatter import extract_sources, format_answer
+from app.formatter import extract_analytics, extract_frames, extract_sources, format_answer
 from app.logging_config import get_logger
 from app.router import route
 from app.state import ChatbotState
@@ -30,14 +31,17 @@ def _normalize_query(state: ChatbotState) -> dict:
 
 def _route_request(state: ChatbotState) -> dict:
     client = LLMClient()
-    decision = route(state["normalized_query"], date.today().isoformat(), client)
+    history = conversation_store.get_history(state["thread_id"])
+    decision = route(state["normalized_query"], date.today().isoformat(), client, history=history)
     logger.info("routed", agent=decision.agent, intent=decision.intent, needs_clarification=decision.needs_clarification)
 
     if decision.needs_clarification:
+        clarification = decision.clarification_question or "Could you clarify what you mean?"
+        conversation_store.append_turn(state["thread_id"], state["normalized_query"], clarification)
         return {
             "router": decision.model_dump(),
             "response_status": "needs_clarification",
-            "final_response": decision.clarification_question or "Could you clarify what you mean?",
+            "final_response": clarification,
             "source_refs": [],
             "freshness": {"kind": "clarification", "label": ""},
         }
@@ -47,7 +51,10 @@ def _route_request(state: ChatbotState) -> dict:
 def _domain_worker(state: ChatbotState) -> dict:
     client = LLMClient()
     agent = AGENTS[state["selected_agent"]]
-    results = run_agent_collect(agent, state["normalized_query"], state["router"].get("entities", {}), client)
+    history = conversation_store.get_history(state["thread_id"])
+    results = run_agent_collect(
+        agent, state["normalized_query"], state["router"].get("entities", {}), client, history=history
+    )
     return {"tool_results": [r.model_dump() for r in results]}
 
 
@@ -58,7 +65,10 @@ def _format_response(state: ChatbotState) -> dict:
     agent = AGENTS[state["selected_agent"]]
     results = [ToolResult.model_validate(r) for r in state.get("tool_results", [])]
     text = format_answer(agent, state["normalized_query"], results, client)
-    sources = extract_sources(results)
+    camera_names = state["router"].get("entities", {}).get("camera_names", [])
+    sources = extract_sources(results, camera_names)
+    frames = extract_frames(results, camera_names)
+    analytics = extract_analytics(results)
 
     if not agent.implemented:
         freshness = {"kind": "stub", "label": "Not implemented"}
@@ -73,9 +83,12 @@ def _format_response(state: ChatbotState) -> dict:
         freshness = {"kind": "degraded", "label": "Degraded"}
         status = "failed"
 
+    conversation_store.append_turn(state["thread_id"], state["normalized_query"], text)
     return {
         "final_response": text,
         "source_refs": [s.model_dump() for s in sources],
+        "frames": frames,
+        "analytics": analytics,
         "freshness": freshness,
         "response_status": status,
     }

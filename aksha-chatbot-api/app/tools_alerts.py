@@ -3,7 +3,7 @@ Per Section 0.1a: cross-alert image correlation is Phase 2."""
 
 from pydantic import BaseModel, Field
 
-from app.node_client import get
+from app.node_client import get, quote_path_segment
 from app.tool_registry import ToolSpec, register_tool
 
 
@@ -14,8 +14,11 @@ class GetRecentAlertsInput(BaseModel):
 def _get_recent_alerts(params: GetRecentAlertsInput) -> dict:
     # The deployed backend exposes the all-camera query as the single-segment
     # route /api/recentAlert/:hours. The documented two-segment variant returns
-    # 404 on the currently running backend.
-    alerts = get(f"/api/recentAlert/{params.hours}")
+    # 404 on the currently running backend. The response wraps the per-camera
+    # buckets as {success, message, alert: [...]} (note the singular key) —
+    # unwrap it, same reasoning as get_cameras below.
+    raw = get(f"/api/recentAlert/{params.hours}")
+    alerts = raw.get("alert", raw) if isinstance(raw, dict) else raw
     return {"alerts": alerts, "window_hours": params.hours}
 
 
@@ -24,7 +27,9 @@ class GetAlertsByCameraInput(BaseModel):
 
 
 def _get_alerts_by_camera(params: GetAlertsByCameraInput) -> dict:
-    alerts = get(f"/api/alert/{params.camera_name}")
+    # Wraps as {success, message, alerts: [...]} — unwrap for the same reason.
+    raw = get(f"/api/alert/{quote_path_segment(params.camera_name)}")
+    alerts = raw.get("alerts", raw) if isinstance(raw, dict) else raw
     return {"alerts": alerts, "camera_name": params.camera_name}
 
 

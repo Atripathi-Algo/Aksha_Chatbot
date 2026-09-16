@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from app.node_client import get
+from app.node_client import get, quote_path_segment, redact_cameras
 from app.tool_registry import ToolSpec, register_tool
 
 
@@ -11,8 +11,13 @@ class GetCamerasInput(BaseModel):
 
 
 def _get_cameras(_: GetCamerasInput) -> dict:
-    cameras = get("/api/camera")
-    return {"cameras": cameras}
+    # /api/camera wraps the list as {success, message, cameras: [...]} — unwrap
+    # it, or the formatter's source/follow-up extraction (which expects
+    # data["cameras"] to be the list itself) silently treats the wrapper's own
+    # keys ("success", "message") as camera names instead.
+    raw = get("/api/camera")
+    cameras = raw.get("cameras", raw) if isinstance(raw, dict) else raw
+    return {"cameras": redact_cameras(cameras)}
 
 
 class GetCameraGroupsInput(BaseModel):
@@ -20,8 +25,9 @@ class GetCameraGroupsInput(BaseModel):
 
 
 def _get_camera_groups(params: GetCameraGroupsInput) -> dict:
-    path = f"/api/camgroup/{params.group_id}" if params.group_id else "/api/camgroup"
-    groups = get(path)
+    path = f"/api/camgroup/{quote_path_segment(params.group_id)}" if params.group_id else "/api/camgroup"
+    raw = get(path)
+    groups = raw.get("groups", raw) if isinstance(raw, dict) else raw
     return {"groups": groups}
 
 

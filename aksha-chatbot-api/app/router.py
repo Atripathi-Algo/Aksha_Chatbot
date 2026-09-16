@@ -10,6 +10,8 @@ name is a validation error, not a guess.
 import json
 import re
 
+from langsmith import traceable
+
 from app.agents import AGENTS, ROUTER_AGENT_CHOICES
 from app.logging_config import get_logger
 from app.state import RouterDecision
@@ -56,6 +58,14 @@ Agent descriptions:
 Disambiguation rules (apply these before guessing):
 - "Which cameras have X setting enabled" (email alerts on/off, detection features, priority),
   scoped to specific cameras, is camera_operations — it's about camera configuration.
+- Found live 2026-09-04: don't let "configuration" alone pull an alert-rule question into
+  camera_operations. camera_operations owns the CAMERA's own device settings — whether its
+  Email_Alert/Display_Alert toggles are on, its Priority, FPS, detection Feature list, Status,
+  group membership. alert_investigation owns the ALERT RULE itself — its name, what object class
+  it watches for, its detection area, its active schedule/days. So "what alert rule is configured
+  for cam3", "show the alert rules for cam3", "what does the alert rule watch for" are
+  alert_investigation (it calls get_alerts_by_camera for exactly this), even though the operator
+  said "configured"/"configuration" — that word alone is not a camera_operations signal here.
 - Questions about a camera's or the system's *current* state right now — "is X online right now",
   "at this moment", "currently", spotlight view, what's live — are live_monitoring, not
   camera_operations, even though they mention a camera by name. camera_operations is for static
@@ -76,11 +86,20 @@ Disambiguation rules (apply these before guessing):
   ("how do X and Y relate") default to help_guide, not to whichever agent happens to own X or Y.
 
 Resolve relative dates (e.g. "today", "yesterday") to actual dates using the current date provided.
+Earlier turns of this conversation, if any, appear before the current question — use them only to
+resolve references like "it", "that camera", or "the same range" in the CURRENT question; still
+classify and extract entities for the current question alone, never for an earlier one.
 If the question is ambiguous (e.g. multiple cameras could match a name), set needs_clarification=true
 and provide clarification_options. You must call emit_route exactly once — never answer in free text."""
 
 
-def route(user_query: str, current_date_iso: str, client: LLMClient) -> RouterDecision:
+@traceable(run_type="chain", name="router.route")
+def route(
+    user_query: str,
+    current_date_iso: str,
+    client: LLMClient,
+    history: list[dict] | None = None,
+) -> RouterDecision:
     # Count/report questions have an unambiguous local owner. Keeping this
     # guard ahead of the model prevents "how many alerts" from being confused
     # with an alert-list lookup by the supervisor model.
@@ -100,9 +119,14 @@ def route(user_query: str, current_date_iso: str, client: LLMClient) -> RouterDe
 
     messages = [
         {"role": "system", "content": f"{_SYSTEM_PROMPT}\nCurrent date: {current_date_iso}"},
+        *(history or []),
         {"role": "user", "content": user_query},
     ]
-    result = client.chat(messages, tools=[_ROUTE_TOOL])
+    # Cheap tier (Section 4.6/4.5 #2): forced-tool-call classification is a
+    # schema-constrained task with no open-ended reasoning, and this call
+    # fires on every single turn — the single highest-leverage place to use
+    # the smaller model.
+    result = client.chat(messages, tools=[_ROUTE_TOOL], tier="cheap", node="router")
 
     if not result.tool_calls:
         logger.warning("router_no_tool_call", content=result.content)
