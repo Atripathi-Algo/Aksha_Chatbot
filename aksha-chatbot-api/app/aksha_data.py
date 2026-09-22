@@ -61,7 +61,20 @@ def read_insight_report(
             })
             for timestamp, alert in raw_camera.get("alerts", {}).items():
                 if _in_time_range(alert.get("timestamp", ""), range_start, range_end):
-                    camera["alerts"][timestamp] = alert
+                    # Found live 2026-09-18: each day's own report file keys
+                    # its alerts dict by time-of-day only ("06:06:49"), safe
+                    # within a single file but colliding silently once
+                    # multiple days are merged into one `camera["alerts"]`
+                    # dict here — two different days sharing a same-second
+                    # alert time (routine on a busy camera) overwrote one
+                    # real alert with another, undercounting the merged dict
+                    # (though total_alerts_generated/object_detection_alerts
+                    # stayed correct, since those increment per loop
+                    # iteration, not from the dict's later length). Each
+                    # alert's own `timestamp` field already carries the full
+                    # date, so keying the merge by that instead is unique
+                    # across the whole range, not just within one day.
+                    camera["alerts"][alert.get("timestamp") or timestamp] = alert
                     camera["total_alerts_generated"] += 1
                     object_name = alert.get("object")
                     if object_name:

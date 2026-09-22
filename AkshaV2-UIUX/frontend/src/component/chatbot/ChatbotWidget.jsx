@@ -11,6 +11,7 @@ import {
   Clock3,
   History,
   Mail,
+  MessageSquare,
   Play,
   Plus,
   RefreshCcw,
@@ -21,8 +22,39 @@ import {
   Wrench,
   X,
 } from "lucide-react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar, Line } from "react-chartjs-2";
 import { socket } from "../../router/socket";
+import { listSessions, saveSession, deleteSession } from "./chatHistory";
 import "./chatbot.scss";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Tooltip, Legend);
+
+// Categorical identity color for a camera, stable across every chart and
+// every query — assigned by each camera's position in an alphabetically
+// sorted name list (never by its rank in a given result, which changes
+// query to query as alert counts change; see dataviz skill's "color follows
+// the entity, never its rank"). The first 3 slots of this 8-hue order are
+// validated all-pairs CVD-safe; slots 4-8 are validated adjacent-pairs only
+// (fine for a legend a reader scans in order, not a scatter of same-colored
+// dots) — see the dataviz skill's palette.md.
+const CAMERA_PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"];
+const CAMERA_OTHER_COLOR = "#9aa1af";
+
+function cameraColor(name, allNames) {
+  const sorted = [...new Set(allNames)].sort();
+  const index = sorted.indexOf(name);
+  return index >= 0 && index < CAMERA_PALETTE.length ? CAMERA_PALETTE[index] : CAMERA_OTHER_COLOR;
+}
 
 const API_BASE = process.env.REACT_APP_CHATBOT_API_URL || window.location.origin;
 const SUGGESTIONS = [
@@ -110,50 +142,189 @@ function toSameOriginPath(rawUrl) {
   }
 }
 
-function Frames({ frames }) {
+function Frames({ frames, onExpand }) {
   if (!frames || frames.length === 0) return null;
   return (
     <div className="aksha-frame-grid">
       {frames.map((frame, index) => (
         <figure className="aksha-frame" key={`${frame.url}-${index}`}>
-          <img src={toSameOriginPath(frame.url)} alt={`Alert frame from ${frame.camera}`} loading="lazy" />
-          <figcaption>{frame.camera}{frame.time ? ` · ${frame.time}` : ""}</figcaption>
+          <button
+            type="button"
+            className="aksha-frame-expand"
+            onClick={() => onExpand(frame)}
+            aria-label={`Expand alert frame from ${frame.camera}`}
+          >
+            <img
+              src={toSameOriginPath(frame.url)}
+              alt={frame.alert_name ? `${frame.alert_name} — alert frame from ${frame.camera}` : `Alert frame from ${frame.camera}`}
+              loading="lazy"
+            />
+          </button>
+          <figcaption>
+            {frame.alert_name ? <span className="aksha-frame-alert-name">{frame.alert_name}</span> : null}
+            {frame.camera}{frame.time ? ` · ${frame.time}` : ""}
+          </figcaption>
         </figure>
       ))}
     </div>
   );
 }
 
-// Table + bar chart for Insights & Analytics — built entirely from
+// Full-size view of one alert frame, opened by clicking its thumbnail in
+// Frames above. Lives at the panel root (not per-message) so it overlays
+// the whole widget, including the composer, and closes on backdrop click,
+// the close button, or Escape.
+function FrameLightbox({ frame, onClose }) {
+  useEffect(() => {
+    if (!frame) return undefined;
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [frame, onClose]);
+
+  if (!frame) return null;
+  return (
+    <div className="aksha-frame-lightbox" role="dialog" aria-modal="true" aria-label="Expanded alert frame" onClick={onClose}>
+      <button type="button" className="aksha-frame-lightbox-close" aria-label="Close" onClick={onClose}><X size={20} /></button>
+      <figure onClick={(e) => e.stopPropagation()}>
+        <img src={toSameOriginPath(frame.url)} alt={frame.alert_name ? `${frame.alert_name} — alert frame from ${frame.camera}` : `Alert frame from ${frame.camera}`} />
+        <figcaption>
+          {frame.alert_name ? <span className="aksha-frame-alert-name">{frame.alert_name}</span> : null}
+          {frame.camera}{frame.time ? ` · ${frame.time}` : ""}
+        </figcaption>
+      </figure>
+    </div>
+  );
+}
+
+// Gridlines/axes, per the dataviz skill's mark specs: hairline, solid, one
+// step off the surface color — never the default chart.js near-black.
+const GRID_COLOR = "#e6e8ec";
+const AXIS_TEXT_COLOR = "#526078";
+const AXIS_FONT = { family: "Inter, sans-serif", size: 11 };
+
+// Camera alert-count bar chart — one bar per camera, each carrying that
+// camera's identity color (consistent with the hourly-trend chart below).
+// A single series across categories needs no legend (dataviz skill,
+// marks-and-anatomy.md): the x-axis labels already name each bar.
+function AlertCountChart({ rows }) {
+  const cameras = rows.map((r) => r.camera);
+  return (
+    <Bar
+      data={{
+        labels: cameras,
+        datasets: [
+          {
+            data: rows.map((r) => r.alert_count || 0),
+            backgroundColor: cameras.map((name) => cameraColor(name, cameras)),
+            borderRadius: 4,
+            borderSkipped: "bottom",
+            maxBarThickness: 24,
+          },
+        ],
+      }}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: (ctx) => `${ctx.parsed.y.toLocaleString()} alerts` },
+          },
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: AXIS_TEXT_COLOR, font: AXIS_FONT } },
+          y: {
+            beginAtZero: true,
+            grid: { color: GRID_COLOR },
+            ticks: { color: AXIS_TEXT_COLOR, font: AXIS_FONT, precision: 0 },
+          },
+        },
+      }}
+    />
+  );
+}
+
+const HOUR_LABELS = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
+
+// Hourly alert-volume trend — one line per camera, sharing AlertCountChart's
+// camera-color mapping so the same camera reads as the same color across
+// both charts (dataviz skill: "color follows the entity, never its rank").
+// Only rendered for rows that actually carry hourly_counts (older cached
+// turns, or a tool failure, simply won't have it — never fabricated here).
+function HourlyTrendChart({ rows }) {
+  const withHours = rows.filter((r) => Array.isArray(r.hourly_counts));
+  if (withHours.length === 0) return null;
+  const cameras = withHours.map((r) => r.camera);
+  return (
+    <Line
+      data={{
+        labels: HOUR_LABELS,
+        datasets: withHours.map((row) => {
+          const color = cameraColor(row.camera, cameras);
+          return {
+            label: row.camera,
+            data: row.hourly_counts,
+            borderColor: color,
+            backgroundColor: color,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            pointHoverBackgroundColor: color,
+            pointHoverBorderColor: "#fff",
+            pointHoverBorderWidth: 2,
+            tension: 0.15,
+          };
+        }),
+      }}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: withHours.length > 1
+            ? { display: true, position: "bottom", labels: { color: AXIS_TEXT_COLOR, font: AXIS_FONT, boxWidth: 10, boxHeight: 10 } }
+            : { display: false },
+          tooltip: { mode: "index", intersect: false },
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: AXIS_TEXT_COLOR, font: AXIS_FONT, maxTicksLimit: 12 } },
+          y: {
+            beginAtZero: true,
+            grid: { color: GRID_COLOR },
+            ticks: { color: AXIS_TEXT_COLOR, font: AXIS_FONT, precision: 0 },
+          },
+        },
+      }}
+    />
+  );
+}
+
+// Table + charts for Insights & Analytics — built entirely from
 // extract_analytics' deterministic rows (never asked of the LLM as text).
-// The bar chart is a visual restatement of the table's alert_count column,
-// not new information; rows arrive pre-sorted highest-first from the
-// backend (tools_insights.py), so neither the table nor the chart re-sorts —
-// order always matches what the prose says led.
+// Both charts are a visual restatement of the table's own columns, not new
+// information; rows arrive pre-sorted highest-first from the backend
+// (tools_insights.py), so the table and the bar chart's category order both
+// follow it — order always matches what the prose says led.
 function AnalyticsPanel({ rows }) {
   if (!rows || rows.length === 0) return null;
-  const maxCount = Math.max(...rows.map((r) => r.alert_count || 0), 1);
   const hasPriority = rows.some((r) => r.priority);
   const hasTopObject = rows.some((r) => r.top_object);
+  const hasHourly = rows.some((r) => Array.isArray(r.hourly_counts));
 
   return (
     <details className="aksha-analytics" open>
       <summary>Show data</summary>
 
-      <div className="aksha-analytics-chart">
-        {rows.map((row) => (
-          <div className="aksha-chart-row" key={row.camera}>
-            <span className="aksha-chart-label">{row.camera}</span>
-            <span className="aksha-chart-track">
-              <span
-                className="aksha-chart-bar"
-                style={{ width: `${Math.max(4, Math.round((100 * (row.alert_count || 0)) / maxCount))}%` }}
-              />
-            </span>
-            <span className="aksha-chart-value">{(row.alert_count || 0).toLocaleString()}</span>
-          </div>
-        ))}
+      <div className="aksha-analytics-chart" role="img" aria-label="Alert count by camera">
+        <AlertCountChart rows={rows} />
       </div>
+
+      {hasHourly && (
+        <div className="aksha-analytics-chart" role="img" aria-label="Alert count by hour of day">
+          <HourlyTrendChart rows={rows} />
+        </div>
+      )}
 
       <div className="aksha-table-wrap">
         <table className="aksha-analytics-table">
@@ -311,6 +482,57 @@ function AgentHeader({ agent, freshness, writing, asOf }) {
   );
 }
 
+function relativeTime(ts) {
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  return `${Math.round(diffHr / 24)}d ago`;
+}
+
+// Recent-chats dropdown — reads/writes through chatHistory.js, storage
+// scoped to this browser only (see that file's docstring for why).
+function RecentChats({ sessions, activeThreadId, onSelect, onNewChat, onDelete }) {
+  return (
+    <div className="aksha-recent-chats">
+      <div className="aksha-recent-chats-head">
+        <span>Recent chats{sessions.length > 0 ? ` · ${sessions.length}` : ""}</span>
+        <button type="button" onClick={onNewChat}><Plus size={12} /> New chat</button>
+      </div>
+      {sessions.length === 0 ? (
+        <p className="aksha-recent-chats-empty">Conversations you've had will show up here — stored on this device only.</p>
+      ) : (
+        <ul>
+          {sessions.map((s) => (
+            <li key={s.threadId}>
+              <button
+                type="button"
+                className={`aksha-recent-chat-item${s.threadId === activeThreadId ? " active" : ""}`}
+                onClick={() => onSelect(s)}
+              >
+                <span className="aksha-recent-chat-icon"><MessageSquare size={13} /></span>
+                <span className="aksha-recent-chat-text">
+                  <span className="aksha-recent-chat-title">{s.title}</span>
+                  <span className="aksha-recent-chat-time">{relativeTime(s.updatedAt)}</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="aksha-recent-chat-delete"
+                aria-label="Delete chat"
+                onClick={() => onDelete(s.threadId)}
+              >
+                <X size={13} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 const ChatbotWidget = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -319,17 +541,71 @@ const ChatbotWidget = () => {
   const [working, setWorking] = useState([]);
   const [liveAnswer, setLiveAnswer] = useState("");
   const [streamAgent, setStreamAgent] = useState(null);
-  const [showWorking, setShowWorking] = useState(true);
+  // Reasoning steps are opt-in, not shown by default while a turn streams —
+  // matches the completed-answer card's own <details> (closed until the
+  // operator clicks "Reasoning and data checks").
+  const [showWorking, setShowWorking] = useState(false);
   const [threadId, setThreadId] = useState(makeThreadId);
+  const messagesRef = useRef(null);
   // Shared across every message's camera pills, not per-card — that's what
   // makes the concurrent-feed cap actually a cap instead of a per-message
   // allowance that resets for each new answer.
   const [watchingCameras, setWatchingCameras] = useState(() => new Set());
+  const [sessions, setSessions] = useState(() => listSessions());
+  const [recentOpen, setRecentOpen] = useState(false);
+  const [expandedFrame, setExpandedFrame] = useState(null);
+
+  // Pin to the floor on every new message, streamed token, and reasoning
+  // step — a token arriving below the fold is useless if the operator has
+  // to scroll down to see it land.
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, liveAnswer, working, loading]);
+
+  // Persist every conversation to this device's recent-chats list — there's
+  // no backend session store (no auth, and app/conversation_store.py's own
+  // memory is in-memory-only and gone on a backend restart), so this is the
+  // only place a conversation survives closing the panel or reloading the
+  // page. Unlike aksha-chatbot-ui's version of this effect, `messages` here
+  // only changes once per completed turn (streaming state lives in
+  // `liveAnswer`/`working`, not in `messages`), so there's no per-token
+  // write storm to debounce and no in-flight placeholder to filter out.
+  // `agent` is stored as its string key, never the resolved object — that
+  // object carries a lucide-react icon COMPONENT, which JSON.stringify
+  // would silently drop; resolveAgent(key, null) rebuilds it on load.
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const persistable = messages.map((m) => (m.agent ? { ...m, agent: m.agent.key } : m));
+    const firstUserMsg = messages.find((m) => m.role === "user");
+    const title = firstUserMsg
+      ? firstUserMsg.text.slice(0, 60) + (firstUserMsg.text.length > 60 ? "…" : "")
+      : "New conversation";
+    saveSession(threadId, title, persistable, Date.now());
+    setSessions(listSessions());
+  }, [messages, threadId]);
 
   const startNewChat = () => {
     setMessages([]);
     setThreadId(makeThreadId());
     setWatchingCameras(new Set());
+    setRecentOpen(false);
+  };
+
+  const selectSession = (session) => {
+    const rehydrated = session.messages.map((m) => (
+      typeof m.agent === "string" ? { ...m, agent: resolveAgent(m.agent, null) } : m
+    ));
+    setMessages(rehydrated);
+    setThreadId(session.threadId);
+    setWatchingCameras(new Set());
+    setRecentOpen(false);
+  };
+
+  const removeSession = (id) => {
+    deleteSession(id);
+    setSessions(listSessions());
+    if (id === threadId) startNewChat();
   };
 
   const toggleWatching = (camera) => {
@@ -468,12 +744,30 @@ const ChatbotWidget = () => {
           <header className="aksha-chatbot-panel-header">
             <div className="aksha-chatbot-title"><Bot size={20} /><div><strong>Aksha Assistant</strong><span>Live camera and alert data</span></div></div>
             <div className="aksha-chatbot-header-actions">
+              <button
+                type="button"
+                onClick={() => setRecentOpen((value) => !value)}
+                aria-label="Recent chats"
+                title="Recent chats"
+                aria-expanded={recentOpen}
+              >
+                <History size={17} />
+              </button>
               <button type="button" onClick={startNewChat} aria-label="New chat" title="New chat"><Plus size={17} /></button>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close chatbot" title="Close"><X size={18} /></button>
             </div>
           </header>
+          {recentOpen && (
+            <RecentChats
+              sessions={sessions}
+              activeThreadId={threadId}
+              onSelect={selectSession}
+              onNewChat={startNewChat}
+              onDelete={removeSession}
+            />
+          )}
           <div className="aksha-chatbot-toolbar"><span><Clock3 size={13} /> Current Aksha data</span>{messages.length > 0 && <button type="button" onClick={startNewChat}><Trash2 size={13} /> Clear</button>}</div>
-          <div className="aksha-chatbot-messages">
+          <div className="aksha-chatbot-messages" ref={messagesRef}>
             {messages.length === 0 && <p className="aksha-chatbot-welcome">Ask about your cameras, alerts, live status, or insight reports.</p>}
             {messages.map((message, index) => {
               if (message.role === "user") {
@@ -521,7 +815,7 @@ const ChatbotWidget = () => {
                     </details>
                   )}
                   <div className="aksha-answer-body">{stripMarkdown(message.text)}</div>
-                  <Frames frames={message.frames} />
+                  <Frames frames={message.frames} onExpand={setExpandedFrame} />
                   <AnalyticsPanel rows={message.analytics} />
                   {message.agent?.key === "live_monitoring" && message.status === "resolved" && message.sources?.length > 0 ? (
                     <div className="aksha-live-camera-list">
@@ -578,6 +872,7 @@ const ChatbotWidget = () => {
       <button type="button" className="aksha-chatbot-launcher" onClick={() => setOpen((value) => !value)} aria-label="Open Aksha Assistant">
         {open ? <X size={22} /> : <Bot size={22} />}<span>{open ? "Close" : "Ask Aksha"}</span>
       </button>
+      <FrameLightbox frame={expandedFrame} onClose={() => setExpandedFrame(null)} />
     </div>
   );
 };

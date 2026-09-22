@@ -82,6 +82,12 @@ Disambiguation rules (apply these before guessing):
   alert type like "RTSP Error") is error_explanation, not help_guide — help_guide is for
   conceptual/how-to questions about product features in general, error_explanation is for
   decoding one specific thing the operator is looking at right now.
+- Found live 2026-09-18: contrast that with "why does cam3 say 'creating' for so long?" — this
+  also quotes a status value, but "why... for so long" is a complaint that the status isn't
+  changing, not a request to define the word. A quoted status PLUS a "why"/"for so long"/"stuck"/
+  "won't change" framing is camera_troubleshooting (it diagnoses that specific camera's stalled
+  state); a quoted status with a plain "what does X mean" framing and no such complaint stays
+  error_explanation (it only defines the term).
 - Questions with no camera/alert/date reference at all and a conceptual/definitional phrasing
   ("how do X and Y relate") default to help_guide, not to whichever agent happens to own X or Y.
 - DIAGNOSTIC questions about a camera or feed PROBLEM — "why is X not showing video", "why is the
@@ -92,8 +98,10 @@ Disambiguation rules (apply these before guessing):
   setting, no fault implied) stays camera_operations.
 - CHRONOLOGICAL questions about alert activity — "timeline of today's incidents", "sequence of
   events", "what happened before/after/between X and Y", "order these alerts by time", "gaps
-  between alerts", "when did alerts start/stop on cam3" — are timeline. Contrast: "show alerts for
-  cam3" / "recent alerts" (a list, with no ordering or sequence framing) stays alert_investigation.
+  between alerts", "when did alerts start/stop on cam3", "alert clusters"/"clustered activity" in
+  a time window — are timeline (get_alert_timeline groups alerts into exactly these episodes/
+  clusters). Contrast: "show alerts for cam3" / "recent alerts" (a list, with no ordering,
+  clustering, or sequence framing) stays alert_investigation.
 
 Resolve relative dates (e.g. "today", "yesterday") to actual dates using the current date provided.
 Earlier turns of this conversation, if any, appear before the current question — use them only to
@@ -119,7 +127,19 @@ def route(
         and ("how many" in query_lower or "total" in query_lower or "count" in query_lower)
     )
     is_report_query = bool(re.search(r"\b(insight|kpi)\s+(report|data|count|summary)", query_lower))
-    if is_alert_count or is_report_query:
+    # Found live 2026-09-18: "Can you explain what an insight report shows?"
+    # is a conceptual/definitional question about the feature itself, not a
+    # data request — but the regex above matched "insight report" and routed
+    # it straight to insights_analytics before the model ever saw the
+    # disambiguation rule that would have sent it to help_guide instead.
+    # insights_analytics then had no camera/date to query and the turn
+    # failed outright. Skip this fast path for that phrasing and let the
+    # model apply the real rule.
+    is_conceptual_phrasing = bool(
+        re.search(r"\bexplain\b", query_lower)
+        or re.search(r"\bwhat (does|is|are)\b.{0,40}\b(mean|show|shows|contain|represent)\b", query_lower)
+    )
+    if (is_alert_count or is_report_query) and not is_conceptual_phrasing:
         return RouterDecision(
             domain="insights_analytics",
             agent="insights_analytics",

@@ -70,6 +70,18 @@ CASES = [
      "'what happened between X and Y' is chronological, not a list lookup"),
     ("Show me the recent alerts for cam3.", "alert_investigation",
      "a plain alert list must NOT be pulled into timeline by the new rule"),
+
+    # Found live 2026-09-18 during the 90-query sample-list validation
+    # (docs/development-plan/Agent_Sample_Query_Validation_2026-09-18.md).
+    ("Can you explain what an insight report shows?", "help_guide",
+     "conceptual question about the feature, not a data request — the pre-model "
+     "'insight report' regex fast-path used to route this straight to "
+     "insights_analytics, which had no camera/date to query and failed outright"),
+    ("Why does cam1-Gate-Camera say 'creating' for so long?", "camera_troubleshooting",
+     "a quoted status PLUS a 'why... for so long' complaint is diagnostic, not a "
+     "plain definition request — must not fall into error_explanation"),
+    ("Show alert clusters for cam3 in the last 3 hours.", "timeline",
+     "'clusters' is chronological/episode framing, same family as 'timeline'/'sequence'"),
 ]
 
 

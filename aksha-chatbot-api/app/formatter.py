@@ -8,10 +8,12 @@ already in the tool results — if every tool failed, it must say so plainly
 import json
 import re
 from collections.abc import Iterator
+from datetime import datetime, time
 
 from langsmith import traceable
 
 from app.agents import AgentSpec
+from app.node_client import NodeApiError
 from app.state import SourceRef, ToolResult
 from llm_client import LLMClient
 
@@ -292,18 +294,75 @@ _ALERT_IMAGE_TS_RE = re.compile(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})_alert"
 MAX_FRAMES = 6
 FRAMES_PER_CAMERA = 3
 
+_DAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+
+def _parse_hhmm(value) -> time | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        return datetime.strptime(value.strip(), "%H:%M").time()
+    except ValueError:
+        return None
+
+
+def _rule_covers_timestamp(rule: dict, dt: datetime) -> bool:
+    if rule.get("Alert_Status") != "active":
+        return False
+    days = rule.get("Days_Active")
+    start = _parse_hhmm(rule.get("Start_Time"))
+    end = _parse_hhmm(rule.get("End_Time"))
+    if not isinstance(days, list) or start is None or end is None:
+        return False
+    today = _DAY_NAMES[dt.weekday()]
+    yesterday = _DAY_NAMES[(dt.weekday() - 1) % 7]
+    t = dt.time()
+    if start <= end:
+        return today in days and start <= t <= end
+    # Window crosses midnight (e.g. 18:00-09:00): active either from start
+    # time to midnight on "today", or from midnight to end time carried
+    # over from "yesterday"'s activation.
+    return (today in days and t >= start) or (yesterday in days and t <= end)
+
+
+def _alert_name_lookup(cameras: set[str]) -> dict[str, list[dict]]:
+    """One get_alerts_by_camera call per distinct camera seen in the frames
+    — never per image — so a name can be attached deterministically instead
+    of asked of the LLM. Best-effort: a camera whose rule lookup fails (or
+    that simply has no rules) yields no name for its frames, never a guess."""
+    from app.tools_alerts import GetAlertsByCameraInput, _get_alerts_by_camera
+
+    rules_by_camera: dict[str, list[dict]] = {}
+    for camera in cameras:
+        try:
+            result = _get_alerts_by_camera(GetAlertsByCameraInput(camera_name=camera))
+        except NodeApiError:
+            rules_by_camera[camera] = []
+            continue
+        rules = result.get("alerts")
+        rules_by_camera[camera] = rules if isinstance(rules, list) else []
+    return rules_by_camera
+
 
 def extract_frames(tool_results: list[ToolResult], camera_filter: list[str] | None = None) -> list[dict]:
-    """Alert frame images — sourced only from get_recent_alerts' per-camera
-    {cameraName, images} buckets. get_alerts_by_camera returns rule config,
-    never images, so it never contributes frames. Every URL here is echoed
-    verbatim from the Node API — never constructed or guessed.
+    """Alert frame images — sourced from get_recent_alerts' per-camera
+    {cameraName, images} buckets. Every URL here is echoed verbatim from the
+    Node API — never constructed or guessed.
+
+    Each frame is also labelled with the alert rule name (Alert_Name) that
+    was active for its camera at its capture time, looked up deterministically
+    via get_alerts_by_camera rather than left to the LLM (Section 0.1a's
+    "minor backend change" for Alert Summary). get_recent_alerts' own image
+    entries carry no alert_id or rule reference, so this is a best-effort
+    time-window join, not a guaranteed one: when zero or more than one active
+    rule covers a capture time (e.g. overlapping windows on one camera), the
+    name is left out rather than guessed.
 
     Found live 2026-09-04: get_recent_alerts has no camera parameter — it
     always returns every camera's bucket, so asking about cam3 showed cam1's
     alert photos too. camera_filter (the router's resolved camera_names)
     restricts frames to the camera(s) actually asked about, when any were."""
-    frames: list[dict] = []
+    raw_frames: list[dict] = []
     for r in tool_results:
         if not r.ok:
             continue
@@ -323,13 +382,32 @@ def extract_frames(tool_results: list[ToolResult], camera_filter: list[str] | No
                 if not isinstance(url, str):
                     continue
                 match = _ALERT_IMAGE_TS_RE.search(url)
-                frames.append({
+                raw_frames.append({
                     "url": url,
                     "camera": str(camera),
                     "date": match.group(1) if match else None,
                     "time": match.group(2) if match else None,
                 })
-    return frames[:MAX_FRAMES]
+    raw_frames = raw_frames[:MAX_FRAMES]
+
+    cameras = {f["camera"] for f in raw_frames if f["date"] and f["time"]}
+    rules_by_camera = _alert_name_lookup(cameras) if cameras else {}
+
+    for frame in raw_frames:
+        frame["alert_name"] = None
+        if not (frame["date"] and frame["time"]):
+            continue
+        try:
+            dt = datetime.strptime(f"{frame['date']} {frame['time']}", "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            continue
+        matches = [
+            rule.get("Alert_Name") for rule in rules_by_camera.get(frame["camera"], [])
+            if _rule_covers_timestamp(rule, dt) and isinstance(rule.get("Alert_Name"), str)
+        ]
+        if len(matches) == 1:
+            frame["alert_name"] = matches[0]
+    return raw_frames
 
 
 def extract_analytics(tool_results: list[ToolResult]) -> list[dict]:
@@ -377,11 +455,13 @@ def extract_analytics(tool_results: list[ToolResult]) -> list[dict]:
         object_alerts = info.get("object_detection_alerts") or {}
         top_object = max(object_alerts, key=object_alerts.get) if object_alerts else None
         peak_hour = info.get("peak_alert_time_hour")
+        hourly_counts = info.get("hourly_alert_counts")
         rows.append({
             "camera": str(camera),
             "priority": priorities.get(camera),
             "alert_count": info.get("total_alerts_generated", 0),
             "peak_hour": f"{peak_hour:02d}:00" if isinstance(peak_hour, int) else None,
             "top_object": top_object,
+            "hourly_counts": hourly_counts if isinstance(hourly_counts, list) and len(hourly_counts) == 24 else None,
         })
     return rows

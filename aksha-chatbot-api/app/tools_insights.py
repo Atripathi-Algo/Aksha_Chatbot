@@ -3,7 +3,7 @@ Matches the exact contract in AkshaV2-UIUX/backend/src/routes/insightReport.js:
 all four of startDate/endDate/startTime/endTime are required by that route,
 so the tool schema requires them too rather than defaulting silently."""
 
-from datetime import date as date_cls
+from datetime import date as date_cls, datetime
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -42,6 +42,25 @@ class GetInsightReportInput(BaseModel):
         return self
 
 
+def _hourly_alert_counts(alerts: dict) -> list[int]:
+    """24-slot histogram (index 0 = 00:00) for the Analytics hourly-trend
+    chart — computed here, once, from the same per-alert timestamps
+    peak_alert_time_hour already reduces to a single number, before this
+    function's caller drops `alerts` for size (see the docstring below)."""
+    counts = [0] * 24
+    if not isinstance(alerts, dict):
+        return counts
+    for alert in alerts.values():
+        if not isinstance(alert, dict):
+            continue
+        try:
+            hour = datetime.strptime(alert.get("timestamp", ""), "%Y-%m-%d %H:%M:%S").hour
+        except ValueError:
+            continue
+        counts[hour] += 1
+    return counts
+
+
 def _prepare_camera_report(cameras: dict) -> dict:
     """Sort by alert count, highest first — dict insertion order is what the
     LLM sees in compact_results_json, and a model reliably preserves the
@@ -54,13 +73,19 @@ def _prepare_camera_report(cameras: dict) -> dict:
     it just never received its data. Insights only needs the aggregates
     (total_alerts_generated, object_detection_alerts, peak/active hours);
     per-alert timestamp detail is Alert Investigation's domain, not this
-    one's, and doesn't belong in a counting/trend answer regardless."""
+    one's, and doesn't belong in a counting/trend answer regardless. The one
+    exception is hourly_alert_counts (Analytics' hourly-trend chart) — a
+    24-int histogram is negligible size next to the raw records it's
+    computed from, so it's attached here, once, right before `alerts` itself
+    is dropped."""
     if not isinstance(cameras, dict):
         return cameras
-    trimmed = {
-        name: {k: v for k, v in (info or {}).items() if k != "alerts"}
-        for name, info in cameras.items()
-    }
+    trimmed = {}
+    for name, info in cameras.items():
+        info = info or {}
+        entry = {k: v for k, v in info.items() if k != "alerts"}
+        entry["hourly_alert_counts"] = _hourly_alert_counts(info.get("alerts") or {})
+        trimmed[name] = entry
     return dict(
         sorted(trimmed.items(), key=lambda item: item[1].get("total_alerts_generated", 0), reverse=True)
     )

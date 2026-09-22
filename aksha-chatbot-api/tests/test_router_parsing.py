@@ -50,6 +50,18 @@ def test_report_query_fast_path_skips_the_model():
     assert decision.intent == "report_counts"
 
 
+def test_conceptual_report_question_does_not_take_the_fast_path():
+    # Found live 2026-09-18: "insight report" alone used to trigger the fast
+    # path above regardless of phrasing, routing this conceptual question
+    # straight to insights_analytics (which then failed with no camera/date
+    # to query) instead of letting the model apply the help_guide rule.
+    client = _FakeClient(tool_calls=_route_tool_call({
+        "domain": "help_guide", "agent": "help_guide", "intent": "product_question",
+    }))
+    decision = route("Can you explain what an insight report shows?", "2026-09-16", client)
+    assert decision.agent == "help_guide"
+
+
 def test_no_tool_call_falls_back_to_clarification():
     client = _FakeClient(tool_calls=[], content="I'm not sure, could you rephrase?")
     decision = route("something ambiguous entirely", "2026-09-16", client)
