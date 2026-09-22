@@ -102,6 +102,12 @@ Disambiguation rules (apply these before guessing):
   a time window — are timeline (get_alert_timeline groups alerts into exactly these episodes/
   clusters). Contrast: "show alerts for cam3" / "recent alerts" (a list, with no ordering,
   clustering, or sequence framing) stays alert_investigation.
+- Found live 2026-09-22: "summarize alert activity for today" is a counting/aggregation request
+  ("summarize" = totals and breakdowns), not a chronological one, even though it says "activity"
+  and names a day like the timeline examples above — it is insights_analytics. Only route to
+  timeline when the question itself asks for order, sequence, clustering, or gaps between
+  events — a bare "summarize"/"how much"/"how many" framing stays insights_analytics even when a
+  date word ("today", "this week") is present.
 
 Resolve relative dates (e.g. "today", "yesterday") to actual dates using the current date provided.
 Earlier turns of this conversation, if any, appear before the current question — use them only to

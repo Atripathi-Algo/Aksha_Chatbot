@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Stack, Typography, Button as MuiButton } from '@mui/material';
-import { Video, Bell, Clock, BarChart3, Mail, Book, AlertCircle, Compass, Wrench, Check, X, PenLine, ChevronDown, ChevronRight } from 'lucide-react';
+import { Video, Bell, Clock, BarChart3, Mail, Book, AlertCircle, Compass, Wrench, History, Check, X, PenLine, ChevronDown, ChevronRight } from 'lucide-react';
 import { color, font, radius } from '../tokens';
 
 // Per-agent glyph + tile tone — AGENTS.md: "accent-100 tile = reads a live
@@ -14,6 +14,8 @@ const AGENT_ICONS = {
   notification: Mail,
   help_guide: Book,
   error_explanation: AlertCircle,
+  camera_troubleshooting: Wrench,
+  timeline: History,
 };
 
 export const AGENT_LABELS = {
@@ -24,6 +26,8 @@ export const AGENT_LABELS = {
   notification: 'Notification',
   help_guide: 'Help & Product Guide',
   error_explanation: 'Error & Status Explanation',
+  camera_troubleshooting: 'Camera Troubleshooting',
+  timeline: 'Timeline & Sequence',
 };
 
 // 24px avatar tile, 8px radius, aria-hidden — the agent name text is the

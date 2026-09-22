@@ -205,8 +205,9 @@ def chat_stream(req: ChatRequest):
 def _run_turn(req: "ChatRequest", turn_id: str):
     client = LLMClient()
     history = conversation_store.get_history(req.thread_id)
+    current_date_iso = date.today().isoformat()
 
-    decision = route(req.user_query.strip(), date.today().isoformat(), client, history=history)
+    decision = route(req.user_query.strip(), current_date_iso, client, history=history)
     logger.info("stream_routed", agent=decision.agent, needs_clarification=decision.needs_clarification)
 
     if decision.needs_clarification:
@@ -229,7 +230,7 @@ def _run_turn(req: "ChatRequest", turn_id: str):
     })
 
     results: list[ToolResult] = []
-    for step in run_agent(agent, req.user_query, decision.entities.model_dump(), client, history=history):
+    for step in run_agent(agent, req.user_query, decision.entities.model_dump(), client, history=history, current_date_iso=current_date_iso):
         if step["type"] == "tool_call":
             yield _sse("thinking", {"phase": "tool_call", "tool": step["tool"], "args": step["args"]})
         elif step["type"] == "tool_result":

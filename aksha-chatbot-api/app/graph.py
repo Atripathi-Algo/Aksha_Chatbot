@@ -53,7 +53,8 @@ def _domain_worker(state: ChatbotState) -> dict:
     agent = AGENTS[state["selected_agent"]]
     history = conversation_store.get_history(state["thread_id"])
     results = run_agent_collect(
-        agent, state["normalized_query"], state["router"].get("entities", {}), client, history=history
+        agent, state["normalized_query"], state["router"].get("entities", {}), client, history=history,
+        current_date_iso=date.today().isoformat(),
     )
     return {"tool_results": [r.model_dump() for r in results]}
 

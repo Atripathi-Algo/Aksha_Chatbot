@@ -137,11 +137,10 @@ $radius-pill: 999px;
 
 .aksha-answer-body { white-space: pre-wrap; }
 
-// Alert frames, §3 — 16:9, grayscale by default (an unreviewed alert image
-// isn't a confirmed detection), caption strip naming the camera + time.
+// Alert frames, §3 — 16:9, shown in full color, caption strip naming the camera + time.
 .aksha-frame-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 9px; }
 .aksha-frame { margin: 0; border: 1px solid $pill-border; border-radius: 9px; overflow: hidden; background: $neutral-100; }
-.aksha-frame img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.aksha-frame img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; filter: contrast(1.05); }
 .aksha-frame figcaption { padding: 4px 7px; font-size: 10px; color: $muted; background: $neutral-100; border-top: 1px solid $pill-border; }
 .aksha-frame-alert-name { display: block; font-weight: 700; color: $muted; font-size: 10px; margin-bottom: 1px; }
 .aksha-frame-expand { all: unset; display: block; width: 100%; cursor: zoom-in; }
@@ -154,7 +153,7 @@ $radius-pill: 999px;
   display: flex; align-items: center; justify-content: center; padding: 32px; cursor: zoom-out;
 }
 .aksha-frame-lightbox figure { margin: 0; max-width: min(90vw, 720px); max-height: 90vh; cursor: default; }
-.aksha-frame-lightbox img { display: block; width: 100%; max-height: calc(90vh - 40px); object-fit: contain; border-radius: 8px; filter: grayscale(1) contrast(1.05); }
+.aksha-frame-lightbox img { display: block; width: 100%; max-height: calc(90vh - 40px); object-fit: contain; border-radius: 8px; filter: contrast(1.05); }
 .aksha-frame-lightbox figcaption { margin-top: 8px; font-size: 12px; color: #fff; }
 .aksha-frame-lightbox .aksha-frame-alert-name { color: #fff; font-size: 12px; }
 .aksha-frame-lightbox-close {

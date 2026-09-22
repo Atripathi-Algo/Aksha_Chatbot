@@ -41,14 +41,26 @@ def run_agent(
     entities: dict,
     client: LLMClient,
     history: list[dict] | None = None,
+    current_date_iso: str | None = None,
 ) -> Iterator[dict[str, Any]]:
     if not agent.implemented:
         yield {"type": "done", "results": []}
         return
 
     tools = get_openai_tools(agent.tool_names)
+    # The router resolves relative dates ("today", "this week") using its own
+    # "Current date: ..." system-prompt line (app/router.py) before it ever
+    # reaches this loop, but that resolution only produces a single
+    # `entities.date` field — a tool like get_insight_report needs an actual
+    # start_date/end_date pair, which this agent's own tool-calling model has
+    # to compute itself. Without today's date grounded here too, it has no
+    # way to do that correctly and silently guesses (found live: "this week"
+    # queries mis-resolving into multi-year spans that then tripped
+    # get_insight_report's own MAX_REPORT_RANGE_DAYS check, or into ranges
+    # with no real data instead of the one actually asked for).
+    date_line = f"\nCurrent date: {current_date_iso}" if current_date_iso else ""
     messages = [
-        {"role": "system", "content": f"{agent.system_prompt}\nExtracted entities so far: {json.dumps(entities)}"},
+        {"role": "system", "content": f"{agent.system_prompt}{date_line}\nExtracted entities so far: {json.dumps(entities)}"},
         *(history or []),
         {"role": "user", "content": user_query},
     ]
@@ -122,11 +134,12 @@ def run_agent_collect(
     entities: dict,
     client: LLMClient,
     history: list[dict] | None = None,
+    current_date_iso: str | None = None,
 ) -> list[ToolResult]:
     """Non-streaming callers (app/graph.py) just want the final results —
     drain the generator and discard the intermediate step events."""
     results: list[ToolResult] = []
-    for step in run_agent(agent, user_query, entities, client, history=history):
+    for step in run_agent(agent, user_query, entities, client, history=history, current_date_iso=current_date_iso):
         if step["type"] == "done":
             results = step["results"]
     return results
